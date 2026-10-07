@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MacDonald Letters Generator</title>
+  <title>Macdonald Form Field Cards</title>
   <style>
     /* ── Reset & Base ─────────────────────────────────────── */
     *, *::before, *::after {
@@ -207,6 +207,15 @@
       white-space: nowrap;
     }
 
+    /* ── Footer ───────────────────────────────────────────── */
+    .disclaimer {
+      max-width: 720px;
+      margin-top: 24px;
+      font-size: 0.78rem;
+      color: #666;
+      text-align: center;
+    }
+
     /* ── Responsive ───────────────────────────────────────── */
     @media (max-width: 600px) {
       .controls-grid {
@@ -222,7 +231,7 @@
         margin: 0;
       }
 
-      h1, .subtitle, .controls-panel, .actions {
+      h1, .subtitle, .controls-panel, .actions, .disclaimer {
         display: none !important;
       }
 
@@ -256,7 +265,7 @@
   </style>
 </head>
 <body>
-  <h1>MacDonald Letters Generator</h1>
+  <h1>Macdonald Form Field Cards</h1>
   <p class="subtitle">Vision therapy form recognition field cards</p>
 
   <!-- Controls Panel -->
@@ -348,6 +357,8 @@
   <div class="card-wrapper">
     <div class="card" id="card"></div>
   </div>
+
+  <p class="disclaimer">Not medical advice. Use exercises as directed by your vision therapist.</p>
 
   <script>
     // ── Letter Sets ──────────────────────────────────────────

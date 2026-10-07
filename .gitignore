@@ -1,2 +1,16 @@
 .DS_Store
 .playwright-mcp/
+
+# Local Claude Code settings
+.claude/settings.local.json
+
+# Env / secrets
+.env
+.env.*
+
+# Windows / misc
+Thumbs.db
+*.log
+
+# Node (not used, but keep out if ever run)
+node_modules/
