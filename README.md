@@ -2,6 +2,8 @@
 
 Small vision therapy exercises as standalone browser pages. No install, no build: open the HTML file.
 
+**Live site:** <https://dan98765.github.io/vision-therapy-tools/>
+
 ## Tools
 
 | Tool | Description |
