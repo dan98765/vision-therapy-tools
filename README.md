@@ -36,7 +36,7 @@ New exercise folders are picked up by the build automatically. See [CLAUDE.md](C
 
 ## Deployment
 
-Every push to `main` runs the tests, builds the site and publishes it with GitHub Pages (`.github/workflows/pages.yml`). A failing test blocks the deploy.
+Every push to `main` runs the tests, builds the site and publishes it with GitHub Pages (`.github/workflows/pages.yml`). A failing test blocks the deploy. Pull requests run the tests and a build too (`.github/workflows/ci.yml`), and Dependabot opens weekly pull requests for dependency updates.
 
 ## Security
 

@@ -1,0 +1,24 @@
+version: 2
+
+updates:
+  # Vite, Vitest and anything they pull in (dev-only; nothing here runs in the pages)
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      npm-dependencies:
+        patterns: ["*"]
+
+  # The actions used by the workflows in .github/workflows
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      github-actions:
+        patterns: ["*"]

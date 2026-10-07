@@ -65,6 +65,8 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - Only `dist/` is published, so `CLAUDE.md`, `docs/`, `tests/` and `_template/` are not on the live site.
 - To confirm a deploy: `gh run list --workflow pages.yml --limit 1` should show `completed success` for the latest commit, and the live URLs should load.
 - The `engines` field in `package.json` says Node 20 or newer; the workflow uses Node 22.
+- `.github/workflows/ci.yml` runs the tests and a build on every pull request (nothing is deployed from it). `pages.yml` only runs on pushes to `main`, so without `ci.yml` a pull request would never be tested.
+- **Dependabot** (`.github/dependabot.yml`) opens a pull request every week for npm dependencies and for the actions used in the workflows, each grouped into one PR. Dependabot alerts and security updates are on too, so a vulnerable dependency gets its own PR straight away. To update: check that the PR's CI run passed, skim the changelog for Vite or Vitest major versions (they can change config and test behaviour), then merge. Merging to `main` deploys.
 
 ## Working here
 
