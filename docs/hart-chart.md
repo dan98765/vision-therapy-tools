@@ -13,7 +13,7 @@ A Hart chart is a grid of letters (sometimes numbers or symbols) in rows. It is 
 
 ## How it is commonly used
 
-Descriptions from therapy sources (the exact routine always comes from the supervising therapist):
+Descriptions from therapy sources, which this repo does not endorse as a protocol or claim are effective (the exact routine always comes from the supervising therapist):
 
 - A large chart is taped to a wall at eye level, and the person sits or stands several feet away (sources mention 6 to 10 feet). A smaller chart with the same letters is held in the hand.
 - **Near-far:** read a letter or line from the near chart, then shift to the far chart and read the matching letter, and alternate. A letter should be clear before moving on. This is often done with one eye covered.

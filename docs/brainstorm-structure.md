@@ -42,7 +42,7 @@ Create `shared/style.css` and `shared/common.js`, loaded with ordinary `<link>` 
 - **Moves out of the pages:** the reset, controls panel, buttons, note, disclaimer, print basics; and helpers such as `shuffle`, the `CAP_HEIGHT` and `MIN_LETTER_MM` constants, the size-note builder, and the amber-warning toggle.
 - **Pages keep:** only their own layout CSS and their own generator logic, probably 100 to 150 lines each.
 - **Pros:** the biggest payoff for the least change. Works on `file://`. No tooling. CSP can become `style-src 'self'; script-src 'self'`, which removes `'unsafe-inline'` and makes the CSP genuinely strong against injected scripts.
-- **Cons:** pages are no longer single files you can email, though a zipped folder still works. Shared globals can collide unless wrapped (for example in one `VT` namespace object). Relative paths are `../shared/...` from each exercise folder, so the template must get them right.
+- **Cons:** pages are no longer single files that can be emailed, though a zipped folder still works. Shared globals can collide unless wrapped (for example in one `VT` namespace object). Relative paths are `../shared/...` from each exercise folder, so the template must get them right.
 - **Gotcha:** classic scripts share one global scope, so name things carefully.
 
 ### 2. Split each page into `index.html`, `style.css`, `app.js`
@@ -62,7 +62,7 @@ Put the math in plain functions with no DOM access, for example:
 
 Then test them with Node's built-in test runner (`node --test`), which needs no install, just a `tests/` folder.
 
-- **Pros:** the checks I ran by hand (1,620 layout combinations, no adjacent repeats, no clipping) become permanent tests. Safe refactors. Fits the "no npm dependencies" rule, since `node --test` is built in.
+- **Pros:** the checks first run by hand in the browser (1,620 layout combinations, no adjacent repeats, no clipping) become permanent tests. Safe refactors. Fits the "no npm dependencies" rule, since `node --test` is built in.
 - **Cons:** the functions must be loadable by both the browser and Node. Without ES modules on `file://` that means a small UMD-style wrapper (`if (typeof module !== 'undefined') module.exports = ...`) or putting the logic in a file that is only a set of functions. This is a bit ugly, but small.
 - **Alternative:** accept a build step later and use real modules (idea 5).
 
@@ -106,7 +106,7 @@ What the host (GitHub Pages, serving `main` from the repo root) allows and does 
 How sure each claim is:
 - **Confirmed in GitHub's docs:** the size, bandwidth and build limits, the `404.html` support, and the public-repo requirement on a free plan ([GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits)).
 - **Confirmed on this site:** `_template/` returns 404 because of the Jekyll underscore rule, and the site stopped rebuilding when Actions was restricted.
-- **Not looked up, from general knowledge:** that there is no setting for custom response headers or `_redirects`. Both are widely documented as unsupported on GitHub Pages, but I have not checked the current docs.
+- **Not looked up, from general knowledge:** that there is no setting for custom response headers or `_redirects`. Both are widely documented as unsupported on GitHub Pages, but the current docs were not checked.
 - **Expected, not tested:** anything marked "expected".
 
 ### What works
@@ -116,7 +116,7 @@ How sure each claim is:
 - **ES modules over HTTPS.** They work on the live site, but not when a page is opened from disk (`file://`), which is a browser limit, not a host limit.
 - **Service workers and PWAs.** Pages is served over HTTPS, which they require. The scope follows the subpath, so register with a relative path.
 - **A custom 404 page.** A `404.html` in the root is used for missing URLs.
-- **A custom domain** with HTTPS enforced, if you ever want one.
+- **A custom domain** with HTTPS enforced, if one is ever wanted.
 - **Printing, mm sizing, and everything else that runs in the browser.**
 
 ### What does not work, or needs care
@@ -126,7 +126,7 @@ How sure each claim is:
 | **No custom HTTP headers** (not looked up) | A CSP header cannot be sent, so the `<meta http-equiv="Content-Security-Policy">` tag has to do the job. A meta tag cannot set `frame-ancestors`, so the pages can still be embedded in someone else's frame. Other security headers (X-Content-Type-Options, Referrer-Policy and so on) cannot be set either |
 | **No server-side code, redirects or rewrites** | Fine for this project. A `_redirects` file is not supported (that is a Netlify feature; not looked up). Old URLs can only be kept alive with a small HTML page that redirects with a meta refresh or script. Note the Macdonald cards already moved from `/` to `/macdonald-form-field-cards/`, so old links now land on the landing page |
 | **Served from a subpath** | Root-relative links like `/shared/style.css` would point at `dan98765.github.io/shared/...` and 404. Use `../shared/style.css` style links |
-| **Jekyll runs on the branch deploy** | Folders and files starting with `_` (such as `_template/`) are skipped, so `_template/` is not published (confirmed: it returns 404 on the live site). Add an empty `.nojekyll` file if you ever want a folder like `_shared/` to be served, or avoid the underscore |
+| **Jekyll runs on the branch deploy** | Folders and files starting with `_` (such as `_template/`) are skipped, so `_template/` is not published (confirmed: it returns 404 on the live site). Add an empty `.nojekyll` file to serve a folder like `_shared/`, or avoid the underscore |
 | **The built-in deploy needs Actions enabled** | "Deploy from a branch" runs on a GitHub-owned Actions workflow. Setting Actions to disabled or to "only this account's actions" stops the site updating without any error on push (this happened once; see `CLAUDE.md`) |
 | **A build step needs a custom workflow** | With "Deploy from a branch" there is no place to run Vite or another bundler. You would switch Pages to the "GitHub Actions" source and add a workflow that builds and uploads the output. That workflow uses GitHub-published actions, so the repo's allowed-actions setting must permit them (the same setting that broke the site before). Pages' own soft limit of 10 builds an hour does not apply to a custom workflow |
 | **Everything in the published folder is public** | The repo is public anyway. Do not rely on obscurity |
@@ -139,7 +139,7 @@ How sure each claim is:
 | --- | --- | --- |
 | 1. Shared stylesheet and script (classic files) | Yes | Use `../shared/` relative paths. CSP becomes `style-src 'self'; script-src 'self'`. Avoid an underscore folder name (Jekyll), or add `.nojekyll` |
 | 2. Split into HTML, CSS and JS files | Yes | Same as above |
-| 3. Pure logic plus `node --test` tests | Yes | Tests run on your machine. If you want them in CI, that is a separate Actions workflow, and Actions must stay enabled |
+| 3. Pure logic plus `node --test` tests | Yes | Tests run locally. Running them in CI is a separate Actions workflow, and Actions must stay enabled |
 | 4. Controls generated from data | Yes | Browser-only code |
 | 5. Build step (Vite or similar) | Only with a custom Actions workflow | Switch the Pages source to "GitHub Actions" and keep Actions allowed (see above). The build output must be plain static files with relative asset paths (Vite: `base: './'`). This also adds a `package.json`, a lockfile and dependency alerts |
 | 6. Web components | Yes | Browser-only code |
@@ -151,7 +151,7 @@ How sure each claim is:
 - Keep the "relative links only" rule. Test links with `python -m http.server` from the repo root.
 - Keep the CSP meta tag on every page, since headers are not an option.
 - After any change to deployment (Actions settings, Pages source, moving files), check `gh api repos/dan98765/vision-therapy-tools/pages/builds --jq '.[0]'` shows the latest commit as `built`, then load the live URLs.
-- Consider a tiny redirect page at any URL you move, if people may have bookmarked it.
+- Consider a tiny redirect page at any URL that moves, in case people have bookmarked it.
 - Batch pushes when you can. Many rapid pushes can hit the 10-builds-an-hour soft limit, and in-flight builds are cancelled when a newer commit arrives (it happened once in this repo).
 
 Source for the limits and plan rules: [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
@@ -168,5 +168,5 @@ Source for the limits and plan rules: [GitHub Pages limits](https://docs.github.
 - Is "send someone a single HTML file" a real use case, or is a folder or the website fine? This decides whether idea 1 is acceptable.
 - Is it important that the code is easy to read for non-programmers who use "view source"?
 - How many exercises are likely: 3 to 5, or 20 or more?
-- Is TypeScript or a test runner something you want, or is a few well-tested pure functions enough?
+- Are TypeScript or a test runner wanted, or are a few well-tested pure functions enough?
 - Should the pages work with no internet, installed as a PWA (installable offline app)? That would add a service worker and change the CSP.
