@@ -51,7 +51,7 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 - Letter size in ring *n* is `base * scale^n`.
 - Rings are placed outward so that neighbouring rings, and neighbouring letters within a ring, cannot touch even with the random wobble.
 - If the requested sizes do not fit on the card, **every letter is shrunk by the same factor** (keeping the size progression) until the outer ring fits. A note under the buttons says how much. So Base Letter Height is the size you ask for, not a guarantee. Raise the card size or lower rings, letters per ring or scale factor to keep the full size.
-- Letters are positioned inside the card border. Positioning once ignored the border and put letters about 3 px off-center from the fixation dot; keep any layout change measuring from the padding box (`BORDER_MM`).
+- Letters are positioned relative to the inside of the card border, so measure from the padding box (`BORDER_MM`) or letters drift off-center from the fixation dot.
 
 ### Gotchas
 

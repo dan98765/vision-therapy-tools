@@ -4,7 +4,7 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 
 ## Layout
 
-- `index.html` — currently the Macdonald Form Field Cards generator (the first tool; background in `docs/macdonald-form-field-cards.md`). Intended to move to `macdonald-form-field-cards/` once there is a second tool and a landing page.
+- `index.html` — currently the Macdonald Form Field Cards generator (the first tool; background in `docs/macdonald-form-field-cards.md`). Intended to move to `macdonald-form-field-cards/` once there is a second tool and a landing page. The repo is served by GitHub Pages from `main` at https://dan98765.github.io/vision-therapy-tools/, so moving it changes the live URL: add the landing page at the root in the same commit.
 - `_template/index.html` — starting point for a new exercise. Copy it, don't edit it.
 - Each new exercise lives in its own folder: `<exercise-name>/index.html`, kebab-case.
 
