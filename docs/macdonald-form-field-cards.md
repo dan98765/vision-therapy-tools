@@ -1,6 +1,6 @@
 # Macdonald Form Field Cards
 
-Notes, history and documentation for the first tool in this repo (`index.html`).
+Notes, history and documentation for the first tool in this repo (`macdonald-form-field-cards/index.html`).
 
 > Not medical advice. This page describes a vision therapy exercise for background only. Use it as directed by a vision therapist.
 
@@ -30,7 +30,7 @@ The exact routines (distance, lens use, timing, whether to fixate and then sacca
 
 The generator creates **new, original** cards in the same style: concentric rings of letters with size scaling outward from a central fixation point. It does not copy any vendor's artwork or layout. It is a neutral implementation of the exercise concept, and is not affiliated with or endorsed by Macdonald, Swartwout or any vendor.
 
-### Settings in `index.html`
+### Settings in the page
 
 | Control | Meaning |
 | --- | --- |

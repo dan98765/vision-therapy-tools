@@ -4,15 +4,18 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 
 ## Layout
 
-- `index.html` — currently the Macdonald Form Field Cards generator (the first tool; background in `docs/macdonald-form-field-cards.md`). Intended to move to `macdonald-form-field-cards/` once there is a second tool and a landing page. The repo is served by GitHub Pages from `main` at https://dan98765.github.io/vision-therapy-tools/, so moving it changes the live URL: add the landing page at the root in the same commit.
+- `index.html` — landing page listing every exercise. **Add a card here for each new exercise.** It has no script, so its CSP omits `script-src`.
+- `macdonald-form-field-cards/index.html` — Macdonald Form Field Cards generator (notes in `docs/macdonald-form-field-cards.md`).
+- `hart-chart/index.html` — Hart Chart generator (notes in `docs/hart-chart.md`).
+- `docs/` — one notes file per exercise: what it is, how it is used, how the page works, gotchas, sources.
 - `_template/index.html` — starting point for a new exercise. Copy it, don't edit it.
-- Each new exercise lives in its own folder: `<exercise-name>/index.html`, kebab-case.
+- Each new exercise lives in its own folder: `<exercise-name>/index.html`, kebab-case. Exercise pages link back to the landing page with `<a class="back" href="../">`. Use relative links only, because the site is served from a subpath on GitHub Pages.
 
 ## Conventions
 
 - **One self-contained HTML file per exercise**: inline `<style>` and `<script>`, no external CDNs, fonts or network requests. It must work offline and from `file://`.
 - **Vanilla JS only.** No frameworks, bundlers or npm. If a tool seems to need one, stop and ask.
-- **Match the existing look** of `index.html`: system font stack, `#f0f2f5` page background, white rounded control panel, `#2563eb` accent, sections separated by `/* ── Name ── */` comment banners.
+- **Match the existing look** of the other exercises: system font stack, `#f0f2f5` page background, white rounded control panel, `#2563eb` accent, sections separated by `/* ── Name ── */` comment banners.
 - **Controls are obvious**: sliders/selects with a visible value readout, sensible defaults so the page is useful on first load. Prefer redrawing live on input; where output is random (as in the Form Field Cards generator) an explicit Generate button is acceptable so a card doesn't change while adjusting sliders.
 - **Printable exercises** (cards, charts) need an `@media print` stylesheet that hides the controls and prints only the exercise at true size.
 - **Interactive exercises** (timers, moving targets) need a clear start/stop, must respect `prefers-reduced-motion`, and should not flash faster than 3 Hz.
@@ -21,7 +24,7 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 
 ## Gotchas
 
-- `index.html` lays out the card in mm (true size when printed at 100%). Letters are auto-shrunk to fit, and `BORDER_MM` in the JS must match the `.card` border in the CSS. See "How layout works" in `docs/macdonald-form-field-cards.md` before changing placement logic.
+- `macdonald-form-field-cards/index.html` lays out the card in mm (true size when printed at 100%). Letters are auto-shrunk to fit, and `BORDER_MM` in the JS must match the `.card` border in the CSS. See "How layout works" in `docs/macdonald-form-field-cards.md` before changing placement logic.
 - Every page has a "not medical advice" footer (`.disclaimer`) that is hidden in `@media print`. Keep it when copying `_template/`.
 - Every page has a Content-Security-Policy `<meta>` that blocks all network access (`default-src 'none'`), allowing only inline styles and scripts. Keep it when copying `_template/`. If a tool genuinely needs something more (e.g. `img-src data:` for a canvas export), widen only that directive. A meta CSP cannot set `frame-ancestors`.
 - The repo is public: no personal info, absolute local paths or analytics in committed files. Git identity for this repo is the GitHub noreply address.
@@ -36,8 +39,8 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 
 ## Working here
 
-- Test by opening the page in a browser (the in-app browser or `start index.html`). Check the console for errors and try print preview for printable tools.
+- Test by opening the page in a browser (the in-app browser, or `start <folder>/index.html`; to test links between pages, run `python -m http.server` from the repo root). Check the console for errors and try print preview for printable tools.
 - Commit style is Conventional Commits with the tool as scope, e.g. `feat(macdonald-cards): ...`, `docs(readme): ...`.
-- Keep the README tool list in sync when adding or renaming an exercise.
+- Adding an exercise means: a new folder from `_template/`, a card on the root `index.html`, a row in the README table, and a notes file in `docs/`.
 - Security: report policy is in `SECURITY.md` (GitHub private vulnerability reporting is on). Secret scanning and push protection are on. Wiki and Projects are off.
 - This is not medical software. Pages should not make clinical claims; exercises are for use as directed by a vision therapist.

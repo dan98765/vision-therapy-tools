@@ -36,6 +36,12 @@
       margin-bottom: 20px;
     }
 
+    .back {
+      font-size: 0.85rem;
+      color: #2563eb;
+      margin-bottom: 12px;
+    }
+
     /* ── Controls Panel ───────────────────────────────────── */
     .controls-panel {
       background: #fff;
@@ -102,12 +108,13 @@
     /* ── Print ────────────────────────────────────────────── */
     @media print {
       body { background: #fff; padding: 0; }
-      h1, .subtitle, .controls-panel, .disclaimer { display: none; }
+      .back, h1, .subtitle, .controls-panel, .disclaimer { display: none; }
       #exercise { border: none; border-radius: 0; max-width: none; }
     }
   </style>
 </head>
 <body>
+  <a class="back" href="../">&larr; All exercises</a>
   <h1>Exercise Name</h1>
   <p class="subtitle">One-line description of what this exercise is for.</p>
 
