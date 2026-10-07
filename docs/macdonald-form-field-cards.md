@@ -1,6 +1,6 @@
 # Macdonald Form Field Cards
 
-Notes, history and documentation for the first tool in this repo (`macdonald-form-field-cards/index.html`).
+Notes, history and documentation for the first tool in this repo (`macdonald-form-field-cards/`).
 
 > Not medical advice. This page describes a vision therapy exercise for background only. Use it as directed by a vision therapist.
 
@@ -30,6 +30,17 @@ The exact routines (distance, lens use, timing, whether to fixate and then sacca
 
 The generator creates **new, original** cards in the same style: concentric rings of letters with size scaling outward from a central fixation point. It does not copy any vendor's artwork or layout. It is a neutral implementation of the exercise concept, and is not affiliated with or endorsed by Macdonald, Swartwout or any vendor.
 
+### Where the code lives
+
+| File | What it does |
+| --- | --- |
+| `index.html` | Markup only: controls, buttons, the card container |
+| `main.js` | Reads the controls, draws the card, writes the note under the buttons |
+| `layout.js` | The maths: card size, ring placement, auto-fit, letter placement. No DOM access, so it is tested |
+| `style.css` | Card, dot, circle and letter styles, plus print overrides |
+| `../shared/` | Styles and helpers shared with other exercises |
+| `../tests/cards-layout.test.js` | Sweeps every combination of settings for clipping and overlap, using each letter's ink area plus a small margin |
+
 ### Settings in the page
 
 | Control | Meaning |
@@ -51,7 +62,7 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 - Letter size in ring *n* is `base * scale^n`.
 - Rings are placed outward so that neighbouring rings, and neighbouring letters within a ring, cannot touch even with the random wobble.
 - If the requested sizes do not fit on the card, **every letter is shrunk by the same factor** (keeping the size progression) until the outer ring fits. A note under the buttons says how much. So Base Letter Height is the size you ask for, not a guarantee. Raise the card size or lower rings, letters per ring or scale factor to keep the full size.
-- Letters are positioned relative to the inside of the card border, so measure from the padding box (`BORDER_MM`) or letters drift off-center from the fixation dot.
+- Letters are positioned relative to the inside of the card border, so measure from the padding box (`BORDER_MM` in `layout.js`) or letters drift off-center from the fixation dot. `main.js` passes `BORDER_MM` to the CSS as `--border-mm`, so the border width is defined once.
 
 ### Gotchas
 

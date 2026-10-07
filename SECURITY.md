@@ -1,6 +1,6 @@
 # Security Policy
 
-These are static, client-side pages. They have no backend, accounts, tracking or network requests, and they store nothing. Each page ships with a Content-Security-Policy that blocks all network access.
+These are static, client-side pages. They have no backend, accounts, tracking or network requests, and they store nothing. Each page ships with a Content-Security-Policy that blocks all network access and allows only scripts and styles from the site itself. The only dependencies (Vite and Vitest) are used to build and test; none of their code runs in the pages beyond Vite's small bundling helper.
 
 ## Reporting a vulnerability
 

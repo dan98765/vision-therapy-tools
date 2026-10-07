@@ -1,6 +1,6 @@
 # Hart Chart Generator
 
-Notes and documentation for `hart-chart/index.html`.
+Notes and documentation for `hart-chart/`.
 
 > Not medical advice. This page describes a vision therapy exercise for background only. Use it as directed by a vision therapist.
 
@@ -27,6 +27,17 @@ TODO: the research behind this page did not find who developed the chart or when
 ## How the tool works
 
 The page generates a chart of random letters, laid out in millimetres so it prints at true size at 100% scale. To make a **large** chart for the wall and a **small** chart for the hand, generate twice with different letter heights. Keep the same row and column counts so the two charts line up. Row numbers help keep your place.
+
+### Where the code lives
+
+| File | What it does |
+| --- | --- |
+| `index.html` | Markup only: controls, buttons, the chart container |
+| `main.js` | Reads the controls, draws the chart, writes the note under the buttons |
+| `grid.js` | The maths: building the letter grid (no repeated neighbours) and the chart size. No DOM access, so it is tested |
+| `style.css` | Chart, cell and row-number styles, plus print overrides |
+| `../shared/` | Styles and helpers shared with other exercises |
+| `../tests/hart-grid.test.js` | Checks the grid builder and size calculations |
 
 ### Settings
 
