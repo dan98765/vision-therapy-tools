@@ -25,10 +25,19 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 - Every page has a "not medical advice" footer (`.disclaimer`) that is hidden in `@media print`. Keep it when copying `_template/`.
 - Every page has a Content-Security-Policy `<meta>` that blocks all network access (`default-src 'none'`), allowing only inline styles and scripts. Keep it when copying `_template/`. If a tool genuinely needs something more (e.g. `img-src data:` for a canvas export), widen only that directive. A meta CSP cannot set `frame-ancestors`.
 - The repo is public: no personal info, absolute local paths or analytics in committed files. Git identity for this repo is the GitHub noreply address.
+- Line endings are LF everywhere, enforced by `.gitattributes` (`* text=auto eol=lf`). Set your editor to LF; do not rely on the global `core.autocrlf`.
+
+## Deployment (GitHub Pages)
+
+- The site is built from `main` (root) by GitHub's built-in "pages build and deployment" workflow. It needs **GitHub Actions enabled** for the repo, with "Allow all actions" (or at least actions created by GitHub allowed). Setting Actions to disabled or to "only this account's actions" silently stops the site from updating, with no error on push. The Settings → Pages page shows a red banner when this happens.
+- To confirm a deploy: `gh api repos/dan98765/vision-therapy-tools/pages/builds --jq '.[0]'` should show the latest commit as `built`.
+- Pages runs Jekyll over the repo, which skips folders starting with `_`, so `_template/` is not published (fine; it is only for copying). Adding an empty `.nojekyll` would publish it.
+- Everything else in the repo, including `CLAUDE.md` and `docs/`, is published too. Never put anything private in the repo.
 
 ## Working here
 
 - Test by opening the page in a browser (the in-app browser or `start index.html`). Check the console for errors and try print preview for printable tools.
 - Commit style is Conventional Commits with the tool as scope, e.g. `feat(macdonald-cards): ...`, `docs(readme): ...`.
 - Keep the README tool list in sync when adding or renaming an exercise.
+- Security: report policy is in `SECURITY.md` (GitHub private vulnerability reporting is on). Secret scanning and push protection are on. Wiki and Projects are off.
 - This is not medical software. Pages should not make clinical claims; exercises are for use as directed by a vision therapist.

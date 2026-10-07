@@ -18,6 +18,10 @@ Small vision therapy exercises as standalone browser pages. No install, no build
 
 See [CLAUDE.md](CLAUDE.md) for project conventions.
 
+## Security
+
+The pages are static, make no network requests and store nothing. To report a problem, see [SECURITY.md](SECURITY.md).
+
 ## Disclaimer
 
 These tools are not medical devices or medical advice. Use exercises as directed by your vision therapist.
