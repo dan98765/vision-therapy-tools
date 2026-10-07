@@ -200,6 +200,6 @@ h1 {
   }
 
   .back, h1, .subtitle, .controls-panel, .actions, .note, .disclaimer {
-    display: none !important;
+    display: none;
   }
 }

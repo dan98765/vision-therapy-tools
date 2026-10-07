@@ -13,11 +13,12 @@ Small vision therapy exercises as browser pages. Plain HTML, CSS and vanilla Jav
 
 ## Running it locally
 
-You need [Node.js](https://nodejs.org) 20.11 or newer.
+You need [Node.js](https://nodejs.org) 22.22 or newer (or 24.8 or newer).
 
 ```bash
 npm install
 npm run dev       # dev server with hot reload
+npm run lint      # lint the JavaScript, CSS and HTML
 npm test          # run the tests
 npm run build     # build to dist/
 npm run preview   # serve the built site
@@ -36,7 +37,7 @@ New exercise folders are picked up by the build automatically. See [CLAUDE.md](C
 
 ## Deployment
 
-Every push to `main` runs the tests, builds the site and publishes it with GitHub Pages (`.github/workflows/pages.yml`). A failing test blocks the deploy. Pull requests run the tests and a build too (`.github/workflows/ci.yml`), and Dependabot opens weekly pull requests for dependency updates.
+Every push to `main` runs the linters and tests, builds the site and publishes it with GitHub Pages (`.github/workflows/pages.yml`). A lint error or failing test blocks the deploy. Pull requests run the linters, tests and a build too (`.github/workflows/ci.yml`), and Dependabot opens weekly pull requests for dependency updates.
 
 ## Security
 

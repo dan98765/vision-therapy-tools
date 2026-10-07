@@ -49,19 +49,18 @@
 
 @media print {
   .card {
-    border-color: #000 !important;
-    box-shadow: none !important;
+    border-color: #000;
   }
 
   .letter {
-    color: #000 !important;
+    color: #000;
   }
 
   .center-dot {
-    background: #000 !important;
+    background: #000;
   }
 
   .center-circle {
-    border-color: #000 !important;
+    border-color: #000;
   }
 }

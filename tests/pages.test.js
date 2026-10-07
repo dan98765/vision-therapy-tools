@@ -1,22 +1,18 @@
 // Checks that every page follows the conventions in CLAUDE.md, so a new exercise
 // or a copy of _template/ cannot quietly break them.
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { findExerciseFolders } from '../scripts/pages.js';
 
 const root = resolve(import.meta.dirname, '..');
 const read = file => readFileSync(join(root, file), 'utf8');
 
-// Same rule as vite.config.js: top-level folders with an index.html, minus tooling folders.
-const NOT_EXERCISES = new Set(['node_modules', 'dist', 'docs', 'shared', 'tests']);
-const folders = readdirSync(root, { withFileTypes: true })
-  .filter(e => e.isDirectory() && !e.name.startsWith('.') && !NOT_EXERCISES.has(e.name))
-  .filter(e => existsSync(join(root, e.name, 'index.html')))
-  .map(e => e.name);
-const exercises = folders.filter(name => !name.startsWith('_'));
+const folders = findExerciseFolders(root, { includeTemplates: true });
+const exercises = findExerciseFolders(root);
 
-// [label, path of index.html]; the template is checked too, because people copy it
+// [label, path of index.html]; the template is included in the checks because people copy it
 const pages = [
   ['landing page', 'index.html'],
   ...folders.map(name => [name, `${name}/index.html`]),

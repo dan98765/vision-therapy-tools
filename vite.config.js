@@ -1,19 +1,13 @@
-import { existsSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
+import { findExerciseFolders } from './scripts/pages.js';
 
 const root = import.meta.dirname;
 
-// Every top-level folder with an index.html is a page, except ones that start
-// with "_" (like _template) and tooling folders. The landing page is the root index.html.
-const NOT_PAGES = new Set(['node_modules', 'dist', 'docs', 'shared', 'tests']);
+// The landing page is the root index.html; every exercise folder is a page too (see scripts/pages.js).
 const pages = { main: resolve(root, 'index.html') };
-for (const entry of readdirSync(root, { withFileTypes: true })) {
-  if (!entry.isDirectory() || entry.name.startsWith('.') || entry.name.startsWith('_')) continue;
-  if (NOT_PAGES.has(entry.name)) continue;
-  if (existsSync(resolve(root, entry.name, 'index.html'))) {
-    pages[entry.name] = resolve(root, entry.name, 'index.html');
-  }
+for (const name of findExerciseFolders(root)) {
+  pages[name] = resolve(root, name, 'index.html');
 }
 
 // The pages ship a strict Content-Security-Policy. The dev server's hot reload
