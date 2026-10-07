@@ -36,28 +36,37 @@ The generator creates **new, original** cards in the same style: concentric ring
 | --- | --- |
 | Number of Rings | How many concentric rings of letters |
 | Letters per Ring | Letters spaced around each ring |
-| Card Width | Card width in CSS pixels (not a calibrated physical size) |
-| Aspect Ratio | Card proportions |
-| Base Font Size | Letter size in the innermost ring (px) |
+| Card Size (long side) | Length of the card's longer side in mm (100 to 250). Default 216 mm = 8.5 in |
+| Aspect Ratio | Card proportions; the shorter side follows from this |
+| Base Letter Height | Capital-letter height in mm for the innermost ring |
 | Scale Factor | How much larger each successive ring's letters are |
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
 | Center dot | Checkbox to show or hide the fixation circle and dot |
 
-Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card.
+Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card. A note under the buttons shows the card's size in mm and inches.
+
+### How layout works
+
+- All geometry is in millimetres (CSS `mm`), so printing at 100% scale gives true physical size. Check with a ruler, because browsers and printers can rescale.
+- Letter size in ring *n* is `base * scale^n`.
+- Rings are placed outward so that neighbouring rings, and neighbouring letters within a ring, cannot touch even with the random wobble.
+- If the requested sizes do not fit on the card, **every letter is shrunk by the same factor** (keeping the size progression) until the outer ring fits. A note under the buttons says how much. So Base Letter Height is the size you ask for, not a guarantee. Raise the card size or lower rings, letters per ring or scale factor to keep the full size.
+- Letters are positioned inside the card border. Positioning once ignored the border and put letters about 3 px off-center from the fixation dot; keep any layout change measuring from the padding box (`BORDER_MM`).
 
 ### Gotchas
 
 - **Sliders do not redraw the card.** Only the value readouts update live. Click "Generate Card" to apply settings, because each generation is random.
-- **Outer rings can clip.** Letter size grows by `Scale Factor` per ring (`base * factor^ring`), so with many rings and a high factor the outermost letters get very large and are cut off by the card edge. Even the defaults clip slightly in places. Lower the factor or ring count if letters are cut off.
-- **Letters are not placed to avoid overlap.** Each ring is spaced evenly with a small random jitter, so crowded rings (many letters on a small inner ring) can touch.
-- **Size is in pixels.** Printed size depends on the browser's print scaling, so it is not suitable for exact viewing-distance work yet (see ideas below).
+- **Small cards with many rings get tiny letters.** Fitting shrinks letters without a minimum, so 7 rings of 10 letters on a 100 mm card can be unreadable. The note will show a very low percentage.
+- **Screen size is approximate.** CSS `mm` is exact in print but screens vary, so a card on screen is not true size.
+- **Letter height is cap height** (about 0.716 of the font size for Arial), not font size.
+- **Landscape cards need landscape paper.** Choose landscape in the print dialog or the card will be cut off.
 
 ### Ideas for later
 
-- Grey card background option and a fine circle-and-dot center target, matching the traditional cards
-- Calibrated physical sizing (mm/in) so letter size corresponds to a chosen viewing distance
+- Grey card background option, matching the traditional cards
+- Choose letter size by visual angle at a given viewing distance
 - Seeded randomness so a given card can be regenerated or shared
-- Letter-size units in terms of visual angle at a given distance
+- A minimum letter size, with a warning when the card is too crowded
 
 ## Legal notes
 

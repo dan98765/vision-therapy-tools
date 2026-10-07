@@ -6,7 +6,7 @@ Small vision therapy exercises as standalone browser pages. No install, no build
 
 | Tool | Description |
 | --- | --- |
-| [Macdonald Form Field Cards](index.html) ([notes](docs/macdonald-form-field-cards.md)) | Printable concentric-ring letter cards for peripheral awareness and form recognition practice. |
+| [Macdonald Form Field Cards](index.html) ([notes](docs/macdonald-form-field-cards.md)) | Printable concentric-ring letter cards for peripheral awareness and form recognition practice, laid out in mm for true-size printing. |
 
 ## Adding an exercise
 
