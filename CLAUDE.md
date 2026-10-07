@@ -23,6 +23,7 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 
 - `index.html` lays out the card in mm (true size when printed at 100%). Letters are auto-shrunk to fit, and `BORDER_MM` in the JS must match the `.card` border in the CSS. See "How layout works" in `docs/macdonald-form-field-cards.md` before changing placement logic.
 - Every page has a "not medical advice" footer (`.disclaimer`) that is hidden in `@media print`. Keep it when copying `_template/`.
+- Every page has a Content-Security-Policy `<meta>` that blocks all network access (`default-src 'none'`), allowing only inline styles and scripts. Keep it when copying `_template/`. If a tool genuinely needs something more (e.g. `img-src data:` for a canvas export), widen only that directive. A meta CSP cannot set `frame-ancestors`.
 - The repo is public: no personal info, absolute local paths or analytics in committed files. Git identity for this repo is the GitHub noreply address.
 
 ## Working here
