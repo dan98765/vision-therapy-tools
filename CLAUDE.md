@@ -13,11 +13,17 @@ A collection of small, single-purpose vision therapy exercises that run as plain
 - **One self-contained HTML file per exercise**: inline `<style>` and `<script>`, no external CDNs, fonts or network requests. It must work offline and from `file://`.
 - **Vanilla JS only.** No frameworks, bundlers or npm. If a tool seems to need one, stop and ask.
 - **Match the existing look** of `index.html`: system font stack, `#f0f2f5` page background, white rounded control panel, `#2563eb` accent, sections separated by `/* ── Name ── */` comment banners.
-- **Controls are live and obvious**: sliders/selects with a visible value readout, sensible defaults so the page is useful on first load.
+- **Controls are obvious**: sliders/selects with a visible value readout, sensible defaults so the page is useful on first load. Prefer redrawing live on input; where output is random (as in the Form Field Cards generator) an explicit Generate button is acceptable so a card doesn't change while adjusting sliders.
 - **Printable exercises** (cards, charts) need an `@media print` stylesheet that hides the controls and prints only the exercise at true size.
 - **Interactive exercises** (timers, moving targets) need a clear start/stop, must respect `prefers-reduced-motion`, and should not flash faster than 3 Hz.
 - **Accessibility basics**: real `<label>`s tied to inputs, keyboard operable, adequate contrast. Exercise content may need to be large and high-contrast by design.
 - Physical size matters for these exercises (viewing distance, letter size). Where size is meaningful, offer units the user can calibrate (e.g. mm/in) rather than only abstract pixels.
+
+## Gotchas
+
+- `index.html` sizes everything in CSS pixels, not physical units. See "Gotchas" in `docs/macdonald-form-field-cards.md` for clipping and overlap behavior of the card generator.
+- Every page has a "not medical advice" footer (`.disclaimer`) that is hidden in `@media print`. Keep it when copying `_template/`.
+- The repo is public: no personal info, absolute local paths or analytics in committed files. Git identity for this repo is the GitHub noreply address.
 
 ## Working here
 

@@ -36,13 +36,21 @@ The generator creates **new, original** cards in the same style: concentric ring
 | --- | --- |
 | Number of Rings | How many concentric rings of letters |
 | Letters per Ring | Letters spaced around each ring |
-| Card Width | Printed width of the card |
+| Card Width | Card width in CSS pixels (not a calibrated physical size) |
 | Aspect Ratio | Card proportions |
-| Base Font Size | Letter size in the innermost ring |
+| Base Font Size | Letter size in the innermost ring (px) |
 | Scale Factor | How much larger each successive ring's letters are |
-| Letter Set | Pool of letters drawn from (e.g. A to Z) |
+| Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
+| Center dot | Checkbox to show or hide the fixation circle and dot |
 
 Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card.
+
+### Gotchas
+
+- **Sliders do not redraw the card.** Only the value readouts update live. Click "Generate Card" to apply settings, because each generation is random.
+- **Outer rings can clip.** Letter size grows by `Scale Factor` per ring (`base * factor^ring`), so with many rings and a high factor the outermost letters get very large and are cut off by the card edge. Even the defaults clip slightly in places. Lower the factor or ring count if letters are cut off.
+- **Letters are not placed to avoid overlap.** Each ring is spaced evenly with a small random jitter, so crowded rings (many letters on a small inner ring) can touch.
+- **Size is in pixels.** Printed size depends on the browser's print scaling, so it is not suitable for exact viewing-distance work yet (see ideas below).
 
 ### Ideas for later
 
