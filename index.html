@@ -215,6 +215,11 @@
       text-align: center;
     }
 
+    .note.warn {
+      color: #b45309;
+      font-weight: 600;
+    }
+
     /* ── Footer ───────────────────────────────────────────── */
     .disclaimer {
       max-width: 720px;
@@ -398,6 +403,7 @@
     const JITTER        = 0.1;   // random wobble of each letter, in em
     const CENTER_CLEAR  = 3.5;   // clear radius around the fixation circle
     const EDGE_MARGIN   = 1;     // keep letters this far inside the border
+    const MIN_LETTER_MM = 1.5;   // below this cap height, warn that letters are too small to read
 
     // ── Utility ──────────────────────────────────────────────
     function shuffle(arr) {
@@ -514,10 +520,14 @@
         });
       });
 
+      const smallestMm = rings[0].font * CAP_HEIGHT;
+      const tooSmall = smallestMm < MIN_LETTER_MM;
+      els.note.classList.toggle('warn', tooSmall);
       els.note.textContent =
         `${cardW.toFixed(0)} × ${cardH.toFixed(0)} mm (${(cardW / 25.4).toFixed(1)} × ${(cardH / 25.4).toFixed(1)} in). ` +
         'Print at 100% / "Actual size" to keep this size.' +
-        (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '');
+        (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '') +
+        (tooSmall ? ` Warning: the innermost letters are only ${smallestMm.toFixed(2)} mm tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.` : '');
     }
 
     // ── Slider value displays ────────────────────────────────

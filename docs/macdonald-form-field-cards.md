@@ -56,7 +56,7 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 ### Gotchas
 
 - **Sliders do not redraw the card.** Only the value readouts update live. Click "Generate Card" to apply settings, because each generation is random.
-- **Small cards with many rings get tiny letters.** Fitting shrinks letters without a minimum, so 7 rings of 10 letters on a 100 mm card can be unreadable. The note will show a very low percentage.
+- **Small cards with many rings get tiny letters.** Fitting shrinks letters instead of refusing, so 7 rings of 10 letters on a 100 mm card can be unreadable. When the innermost letters end up under 1.5 mm tall (`MIN_LETTER_MM`), the note under the buttons turns amber with a warning. It is a warning only; the card is still drawn.
 - **Screen size is approximate.** CSS `mm` is exact in print but screens vary, so a card on screen is not true size.
 - **Letter height is cap height** (about 0.716 of the font size for Arial), not font size.
 - **Landscape cards need landscape paper.** Choose landscape in the print dialog or the card will be cut off.
@@ -66,7 +66,6 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 - Grey card background option, matching the traditional cards
 - Choose letter size by visual angle at a given viewing distance
 - Seeded randomness so a given card can be regenerated or shared
-- A minimum letter size, with a warning when the card is too crowded
 
 ## Legal notes
 
