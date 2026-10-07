@@ -13,7 +13,7 @@ Small vision therapy exercises as browser pages. Plain HTML, CSS and vanilla Jav
 
 ## Running it locally
 
-You need [Node.js](https://nodejs.org) 20 or newer.
+You need [Node.js](https://nodejs.org) 20.11 or newer.
 
 ```bash
 npm install

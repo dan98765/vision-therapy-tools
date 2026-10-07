@@ -21,7 +21,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - `hart-chart/` — Hart Chart generator (notes in `docs/hart-chart.md`).
 - Each exercise folder holds `index.html` (markup only), `style.css`, `main.js` (reads controls, draws), and a file of pure maths with no DOM access (`layout.js`, `grid.js`) that the tests import.
 - `shared/` — code and CSS used by every exercise: `style.css`, `letters.js` (letter pools, shuffle, cap-height and minimum-size constants), `format.js` (text for the size note), `page.js` (small DOM helpers).
-- `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable.
+- `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable. `pages.test.js` checks every page, and `_template/`, against the conventions below (strict CSP, no inline code, relative paths, labels, disclaimer, back link) and checks each exercise is on the landing page, in the README and has a `docs/<folder>.md`. A new exercise fails the tests until all of that is done.
 - `docs/` — one notes file per exercise (what it is, how it is used, how the page works, gotchas, sources), plus `brainstorm-structure.md`, the options considered when choosing this build setup.
 - `_template/` — starting point for a new exercise. Copy it, don't edit it.
 - `vite.config.js` — builds the root `index.html` and every top-level folder that has an `index.html`, except folders starting with `_` or `.` and `node_modules`, `dist`, `docs`, `shared` and `tests`. A new exercise needs no config change.
@@ -31,7 +31,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 1. Copy `_template/` to a new kebab-case folder next to it (the template's `../shared/` paths expect that depth).
 2. Put the maths in its own file and add a test in `tests/`.
 3. Add a card to the root `index.html`, a row to the README table, and a notes file in `docs/`.
-4. Run `npm test` and `npm run build`, then check the page with `npm run preview`.
+4. Run `npm test` (it tells you what is still missing) and `npm run build`, then check the page with `npm run preview`.
 
 ## Conventions
 
@@ -64,7 +64,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - It needs **GitHub Actions enabled** with "Allow all actions" (or at least actions created by GitHub allowed). Setting Actions to disabled or to "only this account's actions" stops the site from updating. Settings → Pages shows a red banner when this happens.
 - Only `dist/` is published, so `CLAUDE.md`, `docs/`, `tests/` and `_template/` are not on the live site.
 - To confirm a deploy: `gh run list --workflow pages.yml --limit 1` should show `completed success` for the latest commit, and the live URLs should load.
-- The `engines` field in `package.json` says Node 20 or newer; the workflow uses Node 22.
+- The `engines` field in `package.json` says Node 20.11 or newer (`vite.config.js` uses `import.meta.dirname`, added in 20.11); the workflow uses Node 22.
 - `.github/workflows/ci.yml` runs the tests and a build on every pull request (nothing is deployed from it). `pages.yml` only runs on pushes to `main`, so without `ci.yml` a pull request would never be tested.
 - **Dependabot** (`.github/dependabot.yml`) opens a pull request every week for npm dependencies and for the actions used in the workflows, each grouped into one PR. Dependabot alerts and security updates are on too, so a vulnerable dependency gets its own PR straight away. To update: check that the PR's CI run passed, skim the changelog for Vite or Vitest major versions (they can change config and test behaviour), then merge. Merging to `main` deploys.
 
