@@ -1,0 +1,19 @@
+/* Styles for this exercise only. Shared styles live in ../shared/style.css. */
+
+#exercise {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 720px;
+  min-height: 320px;
+  padding: 16px;
+}
+
+@media print {
+  #exercise {
+    border: none;
+    border-radius: 0;
+    max-width: none;
+  }
+}

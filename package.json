@@ -1,0 +1,22 @@
+{
+  "name": "vision-therapy-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Small vision therapy exercises as standalone browser pages",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
+  }
+}

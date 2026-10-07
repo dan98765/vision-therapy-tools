@@ -1,0 +1,39 @@
+/* Landing page: the list of exercises. */
+
+.tools {
+  display: grid;
+  gap: 14px;
+  max-width: 720px;
+  width: 100%;
+  list-style: none;
+}
+
+.tool {
+  display: block;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 18px 24px;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.tool:hover,
+.tool:focus-visible {
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+}
+
+.tool h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 4px;
+}
+
+.tool p {
+  font-size: 0.88rem;
+  color: #555;
+}

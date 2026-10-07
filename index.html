@@ -3,88 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'">
   <title>Vision Therapy Tools</title>
-  <style>
-    /* ── Reset & Base ─────────────────────────────────────── */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
-      color: #1a1a1a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 16px;
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: #111;
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 24px;
-    }
-
-    /* ── Tool List ────────────────────────────────────────── */
-    .tools {
-      display: grid;
-      gap: 14px;
-      max-width: 720px;
-      width: 100%;
-      list-style: none;
-    }
-
-    .tool {
-      display: block;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 18px 24px;
-      color: inherit;
-      text-decoration: none;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .tool:hover,
-    .tool:focus-visible {
-      border-color: #2563eb;
-      box-shadow: 0 2px 8px rgba(37,99,235,0.15);
-    }
-
-    .tool h2 {
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: #2563eb;
-      margin-bottom: 4px;
-    }
-
-    .tool p {
-      font-size: 0.88rem;
-      color: #555;
-    }
-
-    /* ── Footer ───────────────────────────────────────────── */
-    .disclaimer {
-      max-width: 720px;
-      margin-top: 24px;
-      font-size: 0.78rem;
-      color: #666;
-      text-align: center;
-    }
-  </style>
+  <link rel="stylesheet" href="./shared/style.css">
+  <link rel="stylesheet" href="./landing.css">
 </head>
 <body>
   <h1>Vision Therapy Tools</h1>
@@ -92,13 +14,13 @@
 
   <ul class="tools">
     <li>
-      <a class="tool" href="macdonald-form-field-cards/">
+      <a class="tool" href="./macdonald-form-field-cards/">
         <h2>Macdonald Form Field Cards</h2>
         <p>Printable concentric rings of letters for peripheral awareness and form recognition practice.</p>
       </a>
     </li>
     <li>
-      <a class="tool" href="hart-chart/">
+      <a class="tool" href="./hart-chart/">
         <h2>Hart Chart Generator</h2>
         <p>Printable rows of random letters for saccade and near-far focusing practice.</p>
       </a>

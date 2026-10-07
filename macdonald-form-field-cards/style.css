@@ -1,0 +1,67 @@
+/* Macdonald Form Field Cards: styles for the card itself. */
+
+.card-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  position: relative;
+  background: #fff;
+  /* --border-mm is set from BORDER_MM in layout.js so the two cannot drift apart */
+  border: calc(var(--border-mm, 0.8) * 1mm) solid #111;
+  overflow: hidden;
+}
+
+.center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.6mm;
+  height: 1.6mm;
+  background: #111;
+  border-radius: 50%;
+}
+
+.center-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4.2mm;
+  height: 4.2mm;
+  border: 0.4mm solid #111;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.letter {
+  position: absolute;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  color: #111;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media print {
+  .card {
+    border-color: #000 !important;
+    box-shadow: none !important;
+  }
+
+  .letter {
+    color: #000 !important;
+  }
+
+  .center-dot {
+    background: #000 !important;
+  }
+
+  .center-circle {
+    border-color: #000 !important;
+  }
+}

@@ -1,0 +1,44 @@
+/* Hart Chart: styles for the chart itself. */
+
+.chart-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.chart {
+  display: grid;
+  width: max-content;
+  background: #fff;
+  border: 1px solid #ddd;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  color: #111;
+  user-select: none;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.row-num {
+  color: #777;
+  font-weight: 400;
+  font-size: 0.5em;
+}
+
+@media print {
+  .chart-wrapper {
+    overflow: visible;
+  }
+
+  .chart {
+    border: none;
+  }
+
+  .row-num {
+    color: #000;
+  }
+}

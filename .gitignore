@@ -12,5 +12,6 @@
 Thumbs.db
 *.log
 
-# Node (not used, but keep out if ever run)
+# Node and build output
 node_modules/
+dist/

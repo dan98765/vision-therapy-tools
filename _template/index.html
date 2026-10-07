@@ -3,147 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
   <title>Exercise Name</title>
-  <style>
-    /* ── Reset & Base ─────────────────────────────────────── */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
-      color: #1a1a1a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 16px;
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .subtitle {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .back {
-      font-size: 0.85rem;
-      color: #2563eb;
-      margin-bottom: 12px;
-    }
-
-    /* ── Controls Panel ───────────────────────────────────── */
-    .controls-panel {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 20px 24px;
-      max-width: 720px;
-      width: 100%;
-      margin-bottom: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-    }
-
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .control-group label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #444;
-    }
-
-    .control-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .control-row input[type="range"] {
-      flex: 1;
-      accent-color: #2563eb;
-    }
-
-    .value-display {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #2563eb;
-      min-width: 42px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* ── Exercise Area ────────────────────────────────────── */
-    #exercise {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 720px;
-      min-height: 320px;
-    }
-
-    /* ── Footer ───────────────────────────────────────────── */
-    .disclaimer {
-      max-width: 720px;
-      margin-top: 24px;
-      font-size: 0.78rem;
-      color: #666;
-      text-align: center;
-    }
-
-    /* ── Print ────────────────────────────────────────────── */
-    @media print {
-      body { background: #fff; padding: 0; }
-      .back, h1, .subtitle, .controls-panel, .disclaimer { display: none; }
-      #exercise { border: none; border-radius: 0; max-width: none; }
-    }
-  </style>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.js"></script>
 </head>
 <body>
   <a class="back" href="../">&larr; All exercises</a>
   <h1>Exercise Name</h1>
   <p class="subtitle">One-line description of what this exercise is for.</p>
 
-  <section class="controls-panel">
-    <div class="control-group">
-      <label for="size">Size</label>
-      <div class="control-row">
-        <input type="range" id="size" min="1" max="10" value="5">
-        <span class="value-display" id="size-value">5</span>
-      </div>
-    </div>
-  </section>
+  <div class="controls-panel">
+    <h2>Settings</h2>
+    <div class="controls-grid">
 
-  <main id="exercise" aria-live="polite"></main>
+      <div class="control-group">
+        <label for="size">Size</label>
+        <div class="control-row">
+          <input type="range" id="size" min="1" max="10" value="5" step="1">
+          <span class="value-display" id="size-val">5</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="btn-generate">Generate</button>
+    <button class="btn btn-secondary" id="btn-print">Print</button>
+  </div>
+
+  <p class="note" id="exercise-note" aria-live="polite"></p>
+
+  <main id="exercise"></main>
 
   <p class="disclaimer">Not medical advice. Use exercises as directed by your vision therapist.</p>
-
-  <script>
-    const sizeInput = document.getElementById('size');
-    const sizeValue = document.getElementById('size-value');
-    const exercise = document.getElementById('exercise');
-
-    function render() {
-      sizeValue.textContent = sizeInput.value;
-      // TODO: draw the exercise into #exercise
-    }
-
-    sizeInput.addEventListener('input', render);
-    render();
-  </script>
 </body>
 </html>
