@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { commitMessageProblem, emailOf, identityProblem } from '../scripts/hooks/checks.js';
+import { commitMessageProblem, commitProblems, emailOf, identityProblem } from '../scripts/hooks/checks.js';
 
 const root = resolve(import.meta.dirname, '..');
 
@@ -65,5 +65,46 @@ describe('hook wiring', () => {
   it('npm install enables the hooks through husky', () => {
     expect(packageJson.scripts.prepare).toBe('husky');
     expect(packageJson.devDependencies.husky).toBeDefined();
+  });
+});
+
+describe('commitProblems (the CI backstop)', () => {
+  const owner = 'someowner';
+  const good = {
+    message: 'feat: add a thing',
+    authorLogin: owner,
+    authorEmail: '1+someowner@users.noreply.github.com',
+    committerLogin: owner,
+    committerEmail: '1+someowner@users.noreply.github.com',
+  };
+
+  it('passes a conventional commit made with a noreply email', () => {
+    expect(commitProblems(good, owner)).toEqual([]);
+  });
+
+  it('flags a non-conventional message from anyone', () => {
+    expect(commitProblems({ ...good, message: 'stuff', authorLogin: 'contributor', committerLogin: 'contributor' }, owner)).toHaveLength(1);
+  });
+
+  it('flags the owner using a personal author or committer email', () => {
+    expect(commitProblems({ ...good, authorEmail: 'me@example.com' }, owner)[0]).toMatch(/author email/);
+    expect(commitProblems({ ...good, committerEmail: 'me@example.com' }, owner)[0]).toMatch(/committer email/);
+  });
+
+  it('does not check the email addresses of other people', () => {
+    const contributor = { ...good, authorLogin: 'contributor', authorEmail: 'them@example.org', committerLogin: 'web-flow', committerEmail: 'noreply@github.com' };
+    expect(commitProblems(contributor, owner)).toEqual([]);
+  });
+
+  it('reports every problem on a commit', () => {
+    expect(commitProblems({ ...good, message: 'stuff', authorEmail: 'me@example.com' }, owner)).toHaveLength(2);
+  });
+});
+
+describe('Node versions', () => {
+  it('CI tests both declared minimums', () => {
+    const { engines } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+    const ci = readFileSync(join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
+    for (const minimum of engines.node.match(/\d+\.\d+\.\d+/g)) expect(ci).toContain(`'${minimum}'`);
   });
 });

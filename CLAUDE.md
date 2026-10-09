@@ -25,7 +25,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable. `pages.test.js` checks every page, and `_template/`, against the conventions below (strict CSP, no inline code, relative paths, labels, disclaimer, back link) and checks each exercise is on the landing page, in the README and has a `docs/<folder>.md`. A new exercise fails the tests until all of that is done.
 - `docs/` — one notes file per exercise (what it is, how it is used, how the page works, gotchas, sources), plus `brainstorm-structure.md`, the options considered when choosing this build setup.
 - `_template/` — starting point for a new exercise. Copy it, don't edit it.
-- `scripts/` — `pages.js` (finds the exercise folders; shared by the build, the HTML linter and the tests), `lint-html.js`, and `hooks/` (the git hook code).
+- `scripts/` — `pages.js` (finds the exercise folders; shared by the build, the HTML linter and the tests), `lint-html.js`, `check-commits.js` (the CI commit check) and `hooks/` (the git hook code and the shared commit rules).
 - `.husky/` — the git hook files (husky); see Git hooks below.
 - `eslint.config.js`, `.htmlvalidate.json`, `.editorconfig` — lint and editor settings (see Linting below).
 - `vite.config.js` — builds the root `index.html` and every top-level folder that has an `index.html`, except folders starting with `_` or `.` and the tooling folders listed in `scripts/pages.js`. A new exercise needs no config change.
@@ -72,7 +72,9 @@ Notes:
 - **commit-msg** (`scripts/hooks/commit-msg.js`): requires Conventional Commits, `type(scope): summary` with type one of feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Merge, Revert, fixup! and squash! messages are allowed.
 - The rules live in `scripts/hooks/checks.js` and are unit tested in `tests/hooks.test.js`, which also checks the `.husky/` files point at scripts that exist and that `prepare` runs husky.
 - To change what a hook does, edit the script in `scripts/hooks/`, not the one-line file in `.husky/`.
-- `git commit --no-verify` skips both hooks, and `HUSKY=0` disables husky for a command. CI still runs lint and the tests, but **nothing in CI checks commit messages or the author email**, so use these sparingly.
+- `git commit --no-verify` skips both hooks, and `HUSKY=0` disables husky for a command. A clone without `npm install` has no hooks at all.
+- **CI backstop** (`.github/workflows/commits.yml`, `scripts/check-commits.js`, same rules from `scripts/hooks/checks.js`): on every pull request it checks the PR title (the squash-merge message comes from it) and each commit's message, and on every push to `main` it checks the pushed commits. It also fails any commit made by the repo owner (the GitHub account that owns the repo) whose author or committer email is not a noreply address; other contributors' emails are not checked. It uses GitHub's API, so no personal address is stored anywhere. On a push to `main` it can only report: the commit is already public.
+- **Also turn on, in your GitHub account** (it cannot be set from the repo): Settings → Emails → *Keep my email addresses private* and *Block command line pushes that expose my email*. GitHub then rejects such a push on its side, which no local setting can bypass.
 - Hooks check the working tree, not just what is staged, so unstaged edits can make a commit pass or fail.
 - Dependabot and the GitHub web editor commit on GitHub, so these local hooks do not apply to them.
 - husky was chosen over home-made hooks for familiarity. The repo does not use lint-staged: lint and tests take a few seconds on the whole project. Revisit it if that grows past about 10 seconds.
@@ -94,8 +96,8 @@ Notes:
 - It needs **GitHub Actions enabled** with "Allow all actions" (or at least actions created by GitHub allowed). Setting Actions to disabled or to "only this account's actions" stops the site from updating. Settings → Pages shows a red banner when this happens.
 - Only `dist/` is published, so `CLAUDE.md`, `docs/`, `tests/` and `_template/` are not on the live site.
 - To confirm a deploy: `gh run list --workflow pages.yml --limit 1` should show `completed success` for the latest commit, and the live URLs should load.
-- The `engines` field in `package.json` is `^22.22.0 || >=24.8.0`, which is what Vitest 5 and html-validate require. The workflows use Node 24. Check `engines` of any new dev dependency before adding it.
-- `.github/workflows/ci.yml` runs the tests and a build on every pull request (nothing is deployed from it). `pages.yml` only runs on pushes to `main`, so without `ci.yml` a pull request would never be tested.
+- The `engines` field in `package.json` is `^22.22.0 || >=24.8.0`, which is what Vitest 5 and html-validate require, and CI runs both minimums. Check `engines` of any new dev dependency before adding it.
+- `.github/workflows/ci.yml` runs lint, the tests and a build on every pull request (nothing is deployed from it), on Node `22.22.0`, `24.8.0` (the two minimums in `engines`) and the current 24. A test checks that every minimum in `engines` appears in the matrix, so change both together. `pages.yml` only runs on pushes to `main` (on Node 24), so without `ci.yml` a pull request would never be tested. `commits.yml` is described under Git hooks.
 - **Dependabot** (`.github/dependabot.yml`) opens a pull request every week for npm dependencies and for the actions used in the workflows, each grouped into one PR. Dependabot alerts and security updates are on too, so a vulnerable dependency gets its own PR straight away. Before adding any dev dependency, run `npm audit` and avoid ones with unfixable advisories. To update: check that the PR's CI run (lint, tests, build) passed, skim the changelog for Vite or Vitest major versions (they can change config and test behaviour), then merge. Merging to `main` deploys.
 
 ## Working here

@@ -39,7 +39,7 @@ New exercise folders are picked up by the build automatically. See [CLAUDE.md](C
 
 ## Deployment
 
-Every push to `main` runs the linters and tests, builds the site and publishes it with GitHub Pages (`.github/workflows/pages.yml`). A lint error or failing test blocks the deploy. Pull requests run the linters, tests and a build too (`.github/workflows/ci.yml`), and Dependabot opens weekly pull requests for dependency updates.
+Every push to `main` runs the linters and tests, builds the site and publishes it with GitHub Pages (`.github/workflows/pages.yml`). A lint error or failing test blocks the deploy. Pull requests run the linters, tests and a build too (`.github/workflows/ci.yml`, on the minimum and current Node versions), and a separate check (`.github/workflows/commits.yml`) verifies commit messages and the owner's commit email. Dependabot opens weekly pull requests for dependency updates.
 
 ## Security
 

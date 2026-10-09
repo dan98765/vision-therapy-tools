@@ -39,3 +39,22 @@ export function identityProblem(role, ident) {
     '  git config user.email "<id>+<username>@users.noreply.github.com"'
   );
 }
+
+// Rules for one commit as seen by CI, which has no local git config. `commit` is reduced to what the
+// rules need: { message, authorLogin, authorEmail, committerLogin, committerEmail }.
+// The email rule applies only to commits made by the repo owner (a contributor's email is theirs to
+// choose); the message rule applies to every commit.
+export function commitProblems(commit, owner) {
+  const problems = [];
+  const message = commitMessageProblem(commit.message);
+  if (message) problems.push(message);
+  if (commit.authorLogin === owner) {
+    const problem = identityProblem('author', `<${commit.authorEmail}>`);
+    if (problem) problems.push(problem);
+  }
+  if (commit.committerLogin === owner) {
+    const problem = identityProblem('committer', `<${commit.committerEmail}>`);
+    if (problem) problems.push(problem);
+  }
+  return problems;
+}
