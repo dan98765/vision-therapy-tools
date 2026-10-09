@@ -1,0 +1,27 @@
+name: Commit checks
+
+# Server-side backstop for the local git hooks (which can be skipped with --no-verify):
+# commit messages must be Conventional Commits, and commits made by the repo owner must
+# use a GitHub noreply email. See scripts/check-commits.js and scripts/hooks/checks.js.
+# On a push to main this can only report, not prevent: the commit is already public.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  commits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/check-commits.js
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
