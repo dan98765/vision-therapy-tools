@@ -55,7 +55,7 @@ The page generates a chart of random letters, laid out in millimetres so it prin
 - **Random letters never repeat next to each other.** A letter is never the same as the one to its left or the one above it, so every eye jump lands on a different letter.
 - **Consonants only** avoids accidentally spelling words.
 - **Size and spacing sliders keep the same letters.** Changing rows, letters per row or letter set makes a new chart, and "Generate Chart" always makes a new one. This split (redraw vs regenerate) is deliberate; keep it when changing the code.
-- **Size warning.** A note under the buttons shows the chart's size in mm and inches. It turns amber if the chart is larger than about 190 x 250 mm (one Letter or A4 page with margins) or if letters are under 1.5 mm tall. The chart is still drawn; split large charts across pages or shrink them.
+- **Size warning.** A note under the buttons shows the chart's size in mm and inches and how it will print (limits from `shared/paper.js`, about 190 x 250 mm upright with 10 mm margins). A chart that only fits a sideways page says "Print in landscape.". A chart that is narrow enough but taller than a page says it continues onto more pages; rows are kept whole (`break-inside: avoid`), so no row is split across a page break. A chart too wide for either orientation turns amber, because it would be cut off, and so does one with letters under 1.5 mm tall. The chart is still drawn.
 - **Letter height is cap height** (about 0.716 of the font size for Arial), including for lowercase letters, so lowercase letters look smaller than uppercase at the same setting.
 - **On-screen size is approximate**, because CSS `mm` is exact in print but screens vary. A chart wider than the window scrolls sideways.
 

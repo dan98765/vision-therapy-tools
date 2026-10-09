@@ -20,7 +20,9 @@
   transform: translate(-50%, -50%);
   width: 1.6mm;
   height: 1.6mm;
-  background: #111;
+  /* A border, not a background: browsers drop backgrounds when printing unless the user turns
+     on "background graphics". With box-sizing: border-box the borders fill the whole box. */
+  border: 0.8mm solid #111;
   border-radius: 50%;
 }
 
@@ -57,7 +59,7 @@
   }
 
   .center-dot {
-    background: #000;
+    border-color: #000;
   }
 
   .center-circle {

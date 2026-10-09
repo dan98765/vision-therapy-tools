@@ -17,6 +17,8 @@
 }
 
 .cell {
+  /* When a tall chart continues onto another page, never split a letter or a row in two */
+  break-inside: avoid;
   display: flex;
   align-items: center;
   justify-content: center;

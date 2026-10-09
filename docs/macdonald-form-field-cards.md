@@ -70,7 +70,8 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 - **Small cards with many rings get tiny letters.** Fitting shrinks letters instead of refusing, so 7 rings of 10 letters on a 100 mm card can be unreadable. When the innermost letters end up under 1.5 mm tall (`MIN_LETTER_MM`), the note under the buttons turns amber with a warning. It is a warning only; the card is still drawn.
 - **Screen size is approximate.** CSS `mm` is exact in print but screens vary, so a card on screen is not true size.
 - **Letter height is cap height** (about 0.716 of the font size for Arial), not font size.
-- **Landscape cards need landscape paper.** Choose landscape in the print dialog or the card will be cut off.
+- **Page fit is reported under the buttons.** A card that only fits a sideways page shows "Print in landscape." (choose landscape in the print dialog). A card too big for either orientation, such as a 250 mm square, shows an amber warning, because it would be cut off or split across pages. The limit is about 190 x 250 mm upright (Letter or A4 with 10 mm margins), from `shared/paper.js`.
+- **The fixation dot is drawn with a border, not a background.** Browsers do not print backgrounds by default, so a background-filled dot disappeared from printouts. Keep it a border (a test guards this).
 
 ### Ideas for later
 

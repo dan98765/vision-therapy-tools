@@ -3,9 +3,6 @@
 
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS } from '../shared/letters.js';
 
-export const PAGE_W_MM = 190; // printable width of Letter/A4 with ~10 mm margins
-export const PAGE_H_MM = 250; // printable height of Letter/A4 with ~10 mm margins
-
 export const LETTER_SETS = {
   'upper': UPPER,
   'upper-consonants': UPPER_CONSONANTS,
@@ -30,7 +27,7 @@ export function buildGrid(rows, cols, pool, random = Math.random) {
 }
 
 // Sizes for a chart: font size, cell size, the optional row-number columns and
-// the overall chart size, plus whether it needs a warning.
+// the overall chart size, plus whether the letters are too small to read.
 export function gridLayout({ rows, cols, heightMm, spacing, numbers }) {
   const fontMm = heightMm / CAP_HEIGHT;
   const cellW = fontMm * spacing;
@@ -45,7 +42,6 @@ export function gridLayout({ rows, cols, heightMm, spacing, numbers }) {
     numW,
     chartW,
     chartH,
-    tooBig: chartW > PAGE_W_MM || chartH > PAGE_H_MM,
     tooSmall: heightMm < MIN_LETTER_MM,
   };
 }

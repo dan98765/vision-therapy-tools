@@ -2,7 +2,8 @@
 
 import { mmLabel, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
-import { LETTER_SETS, PAGE_H_MM, PAGE_W_MM, buildGrid, gridLayout } from './grid.js';
+import { pageNote } from '../shared/paper.js';
+import { LETTER_SETS, buildGrid, gridLayout } from './grid.js';
 
 const els = {
   chart: byId('chart'),
@@ -58,14 +59,13 @@ function render() {
     if (numbers) els.chart.append(cell('cell row-num', r + 1));
   });
 
+  const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true });
   setNote(
     els.note,
     sizeSummary(layout.chartW, layout.chartH) +
-      (layout.tooBig
-        ? ` Warning: this is larger than one Letter/A4 page (about ${PAGE_W_MM} × ${PAGE_H_MM} mm). Use fewer rows or letters, or smaller letters, or print the chart across several pages.`
-        : '') +
+      page.text +
       (layout.tooSmall ? ' Warning: letters this small may be too small to read.' : ''),
-    layout.tooBig || layout.tooSmall,
+    page.warn || layout.tooSmall,
   );
 }
 

@@ -21,7 +21,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - `macdonald-form-field-cards/` — Macdonald Form Field Cards (notes in `docs/macdonald-form-field-cards.md`).
 - `hart-chart/` — Hart Chart generator (notes in `docs/hart-chart.md`).
 - Each exercise folder holds `index.html` (markup only), `style.css`, `main.js` (reads controls, draws), and a file of pure maths with no DOM access (`layout.js`, `grid.js`) that the tests import.
-- `shared/` — code and CSS used by every exercise: `style.css`, `letters.js` (letter pools, shuffle, cap-height and minimum-size constants), `format.js` (text for the size note), `page.js` (small DOM helpers).
+- `shared/` — code and CSS used by every exercise: `style.css`, `letters.js` (letter pools, shuffle, cap-height and minimum-size constants), `format.js` (text for the size note), `paper.js` (does it fit a Letter/A4 page, and what to say about it), `page.js` (small DOM helpers).
 - `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable. `pages.test.js` checks every page, and `_template/`, against the conventions below (strict CSP, no inline code, relative paths, labels, disclaimer, back link) and checks each exercise is on the landing page, in the README and has a `docs/<folder>.md`. A new exercise fails the tests until all of that is done.
 - `docs/` — one notes file per exercise (what it is, how it is used, how the page works, gotchas, sources), plus `brainstorm-structure.md`, the options considered when choosing this build setup.
 - `_template/` — starting point for a new exercise. Copy it, don't edit it.
@@ -45,7 +45,10 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - **Put shared things in `shared/`**, not copied into pages. Do not rely on CSS order: Vite emits page CSS before shared CSS, so a page rule that needs to override a shared rule must be more specific, not just later.
 - **Match the existing look** of the other exercises: system font stack, `#f0f2f5` page background, white rounded control panel, `#2563eb` accent, sections separated by `/* ── Name ── */` comment banners.
 - **Controls are obvious**: sliders and selects with a visible value readout, sensible defaults so the page is useful on first load. Prefer redrawing live on input; where output is random an explicit Generate button is acceptable so the result doesn't change while adjusting sliders (the Hart chart redraws the same letters for size changes and regenerates for the rest).
-- **Printable exercises** (cards, charts) need an `@media print` stylesheet that hides the controls and prints only the exercise at true size.
+- **Printable exercises** (cards, charts) need an `@media print` stylesheet that hides the controls and prints only the exercise at true size. Three rules come from checking real printouts (see Checking print output):
+  - **Never draw anything the exercise needs with a background colour or image.** Browsers drop backgrounds when printing unless the user turns on "background graphics", so such a shape silently disappears (the fixation dot once did). Use borders or text. A white or transparent background is fine; `tests/pages.test.js` enforces this for every exercise's `style.css`.
+  - **Tell the user when it will not fit a page.** Use `pageNote` from `shared/paper.js` for the note under the buttons: nothing for portrait, "Print in landscape." when only a sideways page fits, an amber warning when it will be cut off or split. Pass `rowsStayWhole: true` for exercises that can continue onto more pages.
+  - **Keep rows and cells whole across pages**: `break-inside: avoid` on the items of any grid that can span pages.
 - **Interactive exercises** (timers, moving targets) need a clear start/stop, must respect `prefers-reduced-motion`, and should not flash faster than 3 Hz.
 - **Accessibility basics**: real `<label>`s tied to inputs, keyboard operable, adequate contrast. Exercise content may need to be large and high-contrast by design.
 - Physical size matters for these exercises (viewing distance, letter size). Where size is meaningful, use mm (CSS `mm` is true size in print) rather than abstract pixels.
@@ -63,6 +66,18 @@ Notes:
 - No `!important` in CSS. Print rules sit later in the same file as the screen rules they override, which is enough. Shared CSS is emitted after page CSS, so do not rely on order between files.
 - Stylelint was tried and rejected: its dependency chain includes `braces`, which has a high-severity advisory with no fix, and that would trip Dependabot and `npm audit`.
 - `.editorconfig` sets LF, UTF-8, 2 spaces and a final newline. There is no auto-formatter (no Prettier), by choice.
+
+## Checking print output
+
+Layout checks in a normal browser tab do not show what a printout looks like, so print to PDF with a real browser engine and look at the pages. This found three real bugs (missing fixation dot, silently clipped oversized cards, rows split across pages). Do it after any change to print CSS or to sizes. Nothing here is a repo dependency: install the tools in a scratch folder outside the repo.
+
+1. `npm run build`, then `npm run preview` (http://localhost:4173).
+2. In a scratch folder, `npm install puppeteer-core pdf-to-img`, and drive Chrome (`executablePath` to the installed `chrome.exe`) headless.
+3. For each case, open the page, set the controls (set the value, dispatch an `input` event, click Generate), then `page.pdf({ format: 'Letter' | 'A4', landscape, margin: 10mm on each side, printBackground: false })`. **Leave `printBackground` off**: that is what a normal print dialog does.
+4. Check the number of pages and the on-page size (`getBoundingClientRect` in print emulation, `px / 96 * 25.4` mm), then convert the PDF pages to PNG (`pdf-to-img`) and look at them.
+5. Cases worth covering: the defaults on Letter and A4; the largest card in portrait, landscape and square; a Hart chart with row numbers, 24 rows, and one wider than a page.
+
+The default card is 139.7 x 216 mm and the default Hart chart 174.5 x 167.6 mm; both print on one page with the controls hidden.
 
 ## Git hooks
 

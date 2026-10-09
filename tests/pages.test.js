@@ -98,3 +98,15 @@ describe.each(exercises)('exercise %s', name => {
     expect(existsSync(join(root, 'docs', `${name}.md`)), `docs/${name}.md`).toBe(true);
   });
 });
+
+// Browsers drop background colours and images when printing unless the user turns on "background
+// graphics", so an exercise must not depend on them: the fixation dot once vanished from printouts
+// for exactly this reason. Draw shapes with borders or text; a white or transparent background is fine.
+describe.each(folders)('print styles in %s', name => {
+  it('does not depend on background colours', () => {
+    const css = read(`${name}/style.css`).replace(/\/\*[\s\S]*?\*\//g, ''); // ignore comments
+    for (const [, value] of css.matchAll(/\bbackground(?:-color)?\s*:\s*([^;}]+)/g)) {
+      expect(value.trim(), `background: ${value.trim()}`).toMatch(/^(#fff(fff)?|white|transparent|none)$/i);
+    }
+  });
+});

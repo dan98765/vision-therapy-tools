@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { LETTER_SETS, PAGE_H_MM, PAGE_W_MM, buildGrid, gridLayout } from '../hart-chart/grid.js';
+import { pageFit } from '../shared/paper.js';
+import { LETTER_SETS, buildGrid, gridLayout } from '../hart-chart/grid.js';
 import { seeded } from './rng.js';
 
 // Page defaults from hart-chart/index.html
@@ -51,7 +52,7 @@ describe('gridLayout', () => {
     const layout = gridLayout(DEFAULTS);
     expect(layout.chartW).toBeCloseTo(174.7, 0);
     expect(layout.chartH).toBeCloseTo(167.6, 0);
-    expect(layout.tooBig).toBe(false);
+    expect(pageFit(layout.chartW, layout.chartH)).toBe('portrait');
     expect(layout.tooSmall).toBe(false);
   });
 
@@ -62,10 +63,9 @@ describe('gridLayout', () => {
     expect(numbered.chartH).toBeCloseTo(plain.chartH);
   });
 
-  it('warns when the chart is bigger than one page', () => {
-    expect(gridLayout({ ...DEFAULTS, rows: 24 }).tooBig).toBe(true);
-    expect(gridLayout({ ...DEFAULTS, heightMm: 10 }).chartW).toBeGreaterThan(PAGE_W_MM);
-    expect(gridLayout({ ...DEFAULTS, rows: 4, cols: 4 }).chartH).toBeLessThan(PAGE_H_MM);
+  it('needs a sideways page when the row numbers make it too wide', () => {
+    const layout = gridLayout({ ...DEFAULTS, numbers: true });
+    expect(pageFit(layout.chartW, layout.chartH)).toBe('landscape');
   });
 
   it('warns when letters are very small', () => {

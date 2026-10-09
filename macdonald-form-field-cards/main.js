@@ -3,6 +3,7 @@
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
 import { mmLabel, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
+import { pageNote } from '../shared/paper.js';
 import { BORDER_MM, cardGeometry, fitRings, placeLetters } from './layout.js';
 
 const LETTER_SETS = {
@@ -67,14 +68,16 @@ function generateCard() {
 
   const smallestMm = rings[0].font * CAP_HEIGHT;
   const tooSmall = smallestMm < MIN_LETTER_MM;
+  const page = pageNote(geo.width, geo.height);
   setNote(
     els.note,
     sizeSummary(geo.width, geo.height) +
+      page.text +
       (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '') +
       (tooSmall
         ? ` Warning: the innermost letters are only ${smallestMm.toFixed(2)} mm tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`
         : ''),
-    tooSmall,
+    tooSmall || page.warn,
   );
 }
 
