@@ -24,6 +24,8 @@ npm run build     # build to dist/
 npm run preview   # serve the built site
 ```
 
+`npm install` also enables the git hooks (via [husky](https://typicode.github.io/husky/)): commits are checked for Conventional Commits messages, a GitHub noreply author email, lint and tests.
+
 The built pages are ES modules, so opening an `index.html` straight from disk does not work. Use the dev server, preview, or the live site.
 
 ## Adding an exercise

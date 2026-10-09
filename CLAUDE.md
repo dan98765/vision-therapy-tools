@@ -25,7 +25,8 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable. `pages.test.js` checks every page, and `_template/`, against the conventions below (strict CSP, no inline code, relative paths, labels, disclaimer, back link) and checks each exercise is on the landing page, in the README and has a `docs/<folder>.md`. A new exercise fails the tests until all of that is done.
 - `docs/` — one notes file per exercise (what it is, how it is used, how the page works, gotchas, sources), plus `brainstorm-structure.md`, the options considered when choosing this build setup.
 - `_template/` — starting point for a new exercise. Copy it, don't edit it.
-- `scripts/` — `pages.js` (finds the exercise folders; shared by the build, the HTML linter and the tests) and `lint-html.js`.
+- `scripts/` — `pages.js` (finds the exercise folders; shared by the build, the HTML linter and the tests), `lint-html.js`, and `hooks/` (the git hook code).
+- `.husky/` — the git hook files (husky); see Git hooks below.
 - `eslint.config.js`, `.htmlvalidate.json`, `.editorconfig` — lint and editor settings (see Linting below).
 - `vite.config.js` — builds the root `index.html` and every top-level folder that has an `index.html`, except folders starting with `_` or `.` and the tooling folders listed in `scripts/pages.js`. A new exercise needs no config change.
 
@@ -38,7 +39,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 
 ## Conventions
 
-- **Vanilla JS and CSS.** No UI framework. Vite and Vitest are the only dependencies and both are dev-only. If a tool seems to need another dependency, stop and ask.
+- **Vanilla JS and CSS.** No UI framework. The only dependencies are dev-only tools (Vite, Vitest, ESLint and its plugins, html-validate, husky) and none of their code ships in the pages. If a tool seems to need another dependency, stop and ask.
 - **No network requests at runtime**: no CDNs, remote fonts or analytics. Everything is bundled from this repo.
 - **Keep `index.html` to markup.** CSS goes in `style.css`, behaviour in `main.js`, testable maths in a separate file. Do not add inline `<style>`, `<script>` or `style=""` attributes, because the CSP forbids them. Setting `element.style.x = ...` from JavaScript is fine.
 - **Put shared things in `shared/`**, not copied into pages. Do not rely on CSS order: Vite emits page CSS before shared CSS, so a page rule that needs to override a shared rule must be more specific, not just later.
@@ -62,6 +63,19 @@ Notes:
 - No `!important` in CSS. Print rules sit later in the same file as the screen rules they override, which is enough. Shared CSS is emitted after page CSS, so do not rely on order between files.
 - Stylelint was tried and rejected: its dependency chain includes `braces`, which has a high-severity advisory with no fix, and that would trip Dependabot and `npm audit`.
 - `.editorconfig` sets LF, UTF-8, 2 spaces and a final newline. There is no auto-formatter (no Prettier), by choice.
+
+## Git hooks
+
+[husky](https://typicode.github.io/husky/) runs the hooks. `npm install` runs the `prepare` script (`husky`), which sets `core.hooksPath` to `.husky/_` for this clone, so the hooks work on Windows and Mac. If hooks are not running, run `npm run prepare`. Each file in `.husky/` is a one-line command that runs a Node script in `scripts/hooks/`.
+
+- **pre-commit** (`scripts/hooks/pre-commit.js`): refuses the commit unless the git author and committer email is a GitHub noreply address (this repo is public and history is permanent), then runs `npm run lint` and `npm test` on the working tree. It takes a few seconds.
+- **commit-msg** (`scripts/hooks/commit-msg.js`): requires Conventional Commits, `type(scope): summary` with type one of feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Merge, Revert, fixup! and squash! messages are allowed.
+- The rules live in `scripts/hooks/checks.js` and are unit tested in `tests/hooks.test.js`, which also checks the `.husky/` files point at scripts that exist and that `prepare` runs husky.
+- To change what a hook does, edit the script in `scripts/hooks/`, not the one-line file in `.husky/`.
+- `git commit --no-verify` skips both hooks, and `HUSKY=0` disables husky for a command. CI still runs lint and the tests, but **nothing in CI checks commit messages or the author email**, so use these sparingly.
+- Hooks check the working tree, not just what is staged, so unstaged edits can make a commit pass or fail.
+- Dependabot and the GitHub web editor commit on GitHub, so these local hooks do not apply to them.
+- husky was chosen over home-made hooks for familiarity. The repo does not use lint-staged: lint and tests take a few seconds on the whole project. Revisit it if that grows past about 10 seconds.
 
 ## Gotchas
 
@@ -87,7 +101,7 @@ Notes:
 ## Working here
 
 - Run `npm run lint`, `npm test` and `npm run build` before committing. Check pages with `npm run preview`, look for console errors, and try print preview for printable tools.
-- Commit style is Conventional Commits with the tool as scope, e.g. `feat(macdonald-cards): ...`, `docs(readme): ...`.
+- Commit style is Conventional Commits with the tool as scope, e.g. `feat(macdonald-cards): ...`, `docs(readme): ...` (enforced by the commit-msg hook).
 - Commit `package-lock.json` with any dependency change. `dist/` and `node_modules/` are git-ignored.
 - Security: report policy is in `SECURITY.md` (GitHub private vulnerability reporting is on). Secret scanning and push protection are on. Wiki and Projects are off.
 - This is not medical software. Pages should not make clinical claims; exercises are for use as directed by a vision therapist.
