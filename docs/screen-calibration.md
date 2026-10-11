@@ -18,13 +18,25 @@ It is a utility, and the first step for the interactive tools listed in [tool-id
 
 The page then shows pixels per millimetre and per inch, how long 100 mm is in pixels, and how far a millimetre in CSS is from a real millimetre on this screen.
 
+## Where the code lives
+
+| File | What it does |
+| --- | --- |
+| `index.html` | Markup only: the reference choice, the slider and box, the results, the check ruler |
+| `main.js` | Reads the controls, draws the box and the ruler, shows the results and the note |
+| `ruler.js` | The ruler's tick marks in real millimetres. No DOM access, so it is tested |
+| `style.css` | The box, the results list and the scrolling wrappers |
+| `../shared/calibration.js` | The maths: pixels per mm, conversions, slider range, the stale-zoom check, plain-language numbers |
+| `../tests/calibration.test.js` | The maths, plus checks that the page's wording, limits and slider values agree with the maths |
+| `../tests/ruler.test.js` | The tick marks |
+
 ## How it works
 
 - The matched width in CSS pixels divided by the real length in millimetres is pixels per millimetre: `pxPerMm(widthPx, referenceMm)`.
 - Anything that should be a real length `L` mm is drawn `L x pxPerMm` pixels long: `mmToPx`. Do not use the CSS `mm` unit for it, because that is the browser's assumption, not the screen's.
 - Changing the reference keeps the calibration: the box is redrawn at the width the new reference has under the same pixels per millimetre.
 - A longer reference is more precise, because one pixel of adjustment is a smaller share of it. The page shows what one pixel changes.
-- The pure maths (`shared/calibration.js`, `screen-calibration/ruler.js`) has no DOM access and is covered by `tests/calibration.test.js`.
+- The pure maths (`shared/calibration.js`, `screen-calibration/ruler.js`) has no DOM access and is covered by tests. The page repeats a few of its facts in the HTML (the wording of each reference, the custom length limits, the slider's starting values), so a test checks the two agree.
 
 ## Settings in the page
 
