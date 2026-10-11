@@ -43,4 +43,13 @@ describe('pageNote', () => {
     // ...but a wide one is still cut off, so that warns
     expect(pageNote(447, 268, { rowsStayWhole: true }).warn).toBe(true);
   });
+
+  it('suggests landscape plus more pages when only the width needs a sideways page', () => {
+    const note = pageNote(220, 300, { rowsStayWhole: true });
+    expect(note.warn).toBe(false);
+    expect(note.text).toMatch(/landscape/);
+    expect(note.text).toMatch(/more pages/);
+    // an exercise whose rows cannot continue onto more pages is still cut off
+    expect(pageNote(220, 300).warn).toBe(true);
+  });
 });

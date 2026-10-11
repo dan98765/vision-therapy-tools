@@ -1,9 +1,11 @@
 // Will something fit on a printed page? Shared by the exercises that print at true size.
 // All lengths are in mm.
 
-// Printable area of a Letter or A4 page with about 10 mm margins (the smaller of the two in each direction).
-export const PRINTABLE_W_MM = 190;
-export const PRINTABLE_H_MM = 250;
+// Printable area of a Letter or A4 page with 0.5 in (12.7 mm) margins, taking the smaller of the two papers
+// in each direction. 0.5 in is a cautious allowance: browsers' default margins are about 0.4 to 0.5 in, and
+// a page the user prints with larger margins than that will clip.
+export const PRINTABLE_W_MM = 184; // A4 is the narrower paper: 210 - 2 x 12.7
+export const PRINTABLE_H_MM = 254; // Letter is the shorter paper: 279.4 - 2 x 12.7
 
 // 'portrait' if it fits an upright page, 'landscape' if it only fits a sideways page, otherwise 'none'.
 export function pageFit(widthMm, heightMm) {
@@ -21,6 +23,9 @@ export function pageNote(widthMm, heightMm, { rowsStayWhole = false } = {}) {
   if (fit === 'landscape') return { text: ' Print in landscape.', warn: false };
   if (rowsStayWhole && widthMm <= PRINTABLE_W_MM) {
     return { text: ' Taller than one page, so it continues onto more pages when printed.', warn: false };
+  }
+  if (rowsStayWhole && widthMm <= PRINTABLE_H_MM) {
+    return { text: ' Print in landscape. It is taller than one page, so it continues onto more pages.', warn: false };
   }
   return {
     text:

@@ -73,9 +73,10 @@ Layout checks in a normal browser tab do not show what a printout looks like, so
 
 1. `npm run build`, then `npm run preview` (http://localhost:4173).
 2. In a scratch folder, `npm install puppeteer-core pdf-to-img`, and drive Chrome (`executablePath` to the installed `chrome.exe`) headless.
-3. For each case, open the page, set the controls (set the value, dispatch an `input` event, click Generate), then `page.pdf({ format: 'Letter' | 'A4', landscape, margin: 10mm on each side, printBackground: false })`. **Leave `printBackground` off**: that is what a normal print dialog does.
+3. For each case, open the page, set the controls (set the value, dispatch an `input` event, click Generate), then `page.pdf({ format: 'Letter' | 'A4', landscape, margin: 12.7mm on each side (the 0.5 in `shared/paper.js` assumes), printBackground: false })`. **Leave `printBackground` off**: that is what a normal print dialog does.
 4. Check the number of pages and the on-page size (`getBoundingClientRect` in print emulation, `px / 96 * 25.4` mm), then convert the PDF pages to PNG (`pdf-to-img`) and look at them.
 5. Cases worth covering: the defaults on Letter and A4; the largest card in portrait, landscape and square; a Hart chart with row numbers, 24 rows, and one wider than a page.
+6. Cross-check the page-fit messages whenever `shared/paper.js` or a size range changes. For a grid of settings (every card size and aspect ratio; Hart rows, columns, letter heights and row numbers), read the note under the buttons, print on **both** Letter and A4 with 0.5 in margins in the orientation it recommends, and confirm that anything it says fits really is one page with nothing sticking out sideways (lay the page out at the real printable width to see overflow). When last run, all 65 "fits" results held on both papers and the 24 "will not fit" ones were justified. A card or chart that fits Letter but not A4 correctly warns, because the limits are the smaller of the two.
 
 The default card is 139.7 x 216 mm and the default Hart chart 174.5 x 167.6 mm; both print on one page with the controls hidden.
 
