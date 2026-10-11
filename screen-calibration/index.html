@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Screen Calibration</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <!-- site-header -->
+  <h1>Screen Calibration</h1>
+  <p class="subtitle">Match something of known size to the screen to find how many pixels make a real millimetre</p>
+
+  <div class="controls-panel">
+    <h2>Step 1: choose what to measure against</h2>
+    <div class="controls-grid">
+
+      <div class="control-group">
+        <label for="reference">Reference</label>
+        <div class="control-row">
+          <select id="reference">
+            <option value="card" selected>Credit or ID card (long edge, 85.6 mm)</option>
+            <option value="a4">A4 paper (short edge, 210 mm)</option>
+            <option value="letter">US Letter paper (short edge, 215.9 mm)</option>
+            <option value="custom">Something else I can measure</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group" id="custom-group" hidden>
+        <label for="custom-mm">Length of your object (mm)</label>
+        <div class="control-row">
+          <input type="number" id="custom-mm" min="10" max="400" step="0.5" value="100">
+        </div>
+      </div>
+
+    </div>
+    <p class="help">A credit, bank or ID card is the same size everywhere. A longer reference, such as a sheet of paper, gives a more precise result if it fits on your screen.</p>
+  </div>
+
+  <div class="controls-panel">
+    <h2>Step 2: make the box match</h2>
+    <p class="help">Hold your object flat against the screen with one edge lined up with the left edge of the box. Move the slider until its other edge lines up with the right edge of the box.</p>
+
+    <div class="control-group">
+      <label for="box-width">Box width</label>
+      <div class="control-row">
+        <button type="button" class="btn btn-secondary btn-nudge" id="btn-narrower" aria-label="Make the box one pixel narrower">&minus;</button>
+        <input type="range" id="box-width" min="160" max="647" value="323.5" step="0.5">
+        <button type="button" class="btn btn-secondary btn-nudge" id="btn-wider" aria-label="Make the box one pixel wider">+</button>
+        <span class="value-display" id="box-width-val">323.5 px</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="reference-box" id="reference-box" role="img" aria-label="The on-screen box to match your object against">
+        Match your object to this box
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" id="btn-reset">Reset</button>
+    </div>
+  </div>
+
+  <p class="note" id="calibration-note" aria-live="polite"></p>
+
+  <div class="controls-panel">
+    <h2>Your screen</h2>
+    <dl class="results" aria-live="polite">
+      <div><dt>Pixels per millimetre</dt><dd id="res-ppmm"></dd></div>
+      <div><dt>Pixels per inch</dt><dd id="res-ppi"></dd></div>
+      <div><dt>100 mm on this screen</dt><dd id="res-100"></dd></div>
+      <div><dt>A millimetre in CSS is</dt><dd id="res-css"></dd></div>
+      <div><dt>One pixel of adjustment</dt><dd id="res-precision"></dd></div>
+    </dl>
+  </div>
+
+  <div class="controls-panel">
+    <h2>Step 3: check it with a ruler</h2>
+    <p class="help">Hold a ruler against the drawing below. The numbers are centimetres, and the square is 50 mm on each side. If they do not match, adjust the box above.</p>
+    <div class="ruler-wrapper">
+      <svg id="ruler" role="img" aria-label="A ruler and a 50 millimetre square drawn with your calibration"></svg>
+    </div>
+  </div>
+
+  <p class="disclaimer">Not medical advice. Use exercises as directed by your vision therapist.</p>
+</body>
+</html>

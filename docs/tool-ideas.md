@@ -42,7 +42,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | I4 | Peripheral awareness trainer | Interactive | M | A fixation target with brief peripheral targets to click |
 | I5 | Visual memory flash cards | Interactive | M | Show a pattern briefly, then recreate it |
 | I6 | Rep and rest timer | Interactive | S | Sets, repetitions and rest breaks with a tone |
-| U1 | Screen calibration | Utility | S | Matches an on-screen box to a credit card to get pixels per mm |
+| U1 | Screen calibration | Utility | S | Matches an on-screen box to a credit card to get pixels per mm (built) |
 | U2 | Home program sheet | Utility | S | A printable one-page schedule typed by the therapist or parent |
 | U3 | Practice log | Utility | M | Records what was done and when (a policy decision) |
 
@@ -185,9 +185,10 @@ All of these must start only when the user presses start, offer a stop, and neve
 
 ### U1. Screen calibration
 
+- **Status:** built as `screen-calibration/` (see [screen-calibration.md](screen-calibration.md)). The first version stores nothing.
 - **What:** the user slides a box until it matches the width of a credit card, which is 85.60 mm wide under the ID-1 card standard, and the page works out pixels per millimetre for that screen.
 - **Why:** without it, anything shown at "true size" on screen is only approximate. It is the foundation for the interactive tools.
-- **Open decision:** the value must be remembered somewhere between pages. See the questions below about storage.
+- **Open decision:** the value must be remembered somewhere between pages once an on-screen tool needs it. The first version stores nothing; opt-in remembering on the device is the likely next step. See the questions below about storage.
 - **Tests:** the conversion functions.
 
 ### U2. Home program sheet
@@ -233,7 +234,7 @@ These depend on physical equipment, so a page could only describe or prepare for
 
 ## A possible order
 
-1. **U1 Screen calibration**, because it makes every on-screen exercise meaningful, after deciding how it is remembered.
+1. **U1 Screen calibration** (built), because it makes every on-screen exercise meaningful. Deciding how it is remembered comes next.
 2. **P3 Matched Hart pair and P4 Letter-size calculator**, small steps that extend what exists.
 3. **P2 Saccade cards and P5 Pursuit pattern sheets**, small printables that need no new maths.
 4. **P1 Visual tracing charts**, the first piece with new maths.

@@ -1,0 +1,67 @@
+/* Screen Calibration: styles for this page only. Shared styles live in ../shared/style.css. */
+
+.help {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.btn-nudge {
+  padding: 4px 14px;
+}
+
+/* The box can be wider than a phone screen. It scrolls inside this wrapper, so the page itself does not
+   scroll sideways; margin: 0 auto on the box centres it when it fits. */
+.stage {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 12px 0;
+}
+
+.reference-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  border: 2px solid #2563eb;
+  border-radius: 6px;
+  color: #2563eb;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.results {
+  display: grid;
+  gap: 2px;
+}
+
+.results div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.results dt {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.results dd {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ruler-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.ruler-wrapper svg {
+  display: block;
+}

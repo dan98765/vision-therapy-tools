@@ -9,6 +9,7 @@ Small vision therapy exercises as browser pages. Plain HTML, CSS and vanilla Jav
 | Tool | Description |
 | --- | --- |
 | [Macdonald Form Field Cards](https://dan98765.github.io/vision-therapy-tools/macdonald-form-field-cards/) ([code](macdonald-form-field-cards/), [notes](docs/macdonald-form-field-cards.md)) | Printable concentric-ring letter cards for peripheral awareness and form recognition practice, laid out in mm for true-size printing. |
+| [Screen Calibration](https://dan98765.github.io/vision-therapy-tools/screen-calibration/) ([code](screen-calibration/), [notes](docs/screen-calibration.md)) | A utility: match a credit card or paper to the screen to find how many pixels make a real millimetre, with a ruler to check it. Stores nothing. |
 | [Hart Chart Generator](https://dan98765.github.io/vision-therapy-tools/hart-chart/) ([code](hart-chart/), [notes](docs/hart-chart.md)) | Printable rows of random letters for saccade and near-far focusing practice, laid out in mm for true-size printing. |
 
 More exercises are being considered: see [docs/tool-ideas.md](docs/tool-ideas.md).
