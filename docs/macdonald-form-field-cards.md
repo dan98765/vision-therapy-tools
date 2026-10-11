@@ -38,23 +38,25 @@ The generator creates **new, original** cards in the same style: concentric ring
 | `main.js` | Reads the controls, draws the card, writes the note under the buttons |
 | `layout.js` | The maths: card size, ring placement, auto-fit, letter placement. No DOM access, so it is tested |
 | `style.css` | Card, dot, circle and letter styles, plus print overrides |
-| `../shared/` | Styles and helpers shared with other exercises |
+| `../shared/` | Styles and helpers shared with other exercises, including `paper.js` (will it fit a Letter/A4 page, and what to tell the user) |
 | `../tests/cards-layout.test.js` | Sweeps every combination of settings for clipping and overlap, using each letter's ink area plus a small margin |
+| `../tests/paper.test.js` | The page-fit logic behind the note about printing |
+| `../tests/pages.test.js` | Checks the page against the project conventions, including that its CSS does not depend on background colours |
 
 ### Settings in the page
 
 | Control | Meaning |
 | --- | --- |
-| Number of Rings | How many concentric rings of letters |
-| Letters per Ring | Letters spaced around each ring |
+| Number of Rings | How many concentric rings of letters (3 to 7, default 5) |
+| Letters per Ring | Letters spaced around each ring (3 to 10, default 6) |
 | Card Size (long side) | Length of the card's longer side in mm (100 to 250). Default 216 mm = 8.5 in |
-| Aspect Ratio | Card proportions; the shorter side follows from this |
-| Base Letter Height | Capital-letter height in mm for the innermost ring |
-| Scale Factor | How much larger each successive ring's letters are |
+| Aspect Ratio | Card proportions; the shorter side follows from this. Five choices from 5.5 : 8.5 (portrait, the default) to 8.5 : 5.5 (landscape) |
+| Base Letter Height | Capital-letter height in mm for the innermost ring (1 to 6 in 0.5 steps, default 2) |
+| Scale Factor | How much larger each successive ring's letters are (1.3 to 2.5, default 1.6) |
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
-| Center dot | Checkbox to show or hide the fixation circle and dot |
+| Center dot | Checkbox to show or hide the fixation circle and dot (on by default) |
 
-Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card. A note under the buttons shows the card's size in mm and inches.
+Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card. The default card is 5.5 x 8.5 in (about 140 x 216 mm) and fits one page. A note under the buttons shows the card's size in mm and inches, how it will print, and any warning (letters shrunk to fit, letters too small to read, will not fit a page).
 
 ### How layout works
 
@@ -75,7 +77,7 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 
 ### Ideas for later
 
-- Grey card background option, matching the traditional cards
+- Grey card background option, matching the traditional cards. Browsers do not print backgrounds by default, so this needs a print-safe approach (or an instruction to turn on background graphics) and would have to be an exception to the no-backgrounds rule in `CLAUDE.md`
 - Choose letter size by visual angle at a given viewing distance
 - Seeded randomness so a given card can be regenerated or shared
 

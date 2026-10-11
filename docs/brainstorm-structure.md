@@ -91,13 +91,13 @@ A `<vt-slider label="Rows" min=".." max=".." value="..">` custom element and a `
 
 ## Smaller improvements worth doing along the way
 
-- **One source for constants.** `CAP_HEIGHT`, `MIN_LETTER_MM`, page size and the Arial font stack are defined separately in each page.
-- **Make `BORDER_MM` and the CSS border one value.** Today a comment says "keep in sync". A CSS custom property (`--border: 0.8mm`) read from JS would remove that trap.
-- **A real print-preview check.** Add a documented manual checklist (or a Playwright script) that prints each page to PDF and checks the page count and that nothing is cut off.
-- **Keep the template honest.** Generate `_template/` from the real shared pieces, or add a test that it still parses and contains the required tags (CSP, disclaimer, back link).
-- **Accessibility pass.** The Hart chart is `role="img"` with a label, so screen readers get no letters; fine for a visual exercise, but worth a conscious decision. Check contrast of the grey row numbers and the amber warning.
-- **Lint and format with no install.** An `.editorconfig` (LF, 2 spaces) costs nothing and helps on both Mac and Windows.
-- **Landing page from data.** The root `index.html` lists tools by hand. A small `tools.json`, or a README-driven list, would stop it drifting out of sync with the README table.
+- **One source for constants.** *(Mostly done.)* `CAP_HEIGHT`, `MIN_LETTER_MM`, the letter pools and the page limits now live in `shared/`. Arial is still named in each exercise's CSS.
+- **Make `BORDER_MM` and the CSS border one value.** *(Done.)* `main.js` passes `BORDER_MM` to the CSS as `--border-mm`.
+- **A real print-preview check.** *(Done as a documented procedure, not automated.)* See "Checking print output" in `CLAUDE.md`. It found three real bugs.
+- **Keep the template honest.** *(Done.)* `tests/pages.test.js` and the HTML linter check `_template/` like any exercise.
+- **Accessibility pass.** *(Not done.)* The Hart chart is `role="img"` with a label, so screen readers get no letters; fine for a visual exercise, but worth a conscious decision. Check contrast of the grey row numbers and the amber warning.
+- **Lint and format with no install.** *(Done.)* `.editorconfig` is in place, and linting was added with ESLint and html-validate. There is still no auto-formatter.
+- **Landing page from data.** *(Not done, but guarded.)* The root `index.html` still lists tools by hand; `tests/pages.test.js` now fails if an exercise is missing from the landing page or the README.
 
 ## GitHub Pages compatibility
 

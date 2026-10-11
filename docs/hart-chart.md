@@ -26,7 +26,7 @@ TODO: the research behind this page did not find who developed the chart or when
 
 ## How the tool works
 
-The page generates a chart of random letters, laid out in millimetres so it prints at true size at 100% scale. To make a **large** chart for the wall and a **small** chart for the hand, generate twice with different letter heights. Keep the same row and column counts so the two charts line up. Row numbers help keep your place.
+The page generates a chart of random letters, laid out in millimetres so it prints at true size at 100% scale. To make a **large** chart for the wall and a **small** chart for the hand, generate twice with different letter heights. Keep the same row and column counts so the two charts line up. Row numbers help keep your place. The default chart (12 rows of 10 letters at 5 mm) is about 175 x 168 mm and fits one page; with row numbers it is about 203 mm wide and needs a sideways page.
 
 ### Where the code lives
 
@@ -36,19 +36,21 @@ The page generates a chart of random letters, laid out in millimetres so it prin
 | `main.js` | Reads the controls, draws the chart, writes the note under the buttons |
 | `grid.js` | The maths: building the letter grid (no repeated neighbours) and the chart size. No DOM access, so it is tested |
 | `style.css` | Chart, cell and row-number styles, plus print overrides |
-| `../shared/` | Styles and helpers shared with other exercises |
+| `../shared/` | Styles and helpers shared with other exercises, including `paper.js` (will it fit a Letter/A4 page, and what to tell the user) |
 | `../tests/hart-grid.test.js` | Checks the grid builder and size calculations |
+| `../tests/paper.test.js` | The page-fit logic behind the note about printing |
+| `../tests/pages.test.js` | Checks the page against the project conventions, including that its CSS does not depend on background colours |
 
 ### Settings
 
 | Control | Meaning |
 | --- | --- |
-| Rows | Number of lines of letters (4 to 24) |
-| Letters per Row | Letters in each line (4 to 16) |
-| Letter Height | Capital-letter height in mm (2 to 30) |
-| Spacing | Cell width as a multiple of the font size; row height is 0.8 of that |
-| Letter Set | Uppercase or lowercase, all letters or consonants only |
-| Show row numbers | Numbers each row on both sides |
+| Rows | Number of lines of letters (4 to 24, default 12) |
+| Letters per Row | Letters in each line (4 to 16, default 10) |
+| Letter Height | Capital-letter height in mm (2 to 30 in 0.5 steps, default 5) |
+| Spacing | Cell width as a multiple of the font size (1.5 to 4, default 2.5); row height is 0.8 of that |
+| Letter Set | Uppercase or lowercase, all letters or consonants only (default uppercase, all letters) |
+| Show row numbers | Numbers each row on both sides (off by default) |
 
 ### Behavior
 
@@ -65,7 +67,7 @@ The page generates a chart of random letters, laid out in millimetres so it prin
 - Choose letter size by visual angle at a given viewing distance
 - Number and symbol sets
 - Seeded randomness so a chart can be regenerated or shared
-- Multi-page tiling for wall-size charts
+- Multi-page tiling for wall-size charts. Today a tall chart continues onto more pages row by row, but one wider than a page is cut off
 
 ## Legal notes
 
