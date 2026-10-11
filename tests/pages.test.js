@@ -5,6 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { findExerciseFolders } from '../scripts/pages.js';
+import { PLACEHOLDER, applySiteHeader } from '../scripts/site-header.js';
 
 const root = resolve(import.meta.dirname, '..');
 const read = file => readFileSync(join(root, file), 'utf8');
@@ -30,8 +31,8 @@ describe('page discovery', () => {
 });
 
 describe.each(pages)('%s', (label, file) => {
-  const html = read(file);
-  const isLanding = file === 'index.html';
+  const source = read(file);
+  const html = applySiteHeader(source, join(root, file), root); // the page as it is built, header included
 
   it('has a title', () => {
     expect(html).toMatch(/<title>[^<]+<\/title>/);
@@ -78,11 +79,12 @@ describe.each(pages)('%s', (label, file) => {
     for (const id of controls) expect(labelled.has(id), `#${id} has no label`).toBe(true);
   });
 
-  if (!isLanding) {
-    it('links back to the landing page', () => {
-      expect(html).toContain('<a class="back" href="../">');
-    });
-  }
+  it('starts with the shared site header, which links home and to every exercise', () => {
+    expect(source).toMatch(new RegExp(`<body>\\s*${PLACEHOLDER}`));
+    expect(html).toContain('<header class="site-header">');
+    expect(html).not.toContain('class="back"');
+    for (const name of exercises) expect(html).toContain(`/${name}/"`);
+  });
 });
 
 describe.each(exercises)('exercise %s', name => {

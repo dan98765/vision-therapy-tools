@@ -21,11 +21,11 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - `macdonald-form-field-cards/` — Macdonald Form Field Cards (notes in `docs/macdonald-form-field-cards.md`).
 - `hart-chart/` — Hart Chart generator (notes in `docs/hart-chart.md`).
 - Each exercise folder holds `index.html` (markup only), `style.css`, `main.js` (reads controls, draws), and a file of pure maths with no DOM access (`layout.js`, `grid.js`) that the tests import.
-- `shared/` — code and CSS used by every exercise: `style.css`, `letters.js` (letter pools, shuffle, cap-height and minimum-size constants), `format.js` (text for the size note), `paper.js` (does it fit a Letter/A4 page, and what to say about it), `page.js` (small DOM helpers).
-- `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable. `pages.test.js` checks every page, and `_template/`, against the conventions below (strict CSP, no inline code, relative paths, labels, disclaimer, back link) and checks each exercise is on the landing page, in the README and has a `docs/<folder>.md`. A new exercise fails the tests until all of that is done. `pages.test.js` also rejects exercise CSS that depends on background colours. `paper.test.js` covers the page-fit logic and `hooks.test.js` the git hook and CI commit rules.
+- `shared/` — code and CSS used by every exercise: `style.css`, `letters.js` (letter pools, shuffle, cap-height and minimum-size constants), `format.js` (text for the size note), `paper.js` (does it fit a Letter/A4 page, and what to say about it), `page.js` (small DOM helpers), `header.html` (the header bar every page shares).
+- `tests/` — Vitest tests (`*.test.js`) plus `rng.js`, a seeded random generator so failures are repeatable. `pages.test.js` checks every page, and `_template/`, against the conventions below (strict CSP, no inline code, relative paths, labels, disclaimer, site header) and checks each exercise is on the landing page, in the README and has a `docs/<folder>.md`. A new exercise fails the tests until all of that is done. `pages.test.js` also rejects exercise CSS that depends on background colours. `paper.test.js` covers the page-fit logic, `site-header.test.js` the header, and `hooks.test.js` the git hook and CI commit rules.
 - `docs/` — one notes file per exercise (what it is, how it is used, how the page works, gotchas, sources), plus `brainstorm-structure.md`, the options considered when choosing this build setup.
 - `_template/` — starting point for a new exercise. Copy it, don't edit it.
-- `scripts/` — `pages.js` (finds the exercise folders; shared by the build, the HTML linter and the tests), `lint-html.js`, `check-commits.js` (the CI commit check) and `hooks/` (the git hook code and the shared commit rules).
+- `scripts/` — `pages.js` (finds the exercise folders; shared by the build, the HTML linter and the tests), `lint-html.js`, `site-header.js` (fills in the shared header), `check-commits.js` (the CI commit check) and `hooks/` (the git hook code and the shared commit rules).
 - `.husky/` — the git hook files (husky); see Git hooks below.
 - `eslint.config.js`, `.htmlvalidate.json`, `.editorconfig` — lint and editor settings (see Linting below).
 - `vite.config.js` — builds the root `index.html` and every top-level folder that has an `index.html`, except folders starting with `_` or `.` and the tooling folders listed in `scripts/pages.js`. A new exercise needs no config change.
@@ -34,7 +34,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 
 1. Copy `_template/` to a new kebab-case folder next to it (the template's `../shared/` paths expect that depth).
 2. Put the maths in its own file and add a test in `tests/`.
-3. Add a card to the root `index.html`, a row to the README table, and a notes file in `docs/`.
+3. Add a card to the root `index.html`, a row to the README table, and a notes file in `docs/`. The header bar picks the new exercise up by itself from its `<title>`.
 4. Run `npm run lint`, `npm test` (it tells you what is still missing) and `npm run build`, then check the page with `npm run preview`.
 
 ## Conventions
@@ -42,6 +42,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - **Vanilla JS and CSS.** No UI framework. The only dependencies are dev-only tools (Vite, Vitest, ESLint and its plugins, html-validate, husky) and none of their code ships in the pages. If a tool seems to need another dependency, stop and ask.
 - **No network requests at runtime**: no CDNs, remote fonts or analytics. Everything is bundled from this repo.
 - **Keep `index.html` to markup.** CSS goes in `style.css`, behaviour in `main.js`, testable maths in a separate file. Do not add inline `<style>`, `<script>` or `style=""` attributes, because the CSP forbids them. Setting `element.style.x = ...` from JavaScript is fine.
+- **Every page has the shared header bar.** Put `<!-- site-header -->` as the first thing inside `<body>` and nothing else: `scripts/site-header.js` (a Vite plugin, also used by the HTML linter and the tests) replaces it with `shared/header.html`, with links made relative to the page and a nav listing every exercise by its `<title>`, the current page marked `aria-current="page"`. Change the header in `shared/header.html` and its styles in `shared/style.css`, never on one page. It is hidden when printing. A page `<title>` should be plain text (escape `&` as `&amp;`), because it becomes a nav label as written. The header exists only in the built and dev-served page, so reading a source `index.html` you will see just the placeholder.
 - **Put shared things in `shared/`**, not copied into pages. Do not rely on CSS order: Vite emits page CSS before shared CSS, so a page rule that needs to override a shared rule must be more specific, not just later.
 - **Match the existing look** of the other exercises: system font stack, `#f0f2f5` page background, white rounded control panel, `#2563eb` accent, sections separated by `/* ── Name ── */` comment banners.
 - **Controls are obvious**: sliders and selects with a visible value readout, sensible defaults so the page is useful on first load. Prefer redrawing live on input; where output is random an explicit Generate button is acceptable so the result doesn't change while adjusting sliders (the Hart chart redraws the same letters for size changes and regenerates for the rest).
@@ -52,7 +53,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - **Interactive exercises** (timers, moving targets) need a clear start/stop, must respect `prefers-reduced-motion`, and should not flash faster than 3 Hz.
 - **Accessibility basics**: real `<label>`s tied to inputs, keyboard operable, adequate contrast. Exercise content may need to be large and high-contrast by design.
 - Physical size matters for these exercises (viewing distance, letter size). Where size is meaningful, use mm (CSS `mm` is true size in print) rather than abstract pixels.
-- **Relative links and paths only.** The site is served from a subpath on GitHub Pages, so `/something` links would break. Exercise pages link back with `<a class="back" href="../">`. Vite is configured with `base: './'`.
+- **Relative links and paths only.** The site is served from a subpath on GitHub Pages, so `/something` links would break. Vite is configured with `base: './'`.
 
 ## Linting
 

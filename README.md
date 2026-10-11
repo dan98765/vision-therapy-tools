@@ -35,7 +35,7 @@ The built pages are ES modules, so opening an `index.html` straight from disk do
 3. Add a card to the root `index.html` and a row to the table above.
 4. Add a notes file in `docs/`.
 
-New exercise folders are picked up by the build automatically. See [CLAUDE.md](CLAUDE.md) for project conventions.
+New exercise folders are picked up by the build automatically, and the header bar links to them from their page title. See [CLAUDE.md](CLAUDE.md) for project conventions.
 
 ## Deployment
 

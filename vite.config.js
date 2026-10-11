@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import { findExerciseFolders } from './scripts/pages.js';
+import { siteHeader } from './scripts/site-header.js';
 
 const root = import.meta.dirname;
 
@@ -22,7 +23,7 @@ const devWebsocket = {
 export default defineConfig({
   // Relative asset paths, so the site works from any subpath (GitHub Pages uses /vision-therapy-tools/)
   base: './',
-  plugins: [devWebsocket],
+  plugins: [siteHeader(root), devWebsocket],
   build: {
     rollupOptions: { input: pages },
   },
