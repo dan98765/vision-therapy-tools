@@ -1,12 +1,16 @@
 /* Macdonald Form Field Cards: styles for the card itself. */
 
+/* The true-size card can be wider than a phone screen. It scrolls inside this box, so the page itself
+   does not scroll sideways. margin: 0 auto centers the card when it fits; a flex container would
+   cut off the left edge of a card that is too wide to center. */
 .card-wrapper {
-  display: flex;
-  justify-content: center;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .card {
   position: relative;
+  margin: 0 auto;
   background: #fff;
   /* --border-mm is set from BORDER_MM in layout.js so the two cannot drift apart */
   border: calc(var(--border-mm, 0.8) * 1mm) solid #111;
@@ -50,6 +54,10 @@
 }
 
 @media print {
+  .card-wrapper {
+    overflow: visible;
+  }
+
   .card {
     border-color: #000;
   }

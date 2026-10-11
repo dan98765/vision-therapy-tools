@@ -25,7 +25,7 @@ export function renderSiteHeader(root, filePath) {
 
   const links = findExerciseFolders(root)
     .map(folder => ({ folder, title: titleOf(root, folder) }))
-    .sort((a, b) => a.title.localeCompare(b.title))
+    .sort((a, b) => a.title.localeCompare(b.title, 'en')) // fixed locale: the same order on every machine
     .map(({ folder, title }) =>
       `      <li><a href="${home}${folder}/"${folder === current ? ariaCurrent : ''}>${title}</a></li>`)
     .join('\n');
