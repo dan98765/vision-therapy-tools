@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CAP_HEIGHT, UPPER } from '../shared/letters.js';
+import { CAP_HEIGHT, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
 import {
   BORDER_MM,
   cardGeometry,
@@ -7,6 +7,7 @@ import {
   layoutRings,
   outerExtent,
   placeLetters,
+  ringCounts,
 } from '../macdonald-form-field-cards/layout.js';
 import { seeded } from './rng.js';
 
@@ -165,5 +166,86 @@ describe('placeLetters without repeats', () => {
   it('keeps the same positions and sizes either way, so the layout checks still apply', () => {
     const geometry = letters => letters.map(({ font }) => font);
     expect(geometry(place(DEFAULTS, seeded(6), true))).toEqual(geometry(place(DEFAULTS, seeded(6), false)));
+  });
+});
+
+describe('ringCounts', () => {
+  it('adds up to the total with at most one letter between rings, the extra ones on the outside', () => {
+    for (const total of [5, 9, 21, 26]) {
+      for (const rings of [3, 4, 5, 6, 7]) {
+        const counts = ringCounts(total, rings);
+        expect(counts.reduce((a, b) => a + b, 0), `${total} over ${rings}`).toBe(total);
+        expect(Math.max(...counts) - Math.min(...counts)).toBeLessThanOrEqual(1);
+        expect(counts).toEqual([...counts].sort((a, b) => a - b));
+      }
+    }
+  });
+
+  it('spreads the alphabet over five rings as 5, 5, 5, 5, 6', () => {
+    expect(ringCounts(26, 5)).toEqual([5, 5, 5, 5, 6]);
+    expect(ringCounts(26, 7)).toEqual([3, 3, 4, 4, 4, 4, 4]);
+  });
+
+  it('never gives a ring fewer than three letters, using fewer rings for a small set', () => {
+    expect(ringCounts(5, 3)).toEqual([5]); // five vowels
+    expect(ringCounts(9, 7)).toEqual([3, 3, 3]);
+    for (const total of [5, 8, 9, 21, 26]) {
+      for (const rings of [3, 5, 7]) {
+        const counts = ringCounts(total, rings);
+        expect(Math.min(...counts)).toBeGreaterThanOrEqual(3);
+        expect(counts.length).toBeLessThanOrEqual(rings);
+      }
+    }
+  });
+});
+
+describe('every letter once, spread over uneven rings', () => {
+  function placeAll(pool, rings, longSide, ratio, baseMm, scale, seed) {
+    const counts = ringCounts(pool.length, rings);
+    const geo = cardGeometry(longSide, ratio);
+    const fit = fitRings(counts.length, counts, baseMm / CAP_HEIGHT, scale, geo.available);
+    const letters = placeLetters(fit.rings, counts, geo.cx, geo.cy, pool, seeded(seed), { noRepeats: true });
+    return { geo, counts, letters };
+  }
+
+  it('shows each letter of the set exactly once, with the counts per ring', () => {
+    for (const pool of [UPPER, UPPER_CONSONANTS, VOWELS]) {
+      for (const rings of [3, 5, 7]) {
+        const { letters, counts } = placeAll(pool, rings, 216, 0.647, 2, 1.6, 7);
+        expect(letters.map(l => l.letter).sort()).toEqual([...pool].sort());
+        expect(letters).toHaveLength(counts.reduce((a, b) => a + b, 0));
+      }
+    }
+  });
+
+  it('never clips or overlaps across card sizes, shapes, rings and sets', () => {
+    let checked = 0;
+    for (const pool of [UPPER, UPPER_CONSONANTS, VOWELS]) {
+      for (const longSide of [100, 216, 250]) {
+        for (const ratio of [0.647, 1, 1.545]) {
+          for (const rings of [3, 5, 7]) {
+            for (const [baseMm, scale] of [[1, 1.3], [2, 1.6], [6, 2.5]]) {
+              for (const seed of [1, 2]) {
+                const { geo, letters } = placeAll(pool, rings, longSide, ratio, baseMm, scale, seed);
+                const bs = boxes(letters);
+                const label = JSON.stringify({ pool: pool.length, longSide, ratio, rings, baseMm, scale, seed });
+                for (const b of bs) {
+                  if (b.left < 0 || b.top < 0 || b.right > 2 * geo.cx || b.bottom > 2 * geo.cy) expect.fail(`clipped: ${label}`);
+                }
+                for (let i = 0; i < bs.length; i++) {
+                  for (let j = i + 1; j < bs.length; j++) {
+                    const p = bs[i];
+                    const q = bs[j];
+                    if (p.left < q.right && q.left < p.right && p.top < q.bottom && q.top < p.bottom) expect.fail(`overlap: ${label}`);
+                  }
+                }
+                checked++;
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(checked).toBe(3 * 3 * 3 * 3 * 3 * 2);
   });
 });

@@ -1,11 +1,11 @@
 // Macdonald Form Field Cards: reads the controls, draws the card.
 
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
-import { inchLabel, letterUseNote, mmAsInches, sizeSummary } from '../shared/format.js';
+import { inchLabel, letterUseNote, mmAsInches, ringCountsNote, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { pageNote } from '../shared/paper.js';
 import { inchesToMm } from '../shared/units.js';
-import { BORDER_MM, cardGeometry, fitRings, placeLetters } from './layout.js';
+import { BORDER_MM, cardGeometry, fitRings, placeLetters, ringCounts } from './layout.js';
 
 const LETTER_SETS = {
   all: UPPER,
@@ -27,6 +27,7 @@ const els = {
   scaleFactor: byId('scale-factor'),
   scaleFactorVal: byId('scale-factor-val'),
   letterSet: byId('letter-set'),
+  allLetters: byId('all-letters'),
   noRepeats: byId('no-repeats'),
   showDot: byId('show-dot'),
   btnGenerate: byId('btn-generate'),
@@ -47,10 +48,14 @@ function generateCard() {
   const scaleFactor = parseFloat(els.scaleFactor.value);
 
   const geo = cardGeometry(inchesToMm(parseFloat(els.cardSize.value)), parseFloat(els.aspectRatio.value));
-  const { k, rings } = fitRings(numRings, lettersPerRing, baseEm, scaleFactor, geo.available);
   const pool = LETTER_SETS[els.letterSet.value];
-  const noRepeats = els.noRepeats.checked;
-  const letters = placeLetters(rings, lettersPerRing, geo.cx, geo.cy, pool, Math.random, { noRepeats });
+  // "Use every letter once" spreads the whole set over the rings, so the rings hold different numbers
+  const allLetters = els.allLetters.checked;
+  const counts = allLetters ? ringCounts(pool.length, numRings) : null;
+  const perRing = counts ?? lettersPerRing;
+  const noRepeats = allLetters || els.noRepeats.checked;
+  const { k, rings } = fitRings(counts ? counts.length : numRings, perRing, baseEm, scaleFactor, geo.available);
+  const letters = placeLetters(rings, perRing, geo.cx, geo.cy, pool, Math.random, { noRepeats });
 
   els.card.style.width = geo.width + 'mm';
   els.card.style.height = geo.height + 'mm';
@@ -78,6 +83,7 @@ function generateCard() {
     sizeSummary(geo.width, geo.height) +
       page.text +
       (noRepeats ? ' ' + letterUseNote(letters.length, pool.length) : '') +
+      (counts ? ' ' + ringCountsNote(counts, numRings) : '') +
       (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '') +
       (tooSmall
         ? ` Warning: the innermost letters are only ${mmAsInches(smallestMm, 3)} tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`
@@ -87,15 +93,19 @@ function generateCard() {
 }
 
 function syncDisplays() {
+  // With every letter used once, the rings hold different numbers, so the letters-per-ring control is not used
+  const allLetters = els.allLetters.checked;
+  els.lettersPerRing.disabled = allLetters;
+  els.noRepeats.disabled = allLetters;
   els.ringsVal.textContent = els.rings.value;
-  els.lettersVal.textContent = els.lettersPerRing.value;
+  els.lettersVal.textContent = allLetters ? 'varies' : els.lettersPerRing.value;
   els.cardSizeVal.textContent = inchLabel(els.cardSize.value, 1);
   els.baseLetterVal.textContent = inchLabel(els.baseLetter.value);
   els.scaleFactorVal.textContent = parseFloat(els.scaleFactor.value).toFixed(2);
 }
 
 // Sliders only update their readouts; "Generate Card" applies them (each card is random).
-for (const input of [els.rings, els.lettersPerRing, els.cardSize, els.baseLetter, els.scaleFactor]) {
+for (const input of [els.rings, els.lettersPerRing, els.cardSize, els.baseLetter, els.scaleFactor, els.allLetters]) {
   input.addEventListener('input', syncDisplays);
 }
 els.btnGenerate.addEventListener('click', generateCard);

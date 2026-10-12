@@ -54,6 +54,7 @@ The generator creates **new, original** cards in the same style: concentric ring
 | Base Letter Height | Capital-letter height in inches for the innermost ring (0.04 to 0.24 in 0.01 steps, default 0.08) |
 | Scale Factor | How much larger each successive ring's letters are (1.3 to 2.5, default 1.6) |
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
+| Use every letter once | Off by default. Puts the whole chosen set on the card exactly once (26 letters, 21 consonants or 5 vowels) and spreads it over the rings, as evenly as possible with the extra letters on the outer rings (26 over 5 rings is 5, 5, 5, 5, 6). The letters-per-ring control is then not used and reads "varies", and so is the no-repeats option. A ring needs at least 3 letters, so a small set uses fewer rings than asked for (the 5 vowels fill one ring), and the note says so |
 | No repeated letters on the card | On by default. Letters are dealt from the chosen set across the whole card, so no letter appears twice until every letter in the set has been used. Off: each ring is picked on its own and the same letter can appear in several rings |
 | Center dot | Checkbox to show or hide the fixation circle and dot (on by default) |
 
@@ -65,6 +66,7 @@ Letters are picked at random when a card is generated. With "No repeated letters
 - Letter size in ring *n* is `base * scale^n`.
 - Rings are placed outward so that neighbouring rings, and neighbouring letters within a ring, cannot touch even with the random wobble.
 - If the requested sizes do not fit on the card, **every letter is shrunk by the same factor** (keeping the size progression) until the outer ring fits. A note under the buttons says how much. So Base Letter Height is the size you ask for, not a guarantee. Raise the card size or lower rings, letters per ring or scale factor to keep the full size.
+- Rings can hold different numbers of letters: `layoutRings`, `fitRings` and `placeLetters` take either one number or an array with a count per ring, and `ringCounts` works out the array for "Use every letter once". The tests sweep sizes, shapes, ring counts and all three letter sets for clipping and overlap.
 - Letters are positioned relative to the inside of the card border, so measure from the padding box (`BORDER_MM` in `layout.js`) or letters drift off-center from the fixation dot. `main.js` passes `BORDER_MM` to the CSS as `--border-mm`, so the border width is defined once.
 
 ### Gotchas

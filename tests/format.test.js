@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inchLabel, letterUseNote, mmAsInches, sizeSummary } from '../shared/format.js';
+import { inchLabel, letterUseNote, mmAsInches, ringCountsNote, sizeSummary } from '../shared/format.js';
 import { MM_PER_INCH, inchesToMm, mmToInches } from '../shared/units.js';
 
 describe('sizeSummary', () => {
@@ -49,5 +49,15 @@ describe('letterUseNote', () => {
     expect(letterUseNote(70, 26)).toContain('every letter appears 2 or 3 times');
     expect(letterUseNote(30, 5)).toContain('every letter appears 6 times');
     expect(letterUseNote(30, 26)).toContain('Use 26 places or fewer');
+  });
+});
+
+describe('ringCountsNote', () => {
+  it('lists the letters on each ring, innermost first', () => {
+    expect(ringCountsNote([5, 5, 5, 5, 6], 5)).toBe('The rings hold 5, 5, 5, 5, 6 letters, innermost first.');
+  });
+
+  it('says when fewer rings are used than asked for', () => {
+    expect(ringCountsNote([5], 3)).toContain('Only 1 of the 3 rings is used');
   });
 });

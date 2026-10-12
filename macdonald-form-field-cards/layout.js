@@ -10,6 +10,20 @@ export const RING_GAP = 0.15;    // extra gap between rings, in em
 export const JITTER = 0.1;       // random wobble of each letter, in em
 export const CENTER_CLEAR = 3.5; // clear radius around the fixation circle
 export const EDGE_MARGIN = 1;    // keep letters this far inside the border
+export const MIN_PER_RING = 3;   // fewest letters on a ring when the rings are filled unevenly
+
+// `perRing` is a number (every ring holds that many letters) or an array with one count per ring.
+const countOf = (perRing, i) => (Array.isArray(perRing) ? perRing[i] : perRing);
+
+// How many letters each ring holds when `total` letters are spread over up to `rings` rings, as evenly as
+// possible with the extra letters on the outer rings (which have the most room). A ring needs at least
+// `minPerRing` letters, so a small set uses fewer rings than asked for. The counts add up to `total`.
+export function ringCounts(total, rings, minPerRing = MIN_PER_RING) {
+  const used = Math.max(1, Math.min(rings, Math.floor(total / minPerRing)));
+  const base = Math.floor(total / used);
+  const extra = total % used;
+  return Array.from({ length: used }, (_, i) => base + (i >= used - extra ? 1 : 0));
+}
 
 // Card size from its long side and width/height ratio, plus the centre and the
 // radius available for letters. Letters are positioned inside the border.
@@ -29,7 +43,8 @@ export function layoutRings(numRings, perRing, baseEm, scaleFactor, k) {
   for (let i = 0; i < numRings; i++) {
     const font = baseEm * Math.pow(scaleFactor, i) * k;
     const prev = rings[i - 1];
-    const fitsNeighbours = (MIN_SPACING * font) / (2 * Math.sin(Math.PI / perRing));
+    const count = countOf(perRing, i);
+    const fitsNeighbours = count >= 2 ? (MIN_SPACING * font) / (2 * Math.sin(Math.PI / count)) : 0;
     const clearsInside = prev
       ? prev.radius + GLYPH_REACH * (prev.font + font) + RING_GAP * font
       : CENTER_CLEAR + GLYPH_REACH * font;
@@ -63,12 +78,12 @@ export function fitRings(numRings, perRing, baseEm, scaleFactor, available) {
 // Returns [{ letter, font, x, y }] with x and y measured from the inside corner of the card.
 export function placeLetters(rings, perRing, cx, cy, pool, random = Math.random, { noRepeats = false } = {}) {
   const placed = [];
-  const angleStep = (2 * Math.PI) / perRing;
-
-  const dealt = noRepeats ? dealLetters(pool, rings.map(() => perRing), random) : null;
+  const counts = rings.map((_, i) => countOf(perRing, i));
+  const dealt = noRepeats ? dealLetters(pool, counts, random) : null;
 
   rings.forEach(({ radius, font }, ringIndex) => {
-    const letters = dealt ? dealt[ringIndex] : pickLetters(pool, perRing, random);
+    const angleStep = (2 * Math.PI) / counts[ringIndex];
+    const letters = dealt ? dealt[ringIndex] : pickLetters(pool, counts[ringIndex], random);
     const baseAngle = random() * 2 * Math.PI; // new rotation each generation
     const wobble = () => (random() - 0.5) * JITTER * font;
 

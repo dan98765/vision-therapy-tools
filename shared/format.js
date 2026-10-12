@@ -33,3 +33,12 @@ export function letterUseNote(positions, poolSize) {
   else spread = `every letter appears ${base} or ${base + 1} times`;
   return `There are ${positions} places but only ${poolSize} different letters, so ${spread}. Use ${poolSize} places or fewer for no repeats.`;
 }
+
+// How the letters were spread over the rings when every letter is used once. `counts` is the number of
+// letters on each ring, innermost first; `askedFor` is the number of rings the user chose.
+export function ringCountsNote(counts, askedFor) {
+  const fewer = counts.length < askedFor
+    ? ` Only ${counts.length} of the ${askedFor} rings ${counts.length === 1 ? 'is' : 'are'} used, because every ring needs at least 3 letters.`
+    : '';
+  return `The rings hold ${counts.join(', ')} letters, innermost first.${fewer}`;
+}

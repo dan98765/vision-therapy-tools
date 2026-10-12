@@ -7,7 +7,7 @@ Feedback received from a user of [Macdonald Form Field Cards](macdonald-form-fie
 1. An option to have **one ring moving in a circle**, and to **choose which ring**.
 2. **All letters of the alphabet should be present, with no repeated letters.**
 
-**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The moving ring (request 1), the "use every letter once" mode (option B) and remembered settings are not. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
+**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The "use every letter once" mode (option B) is built too ("Use every letter once" below). The moving ring (request 1) and remembered settings are not. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
 
 ## Answers from the user
 
@@ -50,6 +50,10 @@ Recommendation: do **A** for every letter set, and offer **B** as a "Use every l
 Option A, as a checkbox "No repeated letters on the card", **on by default**. `dealLetters` in `shared/letters.js` deals letters from the pool across all rings, so a letter is used a second time only after every letter has been used once, and a ring never repeats a letter inside itself unless the set is smaller than the ring. `placeLetters` takes `{ noRepeats }`, and `letterUseNote` in `shared/format.js` gives the note under the buttons (all used once, how many are missing, or how many repeat). Sizes and positions are unchanged, so the clipping and overlap tests still cover it. Tests: `tests/letters.test.js`, `tests/cards-layout.test.js`, `tests/format.test.js`.
 
 The default card (5 rings of 6) has 30 places against 26 letters, so on first load the note says four letters appear twice. Equal rings cannot make exactly 26 (26 is 2 x 13, and rings hold 3 to 10), so option B would need uneven rings or a different slider range.
+
+### Option B, built
+
+A second checkbox, "Use every letter once (rings hold different numbers)", off by default. It puts the whole chosen set on the card once and spreads it over the rings with `ringCounts` (`layout.js`): counts differ by at most one, with the extra letters on the outer rings, and no ring has fewer than 3 letters, so a small set uses fewer rings (the 5 vowels use one). The layout functions accept a per-ring count array, and a guard stops a ring of fewer than 2 letters dividing by zero. The letters-per-ring and no-repeats controls are disabled while it is on. The note under the buttons lists the counts, innermost first. Equal rings were not used because 26 does not divide into 3 to 7 rings; uneven rings avoid changing the sliders' ranges.
 
 ### How it was planned to work
 
