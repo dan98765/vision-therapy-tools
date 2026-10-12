@@ -105,7 +105,14 @@ Questions to put back to the user (they change the design):
 2. Do request 2, option A first. It is small, self-contained and removes the per-ring repeats now. Tests, update `docs/macdonald-form-field-cards.md` ("Letters are picked at random for each ring" will no longer be true).
 3. Add the "use every letter once" mode (option B) if the user wants it.
 4. Do request 1 behind a default of "None", with the maths and tests first, then the controls, then the browser checks.
-5. Update the card notes, the README row if the description changes, and the "Ideas for later" list.
+5. Update the card notes, the README row if the description changes, and the "Ideas for later" list. Remembered settings (above) is a separate step after these.
+
+## Remembering the settings
+
+A related idea, from the same round of feedback: the page should remember what the user last set the controls to, so a refresh or a later visit shows their previous settings. The new controls here (moving ring, speed, direction, no-repeat option) would be remembered too. This is idea U4 in [tool-ideas.md](tool-ideas.md), where the design, the choices and the tests are written down, because it applies to every chart. It is a policy decision first (the site currently says it stores nothing), so settle that before building it, and do it as one shared module rather than card by card. Two cautions for this page:
+
+- Remember the control values, not the random letters, and not whether the ring is running: a page that reloads already moving would break the "starts only when asked" rule.
+- A saved moving-ring choice must be checked against the current ring count and fall back to None when the ring no longer exists.
 
 ## Risks and things to watch
 

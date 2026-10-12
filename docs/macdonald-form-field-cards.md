@@ -80,6 +80,8 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 - Grey card background option, matching the traditional cards. Browsers do not print backgrounds by default, so this needs a print-safe approach (or an instruction to turn on background graphics) and would have to be an exception to the no-backgrounds rule in `CLAUDE.md`
 - Choose letter size by visual angle at a given viewing distance
 - Seeded randomness so a given card can be regenerated or shared
+- Remember the last settings on the device (idea U4 in `tool-ideas.md`; needs a decision on the "stores nothing" promise)
+- Planned from user feedback: a moving ring and non-repeating letters (see `macdonald-cards-feedback-plan.md`)
 
 ## Legal notes
 

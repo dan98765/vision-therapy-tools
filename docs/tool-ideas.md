@@ -28,7 +28,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | P1 | Visual tracing charts | Printable | M | Letters and numbers joined by tangled lines, followed with the eyes |
 | P2 | Saccade cards | Printable | S | Target cards for looking back and forth at a set spacing |
 | P3 | Matched Hart pair | Printable | S | A large wall chart and a small hand chart with the same letters |
-| P4 | Letter-size calculator | Printable | S | Viewing distance and visual angle to letter height in mm |
+| P4 | Letter-size calculator | Printable | S | Viewing distance and visual angle to letter height in inches |
 | P5 | Pursuit pattern sheets | Printable | S | Figure-eights, spirals and waves to follow with the eyes |
 | P6 | Fusion and stereogram cards | Printable | M | Paired targets at an exact separation, and cards of two incomplete images used with a pen |
 | P7 | Near-point targets | Printable | S | Fine targets and string-bead position guides |
@@ -45,13 +45,14 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | U1 | Screen calibration | Utility | S | Matches an on-screen box to a credit card to get pixels per mm (built) |
 | U2 | Home program sheet | Utility | S | A printable one-page schedule typed by the therapist or parent |
 | U3 | Practice log | Utility | M | Records what was done and when (a policy decision) |
+| U4 | Remembered settings | Utility | S | Each tool reopens with the settings the user last chose (a policy decision) |
 
 ## What every new tool must meet
 
 From `CLAUDE.md`, so an idea is costed with these in mind:
 
 - Copy `_template/`. Keep the maths in its own file with tests, and let the page code only read controls and draw.
-- Lay out in millimetres. Printable tools must pass the real print check (page count, true size, nothing cut off) on Letter and A4, with default print settings, so no shape may rely on a background colour.
+- Lay out in millimetres, and show inches to the user (controls, readouts and notes; see the units note in `CLAUDE.md`). Printable tools must pass the real print check (page count, true size, nothing cut off) on Letter and A4, with default print settings, so no shape may rely on a background colour.
 - Use `shared/paper.js` to tell the user when something will not fit a page.
 - Moving content needs a clear start and stop, must respect `prefers-reduced-motion`, and must not flash faster than 3 Hz.
 - No network requests, no new runtime dependencies, strict CSP. Anything that stores data conflicts with the "stores nothing" statement in the README and `SECURITY.md` and needs a deliberate decision.
@@ -64,7 +65,7 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 ### P1. Visual tracing charts
 
 - **What:** a column of letters and a column of numbers, each letter joined to a number by a curved line, with the lines crossing. The person follows each line with their eyes and names the number it ends at. Charts like this are described as activities in practitioner material found in searches, and the Groffman version is a clinical test.
-- **Controls:** number of pairs, how winding the lines are, chart size in mm, line thickness and label size, a seed so a chart can be reproduced, and an answer key.
+- **Controls:** number of pairs, how winding the lines are, chart size in inches, line thickness and label size, a seed so a chart can be reproduced, and an answer key.
 - **Design note:** the Groffman Visual Tracing test (see [names](#names-copying-and-trademarks)) is a published clinical test. A study of it found the standard version too hard for young children: 24% of 1st and 3rd graders followed no line correctly, and a simplified version worked better. So offer few pairs and gentle curves by default. A practitioner write-up found in a search (not reachable when checked, so not linked) suggested more pairs to make it harder and tracing with a finger to make it easier.
 - **Maths:** generate smooth paths between fixed endpoints so that crossings are clear and no two lines run close together or on top of each other except where they cross. The unambiguous-line generator is the real work.
 - **Print notes:** draw with SVG strokes, which print without "background graphics". Confirm with the print check.
@@ -74,9 +75,9 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 ### P2. Saccade cards
 
 - **What:** target cards (letters, numbers or shapes) to place a set distance apart, for looking back and forth. Clinic home programs describe two notes on a wall about shoulder-width apart, and drills that alternate horizontally or vertically for a set time.
-- **Controls:** number of targets (2 or 4), target type and size in mm, orientation, and a printed instruction giving the centre-to-centre spacing to use.
+- **Controls:** number of targets (2 or 4), target type and size in inches, orientation, and a printed instruction giving the centre-to-centre spacing to use.
 - **Print notes:** a shoulder-width spacing is wider than a page, so print each target on its own sheet and print the spacing as an instruction. Page-fit checking comes from `shared/paper.js`.
-- **Tests:** target sizes in mm and the page-fit result.
+- **Tests:** target sizes (checked in mm, shown in inches) and the page-fit result.
 
 ### P3. Matched Hart pair
 
@@ -88,7 +89,7 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 
 ### P4. Letter-size calculator
 
-- **What:** enter a viewing distance and the visual angle the letters should span, and get the letter height in mm. Also the reverse.
+- **What:** enter a viewing distance and the visual angle the letters should span, and get the letter height in inches. Also the reverse.
 - **Maths:** height = 2 x distance x tan(angle / 2), with a round-trip test. Take plain angles in minutes of arc or degrees. Do not label results with acuity ratings.
 - **Link to other tools:** offer the result as a starting value for the Hart chart and the cards, for example through a link that carries only a size in the URL.
 - **Tests:** unit conversions and the round trip.
@@ -106,7 +107,7 @@ Two related kinds of card, both about the exact separation between two images.
 
 - **Fusion target cards.** A pair of matching targets, such as concentric or eccentric circles, printed at an exact separation for fusing the two images, plus a red/green version for people who have matching glasses. A vendor describes paired cards for fusion, convergence and divergence with a central anti-suppression target and alignment marks on the outer rings, and says they are meant to be used with a professional's guidance.
 - **Stereogram cards.** A hospital orthoptic leaflet describes a stereogram as two incomplete images that join to make one complete image, and gives a card of three cats, with the features split between the images, as its example. The person holds the card at arm's length, puts a pen just in front of it and slowly brings it closer while watching the pen tip. The background images become double and then the middle two merge, giving a complete centre image. The leaflet says an orthoptist explains and demonstrates the exercise, that not everyone manages it, and that other cards (a bucket, ABC rings) exist. These are not the same as random-dot stereograms (P11).
-- **Controls:** the separation in mm, parallel or crossed viewing for the fusion cards, line thickness, the colour pair for the red/green version, and for the stereogram cards a choice of picture (letters, simple shapes) with the split between the two incomplete images.
+- **Controls:** the separation in inches, parallel or crossed viewing for the fusion cards, line thickness, the colour pair for the red/green version, and for the stereogram cards a choice of picture (letters, simple shapes) with the split between the two incomplete images.
 - **Print notes:** the separation is the whole point, so true size matters most here. Printer colours and glasses vary, which the page cannot control, so say so on the page. Stereogram cards also need printed instructions for the pen distance.
 - **Risk:** these are the ideas closest to a prescription, and the leaflet itself says a professional demonstrates the exercise. Every setting should be the user's choice with a neutral starting value, never presented as the right setting for someone. Draw original pictures, and do not copy the cats or any vendor's card layouts or wording.
 - **Tests:** exact separations, symmetric pairs, and that the two incomplete images combine into the full picture with nothing missing or doubled.
@@ -126,7 +127,7 @@ Two related kinds of card, both about the exact separation between two images.
 ### P9. Scanning sheets
 
 - **What:** letter cancellation (find every copy of the target letters), word searches, and Schulte-style number grids (numbers 1 to 25 in a random grid, found in order). These are general visual-search and attention exercises, not specific to vision therapy.
-- **Controls:** grid size, target letters, text size in mm. Offer a printable sheet and a clickable version with a timer.
+- **Controls:** grid size, target letters, text size in inches. Offer a printable sheet and a clickable version with a timer.
 - **Tests:** target counts, no repeated numbers, every number placed once.
 
 ### P10. Mazes and hidden figures
@@ -201,6 +202,26 @@ All of these must start only when the user presses start, offer a stop, and neve
 - **What:** a record of what was done and when.
 - **Policy decision:** this repo says it stores nothing. A log needs local storage, a clear statement that it never leaves the device, and updates to the README and `SECURITY.md`. Decide it on purpose.
 
+### U4. Remembered settings
+
+- **What:** each tool remembers what the user last set its controls to, so a refresh or a later visit shows the same settings instead of the defaults. It would cover the sliders, selects and checkboxes of the Hart chart, the Macdonald cards and the screen calibration (once the calibration is something to keep), and the moving-ring and letter options planned in [macdonald-cards-feedback-plan.md](macdonald-cards-feedback-plan.md).
+- **How it could work:**
+  - One small shared module (for example `shared/settings.js`) that saves a tool's control values in the browser's own storage (`localStorage`) under a key per tool, and puts them back on load.
+  - Keep the reading and writing in small pure functions (pick the controls to remember, check each saved value against the control's `min`, `max` and options, fall back to the default when it is missing or wrong) so they can be tested without a browser.
+  - Save when a control changes. A "Reset to defaults" button per tool clears it.
+  - Not remembered: the random letters themselves (a regenerated chart or card is new each time), and anything personal.
+  - Storage can be blocked or full (private windows, site data turned off), so every read and write sits in a try/catch and the page works with defaults when it fails.
+  - Saved values are untrusted input: a stale or edited value (an old slider range, a removed option) must be ignored, never trusted.
+- **Policy decision:** the README and `SECURITY.md` say the site stores nothing. This would store a few control values on the user's own device, never sent anywhere (the CSP already blocks all network access). It needs a plain statement in the README, `SECURITY.md`, `CLAUDE.md` and each tool's notes that settings are kept only in this browser and can be reset, and a decision on whether remembering is on by default or opt-in with a checkbox.
+- **Choices to make:**
+  - On by default or opt-in? Opt-in is the cautious reading of the current promise; on by default is the friendlier behaviour.
+  - Shared devices: one browser profile shared by several people sees the last person's settings.
+  - What the keys are called and a version number in them, so a later change to a control's range can discard old values cleanly.
+  - The settings of the cards and chart can change what a page-fit note says on load; the note must be redrawn from the restored values.
+- **Tests:** saving and restoring round-trips; a value outside the control's range or not in its list falls back to the default; corrupt or missing storage gives defaults; a blocked storage object does not throw; a version change discards old values; reset clears the saved values. A real-browser check: change settings, reload, and confirm they come back; then block storage and confirm the page still works.
+- **Effort:** S for one tool, then small for each other because the module is shared.
+- **Related:** U1 (the calibration needs remembering most), U3 (a practice log needs the same policy decision).
+
 ## Shared building blocks
 
 Several ideas would need the same pieces. Building them once, in `shared/` with tests, keeps the tools consistent.
@@ -210,6 +231,7 @@ Several ideas would need the same pieces. Building them once, in `shared/` with 
 | Seeded random generator | P1, P3, P9, P10, P11 | `tests/rng.js` already has one. Move it into `shared/` so pages can reproduce a chart from a seed. |
 | SVG helpers | P1, P2, P5, P6, P7 | A small helper to build strokes and shapes in mm. SVG shapes are content, so they print without "background graphics"; confirm with the print check. |
 | Screen calibration value | I1, I2, I4, I5 | See U1. |
+| Remembered settings | Hart chart, cards, calibration, any new tool | See U4. One shared module, one policy decision. |
 | Animation loop | I1 to I5 | One helper that runs on the browser's frame timer, starts only on request, stops cleanly, and checks `prefers-reduced-motion`. |
 | Audio tick | I2, I3, I6 | The browser's audio API needs no network. |
 | Prefill from the URL | P3, P4 | Carry only sizes, never personal details. |
@@ -234,7 +256,7 @@ These depend on physical equipment, so a page could only describe or prepare for
 
 ## A possible order
 
-1. **U1 Screen calibration** (built), because it makes every on-screen exercise meaningful. Deciding how it is remembered comes next.
+1. **U1 Screen calibration** (built), because it makes every on-screen exercise meaningful. Deciding how it is remembered comes next (see U4).
 2. **P3 Matched Hart pair and P4 Letter-size calculator**, small steps that extend what exists.
 3. **P2 Saccade cards and P5 Pursuit pattern sheets**, small printables that need no new maths.
 4. **P1 Visual tracing charts**, the first piece with new maths.
@@ -245,7 +267,7 @@ These depend on physical equipment, so a page could only describe or prepare for
 
 - Is the main use printing for home practice, or on-screen practice?
 - Who is the audience: a therapist preparing materials, or people practising at home?
-- Should the site ever store anything (U1 calibration, U3 practice log), or stay a store-nothing site? Session-only storage would be a middle path, but it is still storage.
+- Should the site ever store anything (U1 calibration, U3 practice log, U4 remembered settings), or stay a store-nothing site? Session-only storage would be a middle path, but it is still storage.
 - Are red/green glasses and other equipment realistic to assume?
 - Should anything be offered to children directly, or only to adults who then guide them?
 

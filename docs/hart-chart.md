@@ -68,6 +68,7 @@ The page generates a chart of random letters, laid out internally in millimetres
 - Choose letter size by visual angle at a given viewing distance
 - Number and symbol sets
 - Seeded randomness so a chart can be regenerated or shared
+- Remember the last settings on the device, so a refresh or a later visit shows them again (idea U4 in `tool-ideas.md`; needs a decision on the "stores nothing" promise)
 - Multi-page tiling for wall-size charts. Today a tall chart continues onto more pages row by row, but one wider than a page is cut off
 
 ## Legal notes

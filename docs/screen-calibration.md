@@ -63,6 +63,6 @@ The page then shows pixels per inch and how far an inch in CSS is from a real in
 
 ## Ideas for later
 
-- Opt-in remembering on the device, with a clear note that it never leaves the browser, if an interactive tool needs it
-- A viewing-distance step, so sizes can be shown as visual angle as well as millimetres
+- Opt-in remembering on the device, with a clear note that it never leaves the browser, if an interactive tool needs it (part of idea U4 in `tool-ideas.md`, which also covers the settings of the other tools)
+- A viewing-distance step, so sizes can be shown as visual angle as well as inches
 - A vertical check as well as the horizontal one, for screens with non-square pixels
