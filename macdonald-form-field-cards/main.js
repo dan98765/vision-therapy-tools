@@ -1,7 +1,7 @@
 // Macdonald Form Field Cards: reads the controls, draws the card.
 
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
-import { inchLabel, mmAsInches, sizeSummary } from '../shared/format.js';
+import { inchLabel, letterUseNote, mmAsInches, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { pageNote } from '../shared/paper.js';
 import { inchesToMm } from '../shared/units.js';
@@ -27,6 +27,7 @@ const els = {
   scaleFactor: byId('scale-factor'),
   scaleFactorVal: byId('scale-factor-val'),
   letterSet: byId('letter-set'),
+  noRepeats: byId('no-repeats'),
   showDot: byId('show-dot'),
   btnGenerate: byId('btn-generate'),
   btnPrint: byId('btn-print'),
@@ -47,7 +48,9 @@ function generateCard() {
 
   const geo = cardGeometry(inchesToMm(parseFloat(els.cardSize.value)), parseFloat(els.aspectRatio.value));
   const { k, rings } = fitRings(numRings, lettersPerRing, baseEm, scaleFactor, geo.available);
-  const letters = placeLetters(rings, lettersPerRing, geo.cx, geo.cy, LETTER_SETS[els.letterSet.value]);
+  const pool = LETTER_SETS[els.letterSet.value];
+  const noRepeats = els.noRepeats.checked;
+  const letters = placeLetters(rings, lettersPerRing, geo.cx, geo.cy, pool, Math.random, { noRepeats });
 
   els.card.style.width = geo.width + 'mm';
   els.card.style.height = geo.height + 'mm';
@@ -74,6 +77,7 @@ function generateCard() {
     els.note,
     sizeSummary(geo.width, geo.height) +
       page.text +
+      (noRepeats ? ' ' + letterUseNote(letters.length, pool.length) : '') +
       (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '') +
       (tooSmall
         ? ` Warning: the innermost letters are only ${mmAsInches(smallestMm, 3)} tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`

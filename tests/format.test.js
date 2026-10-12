@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inchLabel, mmAsInches, sizeSummary } from '../shared/format.js';
+import { inchLabel, letterUseNote, mmAsInches, sizeSummary } from '../shared/format.js';
 import { MM_PER_INCH, inchesToMm, mmToInches } from '../shared/units.js';
 
 describe('sizeSummary', () => {
@@ -30,5 +30,24 @@ describe('units', () => {
     expect(MM_PER_INCH).toBe(25.4);
     expect(inchesToMm(8.5)).toBeCloseTo(215.9, 10);
     expect(mmToInches(inchesToMm(0.08))).toBeCloseTo(0.08, 12);
+  });
+});
+
+describe('letterUseNote', () => {
+  it('says when every letter is used once', () => {
+    expect(letterUseNote(26, 26)).toBe('All 26 letters are used once each.');
+  });
+
+  it('says how many letters are not shown when the card is smaller than the alphabet', () => {
+    expect(letterUseNote(24, 26)).toBe('No letter repeats. 24 of the 26 letters are used, so 2 do not appear.');
+  });
+
+  it('says what repeats when the card is bigger than the alphabet', () => {
+    expect(letterUseNote(30, 26)).toContain('every letter appears and 4 letters appear twice');
+    expect(letterUseNote(27, 26)).toContain('1 letter appears twice');
+    expect(letterUseNote(52, 26)).toContain('every letter appears 2 times');
+    expect(letterUseNote(70, 26)).toContain('every letter appears 2 or 3 times');
+    expect(letterUseNote(30, 5)).toContain('every letter appears 6 times');
+    expect(letterUseNote(30, 26)).toContain('Use 26 places or fewer');
   });
 });

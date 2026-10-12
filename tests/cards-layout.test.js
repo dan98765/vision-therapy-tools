@@ -131,3 +131,39 @@ describe('placeLetters', () => {
     expect(checked).toBe(3 * 5 * 3 * 3 * 2 * 2 * 2);
   });
 });
+
+describe('placeLetters without repeats', () => {
+  function place(settings, random, noRepeats) {
+    const geo = cardGeometry(settings.longSide, settings.ratio);
+    const fit = fitRings(settings.rings, settings.perRing, settings.baseMm / CAP_HEIGHT, settings.scale, geo.available);
+    return placeLetters(fit.rings, settings.perRing, geo.cx, geo.cy, UPPER, random, { noRepeats });
+  }
+
+  it('shows no letter twice anywhere on a card that fits the alphabet', () => {
+    for (let seed = 0; seed < 50; seed++) {
+      const letters = place({ ...DEFAULTS, rings: 4, perRing: 6 }, seeded(seed), true); // 24 places
+      expect(new Set(letters.map(l => l.letter)).size).toBe(24);
+    }
+  });
+
+  it('shows all 26 letters once on a card of 26 places', () => {
+    const letters = place({ ...DEFAULTS, rings: 2, perRing: 13 }, seeded(4), true);
+    expect(letters).toHaveLength(26);
+    expect(letters.map(l => l.letter).sort()).toEqual(UPPER);
+  });
+
+  it('repeats only after every letter is used when the card has more places than letters', () => {
+    const letters = place(DEFAULTS, seeded(8), true).map(l => l.letter); // 30 places
+    expect(new Set(letters).size).toBe(26);
+  });
+
+  it('puts the same letters in the same places when repeats are allowed, as before', () => {
+    const a = place(DEFAULTS, seeded(3), false);
+    expect(a).toEqual(build(DEFAULTS, seeded(3)).letters);
+  });
+
+  it('keeps the same positions and sizes either way, so the layout checks still apply', () => {
+    const geometry = letters => letters.map(({ font }) => font);
+    expect(geometry(place(DEFAULTS, seeded(6), true))).toEqual(geometry(place(DEFAULTS, seeded(6), false)));
+  });
+});

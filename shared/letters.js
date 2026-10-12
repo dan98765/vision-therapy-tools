@@ -31,3 +31,21 @@ export function pickLetters(pool, count, random = Math.random) {
   }
   return result.slice(0, count);
 }
+
+// Letters for several groups (the rings of a card) dealt from one pool, so a letter is not used a second
+// time anywhere until every letter in the pool has been used once. `counts` is how many letters each group
+// needs. A group never repeats a letter inside itself unless it needs more letters than the pool holds.
+export function dealLetters(pool, counts, random = Math.random) {
+  let bag = []; // letters not yet dealt in the current pass through the pool
+  return counts.map(count => {
+    const group = [];
+    while (group.length < count) {
+      if (bag.length === 0) {
+        const fresh = pool.filter(letter => !group.includes(letter));
+        bag = shuffle(fresh.length > 0 ? fresh : pool, random);
+      }
+      group.push(bag.pop());
+    }
+    return group;
+  });
+}

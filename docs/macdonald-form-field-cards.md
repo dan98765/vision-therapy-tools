@@ -54,9 +54,10 @@ The generator creates **new, original** cards in the same style: concentric ring
 | Base Letter Height | Capital-letter height in inches for the innermost ring (0.04 to 0.24 in 0.01 steps, default 0.08) |
 | Scale Factor | How much larger each successive ring's letters are (1.3 to 2.5, default 1.6) |
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
+| No repeated letters on the card | On by default. Letters are dealt from the chosen set across the whole card, so no letter appears twice until every letter in the set has been used. Off: each ring is picked on its own and the same letter can appear in several rings |
 | Center dot | Checkbox to show or hide the fixation circle and dot (on by default) |
 
-Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card. The default card is 5.5 x 8.5 in and fits one page. A note under the buttons shows the card's size in inches, how it will print, and any warning (letters shrunk to fit, letters too small to read, will not fit a page).
+Letters are picked at random when a card is generated. With "No repeated letters on the card" on (the default), none appears twice: a card of up to 26 places (rings times letters per ring) shows different letters, and the note under the buttons says how many of the alphabet are used. A card with more places than the set has letters (the default 5 x 6 is 30 places against 26 letters) uses every letter before repeating any, and the note says how many repeat. Consonants (21) and vowels (5) repeat sooner for the same reason. Inside one ring a letter never repeats unless the set is smaller than the ring. "Print Card" prints just the card. The default card is 5.5 x 8.5 in and fits one page. A note under the buttons shows the card's size in inches, how it will print, and any warning (letters shrunk to fit, letters too small to read, will not fit a page).
 
 ### How layout works
 

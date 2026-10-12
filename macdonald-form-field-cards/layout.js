@@ -1,7 +1,7 @@
 // Layout maths for the Macdonald Form Field Cards. No DOM access, so it can be tested.
 // All lengths are in mm; "em" means the font-size of the letter in question.
 
-import { pickLetters } from '../shared/letters.js';
+import { dealLetters, pickLetters } from '../shared/letters.js';
 
 export const BORDER_MM = 0.8;    // card border width (the CSS reads this via --border-mm)
 export const GLYPH_REACH = 0.6;  // how far a glyph extends from its center, in em
@@ -57,14 +57,18 @@ export function fitRings(numRings, perRing, baseEm, scaleFactor, available) {
   return { k: lo, rings: at(lo) };
 }
 
-// Pick letters for every ring and place them around it with a little wobble.
+// Pick letters for every ring and place them around it with a little wobble. With `noRepeats`, letters are
+// dealt from the pool across the whole card, so none appears twice until the pool has been used up; otherwise
+// each ring is picked on its own and the same letter can appear in several rings.
 // Returns [{ letter, font, x, y }] with x and y measured from the inside corner of the card.
-export function placeLetters(rings, perRing, cx, cy, pool, random = Math.random) {
+export function placeLetters(rings, perRing, cx, cy, pool, random = Math.random, { noRepeats = false } = {}) {
   const placed = [];
   const angleStep = (2 * Math.PI) / perRing;
 
-  for (const { radius, font } of rings) {
-    const letters = pickLetters(pool, perRing, random);
+  const dealt = noRepeats ? dealLetters(pool, rings.map(() => perRing), random) : null;
+
+  rings.forEach(({ radius, font }, ringIndex) => {
+    const letters = dealt ? dealt[ringIndex] : pickLetters(pool, perRing, random);
     const baseAngle = random() * 2 * Math.PI; // new rotation each generation
     const wobble = () => (random() - 0.5) * JITTER * font;
 
@@ -73,6 +77,6 @@ export function placeLetters(rings, perRing, cx, cy, pool, random = Math.random)
       const r = radius + wobble();
       placed.push({ letter, font, x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
     });
-  }
+  });
   return placed;
 }

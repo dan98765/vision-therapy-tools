@@ -7,7 +7,7 @@ Feedback received from a user of [Macdonald Form Field Cards](macdonald-form-fie
 1. An option to have **one ring moving in a circle**, and to **choose which ring**.
 2. **All letters of the alphabet should be present, with no repeated letters.**
 
-Nothing here is built yet. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
+**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The moving ring (request 1), the "use every letter once" mode (option B) and remembered settings are not. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
 
 ## Answers from the user
 
@@ -45,7 +45,13 @@ Recommendation: do **A** for every letter set, and offer **B** as a "Use every l
 - For the consonants-only (21) and vowels-only (5) sets, "all letters present" means all of that set. With 5 vowels, no repeats caps the card at 5 positions, which is below the current 9 minimum. Likely answer: allow repeats for the small sets and say so in the note.
 - Which letters go in which ring? Random is the current behaviour. If a therapist wants each letter at a known size, a fixed (or seeded) order would help; see "Seeded randomness" in the card notes.
 
-### How it would work
+### What was built
+
+Option A, as a checkbox "No repeated letters on the card", **on by default**. `dealLetters` in `shared/letters.js` deals letters from the pool across all rings, so a letter is used a second time only after every letter has been used once, and a ring never repeats a letter inside itself unless the set is smaller than the ring. `placeLetters` takes `{ noRepeats }`, and `letterUseNote` in `shared/format.js` gives the note under the buttons (all used once, how many are missing, or how many repeat). Sizes and positions are unchanged, so the clipping and overlap tests still cover it. Tests: `tests/letters.test.js`, `tests/cards-layout.test.js`, `tests/format.test.js`.
+
+The default card (5 rings of 6) has 30 places against 26 letters, so on first load the note says four letters appear twice. Equal rings cannot make exactly 26 (26 is 2 x 13, and rings hold 3 to 10), so option B would need uneven rings or a different slider range.
+
+### How it was planned to work
 
 1. Add a `dealLetters(pool, counts, random)` helper to `shared/letters.js` that shuffles the pool once and hands out `counts[i]` letters to ring *i*. Repeats happen only when the total exceeds the pool, and only after every letter has been used, so the pool is always fully used first.
 2. `placeLetters` calls it once per card instead of `pickLetters` once per ring.
