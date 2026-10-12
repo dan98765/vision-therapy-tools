@@ -161,6 +161,7 @@ describe('contentProblems', () => {
     expect(check('Use the 1234+name@users.noreply.github.com address, or me@example.com.')).toEqual([]);
     expect(check('Open ../shared/page.js and docs/tool-ideas.md')).toEqual([]);
     expect(check('The path /usr/local/bin and C:/ are not personal.')).toEqual([]);
+    expect(check('Pinned to vite@8.3.4 and actions/checkout@v4, with @eslint/css as well.')).toEqual([]);
   });
 
   it('flags a path on a personal computer', () => {

@@ -69,7 +69,8 @@ export const SCAN_SKIP = ['package-lock.json'];
 // An email address that is fine to publish: GitHub's noreply forms, or an example domain
 const SAFE_EMAIL = /^noreply@github\.com$|@(users\.noreply\.github\.com|(?:[\w-]+\.)*example(?:\.(?:com|org|net))?|(?:[\w-]+\.)*test|localhost)$/i;
 
-const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+// The last part must be letters, so a versioned package such as name@1.2.3 is not taken for an address
+const EMAIL = /[\w.+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}\b/g;
 
 const LINE_RULES = [
   { name: 'an absolute path on a personal computer', test: line => /[A-Za-z]:\\Users\\[^\\\s"'`]+|\/Users\/[A-Za-z][\w.-]*\/|\/home\/[A-Za-z][\w.-]*\//.test(line) },
