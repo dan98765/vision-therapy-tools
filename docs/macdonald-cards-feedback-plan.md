@@ -112,6 +112,7 @@ Questions to put back to the user (they change the design):
 A related idea, from the same round of feedback: the page should remember what the user last set the controls to, so a refresh or a later visit shows their previous settings. The new controls here (moving ring, speed, direction, no-repeat option) would be remembered too. This is idea U4 in [tool-ideas.md](tool-ideas.md), where the design, the choices and the tests are written down, because it applies to every chart. It is a policy decision first (the site currently says it stores nothing), so settle that before building it, and do it as one shared module rather than card by card. Two cautions for this page:
 
 - Remember the control values, not the random letters, and not whether the ring is running: a page that reloads already moving would break the "starts only when asked" rule.
+- Settings that belong to the user and not to this page, such as inches or metric, would live in the global settings idea (U5 in [tool-ideas.md](tool-ideas.md)), not be added to this page alone.
 - A saved moving-ring choice must be checked against the current ring count and fall back to None when the ring no longer exists.
 
 ## Risks and things to watch

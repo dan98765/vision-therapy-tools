@@ -46,6 +46,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | U2 | Home program sheet | Utility | S | A printable one-page schedule typed by the therapist or parent |
 | U3 | Practice log | Utility | M | Records what was done and when (a policy decision) |
 | U4 | Remembered settings | Utility | S | Each tool reopens with the settings the user last chose (a policy decision) |
+| U5 | Global settings | Utility | M | Settings for every tool at once, starting with inches or metric units |
 
 ## What every new tool must meet
 
@@ -220,7 +221,32 @@ All of these must start only when the user presses start, offer a stop, and neve
   - The settings of the cards and chart can change what a page-fit note says on load; the note must be redrawn from the restored values.
 - **Tests:** saving and restoring round-trips; a value outside the control's range or not in its list falls back to the default; corrupt or missing storage gives defaults; a blocked storage object does not throw; a version change discards old values; reset clears the saved values. A real-browser check: change settings, reload, and confirm they come back; then block storage and confirm the page still works.
 - **Effort:** S for one tool, then small for each other because the module is shared.
-- **Related:** U1 (the calibration needs remembering most), U3 (a practice log needs the same policy decision).
+- **Related:** U1 (the calibration needs remembering most), U3 (a practice log needs the same policy decision), U5 (settings that apply to every tool).
+
+### U5. Global settings
+
+- **What:** a few settings that belong to the user rather than to one chart, set once and applied by every tool. The first and clearest is **units: imperial (inches) or metric (millimetres and centimetres)**. Today every page shows inches and there is no way to change that.
+- **Candidates, roughly in order of value:**
+  - **Units.** Controls, readouts, notes and the calibration ruler follow the choice. The layout maths and CSS stay in millimetres either way, so printing is unaffected.
+  - **Paper size.** Letter or A4. The page-fit limits in `shared/paper.js` use the smaller of the two so one note fits both; knowing the real paper would let the note be exact and allow larger charts on the larger paper.
+  - **Reduced motion.** Follow the system setting by default, with an override for the tools that move (planned in [macdonald-cards-feedback-plan.md](macdonald-cards-feedback-plan.md)).
+  - **Default viewing distance**, once a tool shows sizes as a visual angle (P4).
+  - **Interface size or contrast**, for the controls only. Exercise content keeps its own sizes, and printed output is never changed by it.
+- **Where it lives:** a small control in the shared header bar (`shared/header.html`), so it is on every page and not copied into each tool. This puts the first script on the landing page, which today has none and a CSP without `script-src`; that is a deliberate widening to settle.
+- **How the units part would work:**
+  - Each length control declares its range for both systems, for example the Hart chart letter height as 0.08 to 1.2 in in 0.02 steps and as 2 to 30 mm in 0.5 steps, so that every step is a tidy number in either system. Converting the current value when the user switches means snapping it to the nearest step of the other system.
+  - One shared module (extending `shared/units.js` and `shared/format.js`) holds the unit definitions and the text helpers, which take the chosen unit. Tools stop calling inch-only helpers directly.
+  - Facts that the HTML repeats (the reference options on the calibration page, the custom length limits, slider attributes) must be written for both units, and the existing HTML-versus-constants tests extended to check both. This is the main cost: it roughly doubles the places a number can drift.
+  - The calibration ruler needs a metric version again (centimetre, half-centimetre and millimetre ticks, and a 50 mm square) beside the inch one.
+- **Starting value:** the current behaviour (inches) is the default. Guessing from the browser's language is possible but unreliable; decide whether to guess at all.
+- **Where the choice is kept:** this is the same problem as U4 and should use the same mechanism, so a user who picks metric does not have to pick it again on every page and visit. Without U4 the choice would reset on each page load, which is not usable. A no-storage alternative is a URL parameter (for example `?units=mm`) that the header links carry from page to page, which is shareable but lost when someone types a page address. Decide U4 first.
+- **Choices to make:**
+  - Which settings are really global and which belong to one tool. Keep the list short; a setting only a single tool uses stays on that tool.
+  - Whether to add a settings panel or only the units control for now.
+  - Wording: "Imperial / Metric" or "Inches / Millimetres". The second says what the user will see.
+- **Tests:** the conversion round trip and snap-to-step for every length control; each length control has a definition for both units and its HTML attributes agree with them; the text helpers give the right unit label and decimals in each; the header control is on every page and the pages test still passes with the extra script allowed by the CSP; a real-browser check that switching units changes every readout, note and the ruler, and that a printed chart is the same size either way.
+- **Effort:** M for units across the three existing tools. Later settings are small.
+- **Related:** U4 (storage and the policy decision), P4 (viewing distance).
 
 ## Shared building blocks
 
@@ -232,6 +258,7 @@ Several ideas would need the same pieces. Building them once, in `shared/` with 
 | SVG helpers | P1, P2, P5, P6, P7 | A small helper to build strokes and shapes in mm. SVG shapes are content, so they print without "background graphics"; confirm with the print check. |
 | Screen calibration value | I1, I2, I4, I5 | See U1. |
 | Remembered settings | Hart chart, cards, calibration, any new tool | See U4. One shared module, one policy decision. |
+| Global settings (units and others) | Every tool | See U5. Shares the storage of U4. Unit definitions go in `shared/units.js`. |
 | Animation loop | I1 to I5 | One helper that runs on the browser's frame timer, starts only on request, stops cleanly, and checks `prefers-reduced-motion`. |
 | Audio tick | I2, I3, I6 | The browser's audio API needs no network. |
 | Prefill from the URL | P3, P4 | Carry only sizes, never personal details. |
@@ -268,6 +295,7 @@ These depend on physical equipment, so a page could only describe or prepare for
 - Is the main use printing for home practice, or on-screen practice?
 - Who is the audience: a therapist preparing materials, or people practising at home?
 - Should the site ever store anything (U1 calibration, U3 practice log, U4 remembered settings), or stay a store-nothing site? Session-only storage would be a middle path, but it is still storage.
+- Should there be a global units setting (inches or metric), and should it be remembered (U5, which depends on U4)?
 - Are red/green glasses and other equipment realistic to assume?
 - Should anything be offered to children directly, or only to adults who then guide them?
 
