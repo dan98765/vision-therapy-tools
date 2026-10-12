@@ -1,6 +1,6 @@
 # Security Policy
 
-These are static, client-side pages. They have no backend, accounts, tracking or network requests, and they store nothing. Each page ships with a Content-Security-Policy that blocks all network access and allows only scripts and styles from the site itself. The only dependencies (Vite and Vitest) are used to build and test; none of their code ships in the built pages. Dependabot alerts, Dependabot security updates and weekly Dependabot version updates are enabled.
+These are static, client-side pages. They have no backend, accounts, tracking or network requests, and the only thing they store is each tool's control settings (slider and menu values, and the screen calibration) in the browser's own `localStorage` on the visitor's device. That data is never sent anywhere (the Content-Security-Policy blocks all network access), is read back only after being checked against each control's allowed values, and is cleared by each tool's Reset button or by clearing site data. Each page ships with a Content-Security-Policy that blocks all network access and allows only scripts and styles from the site itself. The only dependencies (Vite and Vitest) are used to build and test; none of their code ships in the built pages. Dependabot alerts, Dependabot security updates and weekly Dependabot version updates are enabled.
 
 ## Reporting a vulnerability
 

@@ -92,6 +92,17 @@ export function describeCalibration(pxPerMmValue) {
   };
 }
 
+// A calibration read back from storage, or null if it is not usable. Saved data is not trusted: both numbers
+// must be finite, the pixels per mm must lie in the range the box slider can reach, and the device pixel
+// ratio must be plausible.
+export function restoredCalibration(saved) {
+  if (typeof saved !== 'object' || saved === null) return null;
+  const { ppmm, ratio } = saved;
+  const ppmmOk = Number.isFinite(ppmm) && ppmm >= NOMINAL_PX_PER_MM * BOX_RANGE.min && ppmm <= NOMINAL_PX_PER_MM * BOX_RANGE.max;
+  const ratioOk = Number.isFinite(ratio) && ratio >= 0.1 && ratio <= 10;
+  return ppmmOk && ratioOk ? { ppmm, ratio } : null;
+}
+
 // The reference length to use: a built-in one, or the user's number kept within the allowed range.
 // A blank or non-numeric custom length gives the default.
 export function referenceLength(key, customMm) {

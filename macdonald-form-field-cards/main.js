@@ -3,10 +3,12 @@
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
 import { inchLabel, letterUseNote, mmAsInches, ringCountsNote, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
+import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
 import { inchesToMm } from '../shared/units.js';
 import { BORDER_MM, cardGeometry, fitRings, placeLetters, ringCounts } from './layout.js';
 import { advanceAngle, secondsPerTurn, turnedPosition } from './motion.js';
+import { REMEMBERED } from './remembered.js';
 
 const LETTER_SETS = {
   all: UPPER,
@@ -38,6 +40,7 @@ const els = {
   btnGenerate: byId('btn-generate'),
   btnMotion: byId('btn-motion'),
   btnPrint: byId('btn-print'),
+  btnResetSettings: byId('btn-reset-settings'),
   note: byId('card-note'),
   motionNote: byId('motion-note'),
 };
@@ -226,6 +229,16 @@ for (const input of [els.rings, els.lettersPerRing, els.cardSize, els.baseLetter
 }
 els.btnGenerate.addEventListener('click', generateCard);
 bindPrint(els.btnPrint);
+
+// Controls come back as the user last left them, and are saved on this device as they change
+const remember = rememberControls('macdonald-form-field-cards', REMEMBERED);
+remember.restore();
+remember.watch();
+els.btnResetSettings.addEventListener('click', () => {
+  remember.reset();
+  syncDisplays();
+  generateCard();
+});
 
 syncDisplays();
 generateCard();

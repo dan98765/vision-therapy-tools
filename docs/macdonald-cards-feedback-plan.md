@@ -7,7 +7,7 @@ Feedback received from a user of [Macdonald Form Field Cards](macdonald-form-fie
 1. An option to have **one ring moving in a circle**, and to **choose which ring**.
 2. **All letters of the alphabet should be present, with no repeated letters.**
 
-**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The "use every letter once" mode (option B) is built too ("Use every letter once" below). The moving ring (request 1) is built too (see "Request 1" below). Remembered settings are not. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
+**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The "use every letter once" mode (option B) is built too ("Use every letter once" below). The moving ring (request 1) is built too (see "Request 1" below). Remembered settings are built too (see "Remembering the settings" below). This plan is complete. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
 
 ## Answers from the user
 
@@ -120,6 +120,8 @@ Questions to put back to the user (they change the design):
 5. Update the card notes, the README row if the description changes, and the "Ideas for later" list. Remembered settings (above) is a separate step after these.
 
 ## Remembering the settings
+
+**Built**, as one shared module for every tool (idea U4 in [tool-ideas.md](tool-ideas.md), where the status is). For this page: every control is remembered including the speed and direction of the moving ring, and the two cautions below were followed. The moving-ring choice is not remembered at all (the rings on offer depend on the card that was drawn, so there is nothing safe to restore), and nothing is ever restored as running. The policy decision was made: settings are kept on the device by default, and the README, `SECURITY.md` and the landing page say so. The text below is the original plan.
 
 A related idea, from the same round of feedback: the page should remember what the user last set the controls to, so a refresh or a later visit shows their previous settings. The new controls here (moving ring, speed, direction, no-repeat option) would be remembered too. This is idea U4 in [tool-ideas.md](tool-ideas.md), where the design, the choices and the tests are written down, because it applies to every chart. It is a policy decision first (the site currently says it stores nothing), so settle that before building it, and do it as one shared module rather than card by card. Two cautions for this page:
 

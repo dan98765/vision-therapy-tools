@@ -50,7 +50,7 @@ The page then shows pixels per inch and how far an inch in CSS is from a real in
 ## Gotchas
 
 - **It is valid only for the current browser zoom and display.** Zooming the page, resizing between screens, or dragging the window to another monitor changes the pixel ratio. After you adjust the box, the page watches the device pixel ratio (through a media query, and on window resize) and shows an amber warning if it changes, which covers browser zoom and moving the window to a screen with a different ratio. It cannot see every change, for example a different monitor with the same pixel ratio, so match the box again whenever the setup changes.
-- **Nothing is stored.** The value lives only on this page while it is open. A future tool that needs the calibration would need it passed in or stored, which is a deliberate decision (see "Open decision" under U1 in [tool-ideas.md](tool-ideas.md)). The README and `SECURITY.md` say the site stores nothing, so any storage would be opt-in and documented.
+- **The calibration and the reference choice are remembered on this device** (`shared/settings.js`, in the browser's own `localStorage`, never sent anywhere). Reset forgets the calibration. A remembered calibration is only trusted while the browser zoom and display are what they were: the page saves the device pixel ratio next to it, and the existing stale check shows the amber "match the box again" note at once if it differs. What is read back is checked first (`restoredCalibration`: finite numbers, pixels per mm inside the slider's reach, a believable ratio) and ignored if it fails. After restoring, the note starts "Restored from your last visit". It cannot see a move to another monitor with the same pixel ratio, which was already a limit. This is also how a future on-screen tool would get the value (see U1 in [tool-ideas.md](tool-ideas.md)).
 - **A card is edge to edge.** Measure the whole width of the card including its rounded corners, not the printed area.
 - **Precision is limited.** With a card, one pixel is about 0.3% of the width, and holding an object flat against glass and lining up edges by eye adds more. Expect an accuracy of about a percent or two, not better. For work that needs more, measure on the actual screen.
 - **Some screens and browsers scale in ways a page cannot see.** Display scaling set in the operating system is normally included in the pixel ratio, but projectors, mirrored screens and remote desktops may not report their real size.
@@ -63,6 +63,5 @@ The page then shows pixels per inch and how far an inch in CSS is from a real in
 
 ## Ideas for later
 
-- Opt-in remembering on the device, with a clear note that it never leaves the browser, if an interactive tool needs it (part of idea U4 in `tool-ideas.md`, which also covers the settings of the other tools)
 - A viewing-distance step, so sizes can be shown as visual angle as well as inches
 - A vertical check as well as the horizontal one, for screens with non-square pixels

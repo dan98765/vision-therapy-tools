@@ -73,6 +73,10 @@ Letters are picked at random when a card is generated. With "No repeated letters
 - Rings can hold different numbers of letters: `layoutRings`, `fitRings` and `placeLetters` take either one number or an array with a count per ring, and `ringCounts` works out the array for "Use every letter once". The tests sweep sizes, shapes, ring counts and all three letter sets for clipping and overlap.
 - Letters are positioned relative to the inside of the card border, so measure from the padding box (`BORDER_MM` in `layout.js`) or letters drift off-center from the fixation dot. `main.js` passes `BORDER_MM` to the CSS as `--border-mm`, so the border width is defined once.
 
+### Remembered settings
+
+The controls are remembered on this device (`remembered.js` lists them; `shared/settings.js` and `shared/remember.js` do the work) and come back when the page is opened again, including the speed and direction of the moving ring. Not remembered: the card's random letters, the moving-ring choice (the choices depend on the card that was drawn) and whether a ring is turning, so a page never opens with something already moving. **Reset settings** clears everything and puts the defaults back. A saved value that no longer fits its control is ignored, and a missing, blocked or corrupt store just means the defaults.
+
 ### The moving ring
 
 - Each letter keeps the distance from the center it was drawn at and is moved round it, not rotated, so letters stay upright. The maths (`advanceAngle`, `turnedPosition`) is in `motion.js`, and `placeLetters` returns each letter's `ring`, `angle` and `r` for it.
@@ -96,7 +100,6 @@ Letters are picked at random when a card is generated. With "No repeated letters
 - Grey card background option, matching the traditional cards. Browsers do not print backgrounds by default, so this needs a print-safe approach (or an instruction to turn on background graphics) and would have to be an exception to the no-backgrounds rule in `CLAUDE.md`
 - Choose letter size by visual angle at a given viewing distance
 - Seeded randomness so a given card can be regenerated or shared
-- Remember the last settings on the device (idea U4 in `tool-ideas.md`; needs a decision on the "stores nothing" promise)
 - Reverse the direction each lap, or turn more than one ring at once (not asked for yet)
 
 ## Legal notes

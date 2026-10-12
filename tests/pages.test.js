@@ -104,6 +104,25 @@ describe.each(exercises)('exercise %s', name => {
 // Browsers drop background colours and images when printing unless the user turns on "background
 // graphics", so an exercise must not depend on them: the fixation dot once vanished from printouts
 // for exactly this reason. Draw shapes with borders or text; a white or transparent background is fine.
+// Remembering the controls is part of every exercise (shared/settings.js), including copies of _template/
+describe.each(folders)('remembered settings in %s', name => {
+  const main = read(`${name}/main.js`);
+  const html = read(`${name}/index.html`);
+
+  it('lists the controls it remembers and uses them', () => {
+    expect(existsSync(join(root, name, 'remembered.js'))).toBe(true);
+    expect(main).toContain("from './remembered.js'");
+    expect(main).toContain('rememberControls(');
+  });
+
+  it('has a Reset button for them and says where the settings are kept', () => {
+    // The calibration page's own Reset button also forgets what it saved
+    expect(html).toMatch(/id="btn-reset(-settings)?"/);
+    expect(html).toMatch(/remembered in this browser only/);
+    expect(html).toMatch(/nothing is sent anywhere/);
+  });
+});
+
 describe.each(folders)('print styles in %s', name => {
   it('does not depend on background colours', () => {
     const css = read(`${name}/style.css`).replace(/\/\*[\s\S]*?\*\//g, ''); // ignore comments

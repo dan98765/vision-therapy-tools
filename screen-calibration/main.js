@@ -1,5 +1,7 @@
 // Screen calibration: the user matches an on-screen box to an object of known size, and the page
-// works out pixels per real millimetre and draws a ruler to check it. Nothing is stored.
+// works out pixels per real millimetre and draws a ruler to check it. The calibration and the reference choice
+// are remembered on this device (shared/settings.js), and a calibration is only trusted while the browser zoom
+// and display are the ones it was made for.
 
 import {
   NOMINAL_PX_PER_MM,
@@ -11,10 +13,13 @@ import {
   mmToPx,
   pxPerMm,
   referenceLength,
+  restoredCalibration,
   stepPrecisionPercent,
 } from '../shared/calibration.js';
 import { byId, setNote } from '../shared/page.js';
+import { rememberControls } from '../shared/remember.js';
 import { inchesToMm } from '../shared/units.js';
+import { REMEMBERED } from './remembered.js';
 import { TICK_IN, rulerTicks } from './ruler.js';
 
 const DEFAULT_BOX_HEIGHT_PX = 56; // for references that have no known height
@@ -34,6 +39,10 @@ const DRAWING = {
 };
 
 const NOTES = {
+  restored: {
+    text: 'Restored from your last visit on this device, and calibrated for this browser zoom and display. Check it with the ruler below. If you zoom or move this window to another screen, match the box again.',
+    warn: false,
+  },
   unadjusted: {
     text: 'Not adjusted yet: this is the size your browser assumes, which is usually a little off. Match the box to your object.',
     warn: false,
@@ -71,7 +80,15 @@ const state = {
   ppmm: NOMINAL_PX_PER_MM,
   adjusted: false,
   ratioWhenAdjusted: window.devicePixelRatio, // to notice a later zoom or display change
+  restored: false, // the calibration came from an earlier visit, not from matching the box this time
 };
+
+const remember = rememberControls('screen-calibration', REMEMBERED);
+
+// Keep the calibration on this device, or forget it
+function persistCalibration() {
+  remember.setExtra('calibration', state.adjusted ? { ppmm: state.ppmm, ratio: state.ratioWhenAdjusted } : null);
+}
 
 // The custom length is typed in inches. A blank box is passed on as blank, so it gets the default.
 function customLengthMm() {
@@ -105,7 +122,9 @@ function adjust(widthPx) {
   els.boxWidth.value = String(clamped);
   state.ppmm = pxPerMm(clamped, referenceMm());
   state.adjusted = true;
+  state.restored = false;
   state.ratioWhenAdjusted = window.devicePixelRatio;
+  persistCalibration();
   render();
 }
 
@@ -182,7 +201,8 @@ function updateNote() {
     calibratedRatio: state.ratioWhenAdjusted,
     currentRatio: window.devicePixelRatio,
   });
-  setNote(els.note, NOTES[status].text, NOTES[status].warn);
+  const note = status === 'calibrated' && state.restored ? NOTES.restored : NOTES[status];
+  setNote(els.note, note.text, note.warn);
 }
 
 function render() {
@@ -200,6 +220,7 @@ els.wider.addEventListener('click', () => adjust(Number(els.boxWidth.value) + 1)
 function referenceChanged() {
   els.customGroup.hidden = els.reference.value !== 'custom';
   syncSlider();
+  if (state.adjusted) persistCalibration(); // the slider may have moved the calibration to fit its range
   render();
 }
 els.reference.addEventListener('change', referenceChanged);
@@ -208,6 +229,8 @@ els.customLength.addEventListener('input', referenceChanged);
 els.reset.addEventListener('click', () => {
   state.ppmm = NOMINAL_PX_PER_MM;
   state.adjusted = false;
+  state.restored = false;
+  persistCalibration();
   syncSlider();
   render();
 });
@@ -226,5 +249,16 @@ function watchPixelRatio() {
 window.addEventListener('resize', updateNote);
 watchPixelRatio();
 
-syncSlider();
-render();
+// Bring back the reference choice and the calibration from the last visit, if they are still valid. A
+// calibration made at another zoom or on another display shows the warning straight away, because its
+// pixel ratio differs from the current one.
+const saved = remember.restore();
+const calibration = restoredCalibration(saved.calibration);
+if (calibration) {
+  state.ppmm = calibration.ppmm;
+  state.adjusted = true;
+  state.restored = true;
+  state.ratioWhenAdjusted = calibration.ratio;
+}
+remember.watch();
+referenceChanged();

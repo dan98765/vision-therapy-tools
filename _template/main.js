@@ -4,6 +4,8 @@
 
 import { inchLabel } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
+import { rememberControls } from '../shared/remember.js';
+import { REMEMBERED } from './remembered.js';
 
 const els = {
   exercise: byId('exercise'),
@@ -11,6 +13,7 @@ const els = {
   sizeVal: byId('size-val'),
   btnGenerate: byId('btn-generate'),
   btnPrint: byId('btn-print'),
+  btnResetSettings: byId('btn-reset-settings'),
   note: byId('exercise-note'),
 };
 
@@ -27,6 +30,16 @@ function syncDisplays() {
 els.size.addEventListener('input', syncDisplays);
 els.btnGenerate.addEventListener('click', generate);
 bindPrint(els.btnPrint);
+
+// Controls come back as the user last left them. Name this exercise's folder (not 'template') below.
+const remember = rememberControls('template', REMEMBERED);
+remember.restore();
+remember.watch();
+els.btnResetSettings.addEventListener('click', () => {
+  remember.reset();
+  syncDisplays();
+  generate();
+});
 
 syncDisplays();
 generate();

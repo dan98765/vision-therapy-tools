@@ -18,6 +18,7 @@ import {
   pxPerMm,
   pxToMm,
   referenceLength,
+  restoredCalibration,
   stepPrecisionPercent,
 } from '../shared/calibration.js';
 import { inchesToMm, mmToInches } from '../shared/units.js';
@@ -161,6 +162,40 @@ describe('references', () => {
 
   it('rejects an unknown reference', () => {
     expect(() => referenceLength('banana')).toThrow(RangeError);
+  });
+});
+
+describe('restoredCalibration', () => {
+  it('accepts a calibration inside the range the slider can reach', () => {
+    const saved = { ppmm: 4.2, ratio: 1.25 };
+    expect(restoredCalibration(saved)).toEqual(saved);
+    expect(restoredCalibration({ ppmm: NOMINAL_PX_PER_MM * BOX_RANGE.min, ratio: 1 })).not.toBeNull();
+    expect(restoredCalibration({ ppmm: NOMINAL_PX_PER_MM * BOX_RANGE.max, ratio: 1 })).not.toBeNull();
+  });
+
+  it('ignores one outside that range, or with a ratio that cannot be real', () => {
+    for (const bad of [
+      { ppmm: NOMINAL_PX_PER_MM * 0.4, ratio: 1 },
+      { ppmm: NOMINAL_PX_PER_MM * 2.1, ratio: 1 },
+      { ppmm: 0, ratio: 1 },
+      { ppmm: -3, ratio: 1 },
+      { ppmm: 4, ratio: 0 },
+      { ppmm: 4, ratio: 50 },
+    ]) {
+      expect(restoredCalibration(bad), JSON.stringify(bad)).toBeNull();
+    }
+  });
+
+  it('ignores anything that is not a pair of numbers', () => {
+    for (const bad of [null, undefined, 'text', 5, [], {}, { ppmm: '4', ratio: 1 }, { ppmm: 4 }, { ppmm: NaN, ratio: 1 }, { ppmm: 4, ratio: Infinity }]) {
+      expect(restoredCalibration(bad), String(bad)).toBeNull();
+    }
+  });
+
+  it('keeps a restored calibration stale when the zoom or display differs from when it was made', () => {
+    const { ratio } = restoredCalibration({ ppmm: 4, ratio: 1.25 });
+    expect(calibrationStatus({ adjusted: true, calibratedRatio: ratio, currentRatio: 1.25 })).toBe('calibrated');
+    expect(calibrationStatus({ adjusted: true, calibratedRatio: ratio, currentRatio: 1 })).toBe('stale');
   });
 });
 

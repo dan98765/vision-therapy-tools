@@ -62,13 +62,16 @@ The page generates a chart of random letters, laid out internally in millimetres
 - **Letter height is cap height** (about 0.716 of the font size for Arial), including for lowercase letters, so lowercase letters look smaller than uppercase at the same setting.
 - **On-screen size is approximate**, because CSS `mm` is exact in print but screens vary. A chart wider than the window scrolls sideways.
 
+### Remembered settings
+
+The controls are remembered on this device (`remembered.js` lists them; `shared/settings.js` and `shared/remember.js` do the work) and come back when the page is opened again. The letters are not kept, so a chart is new each time. **Reset settings** clears them and puts the defaults back. A saved value that no longer fits its control (outside the slider's range, an option that is gone) is ignored, and a missing, blocked or corrupt store just means the defaults.
+
 ### Ideas for later
 
 - Print a matching large and small pair in one click
 - Choose letter size by visual angle at a given viewing distance
 - Number and symbol sets
 - Seeded randomness so a chart can be regenerated or shared
-- Remember the last settings on the device, so a refresh or a later visit shows them again (idea U4 in `tool-ideas.md`; needs a decision on the "stores nothing" promise)
 - Multi-page tiling for wall-size charts. Today a tall chart continues onto more pages row by row, but one wider than a page is cut off
 
 ## Legal notes

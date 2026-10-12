@@ -45,7 +45,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | U1 | Screen calibration | Utility | S | Matches an on-screen box to a credit card to get pixels per mm (built) |
 | U2 | Home program sheet | Utility | S | A printable one-page schedule typed by the therapist or parent |
 | U3 | Practice log | Utility | M | Records what was done and when (a policy decision) |
-| U4 | Remembered settings | Utility | S | Each tool reopens with the settings the user last chose (a policy decision) |
+| U4 | Remembered settings | Utility | S | Each tool reopens with the settings the user last chose (built) |
 | U5 | Global settings | Utility | M | Settings for every tool at once, starting with inches or metric units |
 
 ## What every new tool must meet
@@ -56,7 +56,7 @@ From `CLAUDE.md`, so an idea is costed with these in mind:
 - Lay out in millimetres, and show inches to the user (controls, readouts and notes; see the units note in `CLAUDE.md`). Printable tools must pass the real print check (page count, true size, nothing cut off) on Letter and A4, with default print settings, so no shape may rely on a background colour.
 - Use `shared/paper.js` to tell the user when something will not fit a page.
 - Moving content needs a clear start and stop, must respect `prefers-reduced-motion`, and must not flash faster than 3 Hz.
-- No network requests, no new runtime dependencies, strict CSP. Anything that stores data conflicts with the "stores nothing" statement in the README and `SECURITY.md` and needs a deliberate decision.
+- No network requests, no new runtime dependencies, strict CSP. The site stores only each tool's control settings, on the device (see U4). Anything more, such as a practice log, needs a deliberate decision and an update to the README and `SECURITY.md`.
 - The footer disclaimer stays on every page, and the notes file for the tool states where its description comes from.
 
 ## Printable generators
@@ -187,10 +187,10 @@ All of these must start only when the user presses start, offer a stop, and neve
 
 ### U1. Screen calibration
 
-- **Status:** built as `screen-calibration/` (see [screen-calibration.md](screen-calibration.md)). The first version stores nothing.
+- **Status:** built as `screen-calibration/` (see [screen-calibration.md](screen-calibration.md)). The calibration is remembered on the device (see U4).
 - **What:** the user slides a box until it matches the width of a credit card, which is 85.60 mm wide under the ID-1 card standard, and the page works out pixels per millimetre for that screen.
 - **Why:** without it, anything shown at "true size" on screen is only approximate. It is the foundation for the interactive tools.
-- **Open decision:** the value must be remembered somewhere between pages once an on-screen tool needs it. The first version stores nothing; opt-in remembering on the device is the likely next step. See the questions below about storage.
+- **Remembering it:** settled by U4. The calibration is kept on the device with the zoom it was made at, so an on-screen tool can read it back and show the stale warning when the zoom or display has changed.
 - **Tests:** the conversion functions.
 
 ### U2. Home program sheet
@@ -201,9 +201,11 @@ All of these must start only when the user presses start, offer a stop, and neve
 ### U3. Practice log
 
 - **What:** a record of what was done and when.
-- **Policy decision:** this repo says it stores nothing. A log needs local storage, a clear statement that it never leaves the device, and updates to the README and `SECURITY.md`. Decide it on purpose.
+- **Policy decision:** the site stores only each tool's control settings (U4). A practice log is more personal data: it needs local storage, a clear statement that it never leaves the device, a way to see and delete it, and updates to the README and `SECURITY.md`. Decide it on purpose.
 
 ### U4. Remembered settings
+
+**Status: built.** `shared/settings.js` (tested logic and the storage wrapper), `shared/remember.js` (the controls), a `remembered.js` list and a Reset settings button in every exercise, and a test that fails an exercise without them. It was built **on by default**, not opt-in, because the point is that a refresh or a later visit shows the previous settings; the README, `SECURITY.md`, the landing page and each tool now say plainly what is kept and where. The screen calibration is kept too, with its device pixel ratio so a different zoom or display shows the stale warning. The text below is the original plan; the "choices to make" were settled as: on by default, one shared module, version number 1, keys named `vision-therapy-tools:<tool>`, and the notes redrawn from the restored values because the page draws after restoring.
 
 - **What:** each tool remembers what the user last set its controls to, so a refresh or a later visit shows the same settings instead of the defaults. It would cover the sliders, selects and checkboxes of the Hart chart, the Macdonald cards and the screen calibration (once the calibration is something to keep), and the moving-ring and letter options planned in [macdonald-cards-feedback-plan.md](macdonald-cards-feedback-plan.md).
 - **How it could work:**
@@ -294,7 +296,7 @@ These depend on physical equipment, so a page could only describe or prepare for
 
 - Is the main use printing for home practice, or on-screen practice?
 - Who is the audience: a therapist preparing materials, or people practising at home?
-- Should the site ever store anything (U1 calibration, U3 practice log, U4 remembered settings), or stay a store-nothing site? Session-only storage would be a middle path, but it is still storage.
+- U4 settled that the site may keep a tool's control settings on the device. Is a practice log (U3), which is more personal, acceptable too, or does the site stop at settings?
 - Should there be a global units setting (inches or metric), and should it be remembered (U5, which depends on U4)?
 - Are red/green glasses and other equipment realistic to assume?
 - Should anything be offered to children directly, or only to adults who then guide them?

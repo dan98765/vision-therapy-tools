@@ -2,9 +2,11 @@
 
 import { inchLabel, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
+import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
 import { inchesToMm } from '../shared/units.js';
 import { LETTER_SETS, buildGrid, gridLayout } from './grid.js';
+import { REMEMBERED } from './remembered.js';
 
 const els = {
   chart: byId('chart'),
@@ -21,6 +23,7 @@ const els = {
   showColumnNumbers: byId('show-column-numbers'),
   btnGenerate: byId('btn-generate'),
   btnPrint: byId('btn-print'),
+  btnResetSettings: byId('btn-reset-settings'),
   note: byId('chart-note'),
 };
 
@@ -103,6 +106,16 @@ for (const input of [els.rows, els.cols, els.letterSet]) {
 }
 els.btnGenerate.addEventListener('click', generate);
 bindPrint(els.btnPrint);
+
+// Controls come back as the user last left them, and are saved on this device as they change
+const remember = rememberControls('hart-chart', REMEMBERED);
+remember.restore();
+remember.watch();
+els.btnResetSettings.addEventListener('click', () => {
+  remember.reset();
+  syncDisplays();
+  generate();
+});
 
 syncDisplays();
 generate();
