@@ -58,3 +58,61 @@ export function commitProblems(commit, owner) {
   }
   return problems;
 }
+
+// ── Content of the lines being added ─────────────────────
+// This repo is public and history is permanent, so a commit must not add personal details, secrets or
+// leftover merge markers. Only the lines a commit adds are checked, not what is already there.
+
+// Files whose text is not written by hand
+export const SCAN_SKIP = ['package-lock.json'];
+
+// An email address that is fine to publish: GitHub's noreply forms, or an example domain
+const SAFE_EMAIL = /^noreply@github\.com$|@(users\.noreply\.github\.com|(?:[\w-]+\.)*example(?:\.(?:com|org|net))?|(?:[\w-]+\.)*test|localhost)$/i;
+
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+
+const LINE_RULES = [
+  { name: 'an absolute path on a personal computer', test: line => /[A-Za-z]:\\Users\\[^\\\s"'`]+|\/Users\/[A-Za-z][\w.-]*\/|\/home\/[A-Za-z][\w.-]*\//.test(line) },
+  { name: 'an email address that is not a noreply or example address', test: line => (line.match(EMAIL) ?? []).some(email => !SAFE_EMAIL.test(email)) },
+  { name: 'something that looks like an access token or key', test: line => /\b(?:ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|\bAKIA[0-9A-Z]{16}\b|xox[abprs]-[A-Za-z0-9-]{10,}|\bsk-[A-Za-z0-9]{20,}|-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----/.test(line) },
+  { name: 'a merge conflict marker', test: line => /^(?:<{7}|>{7})(?: |$)/.test(line) },
+];
+
+// Reads `git diff --cached --unified=0` and returns [{ path, lines: [{ number, text }] }] for the added lines.
+export function addedLines(diff) {
+  const files = [];
+  let file = null;
+  let inHeader = false; // between "diff --git" and the first "@@", where "+++ path" names the file
+  let number = 0;
+  for (const line of diff.split(/\r?\n/)) {
+    if (line.startsWith('diff ')) {
+      inHeader = true;
+      file = null;
+    } else if (inHeader && line.startsWith('+++ ')) {
+      const path = line.slice(4).replace(/^b\//, '');
+      file = path === '/dev/null' ? null : { path, lines: [] };
+      if (file) files.push(file);
+    } else if (line.startsWith('@@')) {
+      inHeader = false;
+      number = Number(line.match(/\+(\d+)/)?.[1] ?? 0);
+    } else if (!inHeader && file && line.startsWith('+')) {
+      file.lines.push({ number, text: line.slice(1) });
+      number++;
+    }
+  }
+  return files;
+}
+
+// Problems in the added lines, as text. The line itself is not repeated, since it may be the secret.
+export function contentProblems(files) {
+  const problems = [];
+  for (const { path, lines } of files) {
+    if (SCAN_SKIP.includes(path)) continue;
+    for (const { number, text } of lines) {
+      for (const rule of LINE_RULES) {
+        if (rule.test(text)) problems.push(`${path}:${number} adds ${rule.name}.`);
+      }
+    }
+  }
+  return problems;
+}

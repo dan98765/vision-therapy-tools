@@ -1,7 +1,14 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { commitMessageProblem, commitProblems, emailOf, identityProblem } from '../scripts/hooks/checks.js';
+import {
+  addedLines,
+  commitMessageProblem,
+  commitProblems,
+  contentProblems,
+  emailOf,
+  identityProblem,
+} from '../scripts/hooks/checks.js';
 
 const root = resolve(import.meta.dirname, '..');
 
@@ -53,7 +60,7 @@ describe('identity check', () => {
 });
 
 describe('hook wiring', () => {
-  const hooks = ['pre-commit', 'commit-msg'];
+  const hooks = ['pre-commit', 'commit-msg', 'pre-push'];
   const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 
   it.each(hooks)('husky runs the %s script, which exists', hook => {
@@ -106,5 +113,95 @@ describe('Node versions', () => {
     const { engines } = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
     const ci = readFileSync(join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
     for (const minimum of engines.node.match(/\d+\.\d+\.\d+/g)) expect(ci).toContain(`'${minimum}'`);
+  });
+});
+
+// Fixtures are put together from pieces so this file does not contain what the scan looks for.
+describe('addedLines', () => {
+  const diff = [
+    'diff --git a/docs/a.md b/docs/a.md',
+    'index 111..222 100644',
+    '--- a/docs/a.md',
+    '+++ b/docs/a.md',
+    '@@ -3,0 +4,2 @@ heading',
+    '+first added',
+    '+++ not a header',
+    '@@ -9 +11 @@',
+    '-old',
+    '+changed',
+    'diff --git a/gone.txt b/gone.txt',
+    '--- a/gone.txt',
+    '+++ /dev/null',
+    '@@ -1 +0,0 @@',
+    '-removed',
+  ].join('\n');
+
+  it('returns the added lines with their numbers, and skips removed files and removed lines', () => {
+    expect(addedLines(diff)).toEqual([
+      {
+        path: 'docs/a.md',
+        lines: [
+          { number: 4, text: 'first added' },
+          { number: 5, text: '++ not a header' },
+          { number: 11, text: 'changed' },
+        ],
+      },
+    ]);
+  });
+
+  it('is empty for an empty diff', () => {
+    expect(addedLines('')).toEqual([]);
+  });
+});
+
+describe('contentProblems', () => {
+  const check = (text, path = 'docs/a.md') => contentProblems([{ path, lines: [{ number: 7, text }] }]);
+
+  it('passes ordinary text, noreply and example addresses, and relative paths', () => {
+    expect(check('Use the 1234+name@users.noreply.github.com address, or me@example.com.')).toEqual([]);
+    expect(check('Open ../shared/page.js and docs/tool-ideas.md')).toEqual([]);
+    expect(check('The path /usr/local/bin and C:/ are not personal.')).toEqual([]);
+  });
+
+  it('flags a path on a personal computer', () => {
+    const windows = ['C:', 'Users', 'someone', 'dev'].join('\\');
+    expect(check(`cd ${windows}`)[0]).toMatch(/docs\/a\.md:7 adds an absolute path/);
+    expect(check('see ' + ['', 'Users', 'someone', 'dev'].join('/') + '/')).toHaveLength(1);
+    expect(check('see ' + ['', 'home', 'someone', 'dev'].join('/') + '/')).toHaveLength(1);
+  });
+
+  it('flags a personal email address', () => {
+    expect(check('mail ' + ['someone', 'gmail.com'].join('@'))[0]).toMatch(/email address/);
+  });
+
+  it('flags access tokens and private keys without printing them', () => {
+    const token = 'ghp_' + 'a1B2'.repeat(9);
+    const problems = check(`token = ${token}`);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).not.toContain(token);
+    expect(check('AKIA' + 'ABCDEFGHIJKLMNOP')).toHaveLength(1);
+    expect(check('-----BEGIN ' + 'RSA PRIVATE KEY-----')).toHaveLength(1);
+  });
+
+  it('flags merge conflict markers', () => {
+    expect(check('<'.repeat(7) + ' HEAD')[0]).toMatch(/merge conflict/);
+    expect(check('>'.repeat(7) + ' branch')).toHaveLength(1);
+    expect(check('a line with ' + '<'.repeat(7) + ' in the middle')).toEqual([]);
+  });
+
+  it('skips the generated lock file', () => {
+    expect(check('mail ' + ['someone', 'gmail.com'].join('@'), 'package-lock.json')).toEqual([]);
+  });
+
+  it('is clean for the files in this repo', () => {
+    const tracked = readdirSync(root, { recursive: true, withFileTypes: false })
+      .map(String)
+      .filter(path => /\.(md|js|css|html|json|yml|yaml)$/.test(path))
+      .filter(path => !/^(node_modules|dist|\.git)[\\/]/.test(path));
+    const files = tracked.map(path => ({
+      path,
+      lines: readFileSync(join(root, path), 'utf8').split('\n').map((text, i) => ({ number: i + 1, text })),
+    }));
+    expect(contentProblems(files)).toEqual([]);
   });
 });

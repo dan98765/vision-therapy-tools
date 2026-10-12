@@ -1,10 +1,11 @@
-// pre-commit: block a commit with the wrong git identity, lint errors or failing tests.
+// pre-commit: block a commit with the wrong git identity, personal details or secrets in the added lines,
+// lint errors or failing tests.
 // Skip in an emergency with `git commit --no-verify` (CI runs lint and tests again).
 
 import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { identityProblem } from './checks.js';
+import { addedLines, contentProblems, identityProblem } from './checks.js';
 
 const root = resolve(import.meta.dirname, '..', '..');
 
@@ -20,7 +21,20 @@ for (const [role, variable] of [['author', 'GIT_AUTHOR_IDENT'], ['committer', 'G
   if (problem) fail(problem);
 }
 
-// 2. Lint and tests
+// 2. Content: no personal paths, emails, keys or merge markers in the lines being added
+const diff = spawnSync('git', ['diff', '--cached', '--unified=0', '--no-color', '--no-ext-diff'], {
+  cwd: root,
+  encoding: 'utf8',
+  maxBuffer: 64 * 1024 * 1024,
+});
+if (diff.status !== 0) fail('could not read the staged changes with git diff.');
+const contentIssues = contentProblems(addedLines(diff.stdout));
+if (contentIssues.length > 0) {
+  const list = contentIssues.map(issue => `  ${issue}`).join('\n');
+  fail(`this commit adds something that should not be public:\n${list}\nRemove it, or use --no-verify if it is intended.`);
+}
+
+// 3. Lint and tests
 if (!existsSync(resolve(root, 'node_modules'))) {
   fail('dependencies are not installed. Run `npm install`.');
 }
