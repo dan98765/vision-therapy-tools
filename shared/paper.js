@@ -1,5 +1,7 @@
 // Will something fit on a printed page? Shared by the exercises that print at true size.
-// All lengths are in mm.
+// All lengths are in mm; the text shown to the user gives inches.
+
+import { mmToInches } from './units.js';
 
 // Printable area of a Letter or A4 page with 0.5 in (12.7 mm) margins, taking the smaller of the two papers
 // in each direction. 0.5 in is a cautious allowance: browsers' default margins are about 0.4 to 0.5 in, and
@@ -29,7 +31,7 @@ export function pageNote(widthMm, heightMm, { rowsStayWhole = false } = {}) {
   }
   return {
     text:
-      ` Warning: this is larger than one Letter/A4 page (about ${PRINTABLE_W_MM} × ${PRINTABLE_H_MM} mm)` +
+      ` Warning: this is larger than one Letter/A4 page (about ${mmToInches(PRINTABLE_W_MM).toFixed(1)} × ${mmToInches(PRINTABLE_H_MM).toFixed(1)} in)` +
       ' and will be cut off or split when printed. Use a smaller size.',
     warn: true,
   };

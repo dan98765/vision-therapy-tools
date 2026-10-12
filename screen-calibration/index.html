@@ -22,18 +22,18 @@
         <label for="reference">Reference</label>
         <div class="control-row">
           <select id="reference">
-            <option value="card" selected>Credit or ID card (long edge, 85.6 mm)</option>
-            <option value="a4">A4 paper (short edge, 210 mm)</option>
-            <option value="letter">US Letter paper (short edge, 215.9 mm)</option>
+            <option value="card" selected>Credit or ID card (long edge, 3.37 in)</option>
+            <option value="a4">A4 paper (short edge, 8.27 in)</option>
+            <option value="letter">US Letter paper (short edge, 8.5 in)</option>
             <option value="custom">Something else I can measure</option>
           </select>
         </div>
       </div>
 
       <div class="control-group" id="custom-group" hidden>
-        <label for="custom-mm">Length of your object (mm)</label>
+        <label for="custom-length">Length of your object (inches)</label>
         <div class="control-row">
-          <input type="number" id="custom-mm" min="10" max="400" step="0.5" value="100">
+          <input type="number" id="custom-length" min="0.5" max="16" step="0.05" value="4">
         </div>
       </div>
 
@@ -71,19 +71,17 @@
   <div class="controls-panel">
     <h2>Your screen</h2>
     <dl class="results">
-      <div><dt>Pixels per millimetre</dt><dd id="res-ppmm"></dd></div>
       <div><dt>Pixels per inch</dt><dd id="res-ppi"></dd></div>
-      <div><dt>100 mm on this screen</dt><dd id="res-100"></dd></div>
-      <div><dt>A millimetre in CSS is</dt><dd id="res-css"></dd></div>
+      <div><dt>An inch in CSS is</dt><dd id="res-css"></dd></div>
       <div><dt>One pixel of adjustment</dt><dd id="res-precision"></dd></div>
     </dl>
   </div>
 
   <div class="controls-panel">
     <h2>Step 3: check it with a ruler</h2>
-    <p class="help">Hold a ruler against the drawing below. The numbers are centimetres, and the square is 50 mm on each side. If they do not match, adjust the box above.</p>
+    <p class="help">Hold a ruler against the drawing below. The numbers are inches, and the square is 2 inches on each side. If they do not match, adjust the box above.</p>
     <div class="ruler-wrapper">
-      <svg id="ruler" role="img" aria-label="A ruler and a 50 millimetre square drawn with your calibration"></svg>
+      <svg id="ruler" role="img" aria-label="A ruler and a 2 inch square drawn with your calibration"></svg>
     </div>
   </div>
 

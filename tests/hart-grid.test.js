@@ -4,7 +4,7 @@ import { LETTER_SETS, buildGrid, gridLayout } from '../hart-chart/grid.js';
 import { seeded } from './rng.js';
 
 // Page defaults from hart-chart/index.html
-const DEFAULTS = { rows: 12, cols: 10, heightMm: 5, spacing: 2.5, numbers: false };
+const DEFAULTS = { rows: 10, cols: 10, heightMm: 5, spacing: 2.5, numbers: false };
 
 describe('buildGrid', () => {
   it('makes a grid of the requested size from the chosen letters', () => {
@@ -51,7 +51,7 @@ describe('gridLayout', () => {
   it('sizes the default chart to fit one page', () => {
     const layout = gridLayout(DEFAULTS);
     expect(layout.chartW).toBeCloseTo(174.7, 0);
-    expect(layout.chartH).toBeCloseTo(167.6, 0);
+    expect(layout.chartH).toBeCloseTo(139.7, 0);
     expect(pageFit(layout.chartW, layout.chartH)).toBe('portrait');
     expect(layout.tooSmall).toBe(false);
   });
@@ -61,6 +61,13 @@ describe('gridLayout', () => {
     const numbered = gridLayout({ ...DEFAULTS, numbers: true });
     expect(numbered.chartW).toBeCloseTo(plain.chartW + 2 * numbered.numW);
     expect(numbered.chartH).toBeCloseTo(plain.chartH);
+  });
+
+  it('adds a row of column numbers above and below when they are shown', () => {
+    const plain = gridLayout(DEFAULTS);
+    const numbered = gridLayout({ ...DEFAULTS, colNumbers: true });
+    expect(numbered.chartH).toBeCloseTo(plain.chartH + 2 * numbered.cellH);
+    expect(numbered.chartW).toBeCloseTo(plain.chartW);
   });
 
   it('needs a sideways page when the row numbers make it too wide', () => {

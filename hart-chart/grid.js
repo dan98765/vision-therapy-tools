@@ -28,13 +28,14 @@ export function buildGrid(rows, cols, pool, random = Math.random) {
 
 // Sizes for a chart: font size, cell size, the optional row-number columns and
 // the overall chart size, plus whether the letters are too small to read.
-export function gridLayout({ rows, cols, heightMm, spacing, numbers }) {
+// `numbers` adds a row-number column on each side; `colNumbers` adds a row of column numbers above and below.
+export function gridLayout({ rows, cols, heightMm, spacing, numbers, colNumbers = false }) {
   const fontMm = heightMm / CAP_HEIGHT;
   const cellW = fontMm * spacing;
   const cellH = fontMm * spacing * 0.8;
   const numW = numbers ? cellW * 0.8 : 0;
   const chartW = cols * cellW + numW * 2;
-  const chartH = rows * cellH;
+  const chartH = (rows + (colNumbers ? 2 : 0)) * cellH;
   return {
     fontMm,
     cellW,

@@ -20,6 +20,7 @@ import {
   referenceLength,
   stepPrecisionPercent,
 } from '../shared/calibration.js';
+import { inchesToMm, mmToInches } from '../shared/units.js';
 
 describe('the browser assumption', () => {
   it('is 96 CSS pixels per inch', () => {
@@ -97,17 +98,16 @@ describe('describeCalibration', () => {
   it('reports no error when the screen follows the CSS definition', () => {
     const d = describeCalibration(NOMINAL_PX_PER_MM);
     expect(d.pxPerInch).toBeCloseTo(96, 8);
-    expect(d.hundredMmInPx).toBeCloseTo(377.95, 1);
-    expect(d.cssMmTooSmallPercent).toBeCloseTo(0, 8);
+    expect(d.cssLengthTooSmallPercent).toBeCloseTo(0, 8);
   });
 
   it('says CSS millimetres are too small when the screen has more pixels per mm than assumed', () => {
     const d = describeCalibration(NOMINAL_PX_PER_MM * 1.25); // 25% more pixels per real mm
-    expect(d.cssMmTooSmallPercent).toBeCloseTo(20, 8); // a CSS mm is 1/1.25 = 80% of a real mm
+    expect(d.cssLengthTooSmallPercent).toBeCloseTo(20, 8); // a CSS mm is 1/1.25 = 80% of a real mm
   });
 
   it('says CSS millimetres are too large when it has fewer', () => {
-    expect(describeCalibration(NOMINAL_PX_PER_MM * 0.8).cssMmTooSmallPercent).toBeCloseTo(-25, 8);
+    expect(describeCalibration(NOMINAL_PX_PER_MM * 0.8).cssLengthTooSmallPercent).toBeCloseTo(-25, 8);
   });
 
   it('draws a length true to size by using pixels per real mm, not CSS mm', () => {
@@ -174,7 +174,9 @@ describe('the page and the shared maths agree', () => {
     const options = [...html.matchAll(/<option value="(\w+)"[^>]*>([^<]+)<\/option>/g)].map(m => ({ key: m[1], text: m[2] }));
     expect(options.map(o => o.key)).toEqual(Object.keys(REFERENCES));
     for (const { key, text } of options) {
-      if (REFERENCES[key].mm !== null) expect(text, key).toContain(String(REFERENCES[key].mm));
+      if (REFERENCES[key].mm === null) continue;
+      const inches = Number(mmToInches(REFERENCES[key].mm).toFixed(2)); // 3.37, 8.27, 8.5
+      expect(text, key).toContain(`${inches} in`);
     }
   });
 
@@ -182,10 +184,10 @@ describe('the page and the shared maths agree', () => {
     expect(html).toMatch(/<option value="card" selected>/);
   });
 
-  it('limits the custom length the same way', () => {
-    expect(Number(attribute('custom-mm', 'min'))).toBe(CUSTOM_MM_MIN);
-    expect(Number(attribute('custom-mm', 'max'))).toBe(CUSTOM_MM_MAX);
-    expect(Number(attribute('custom-mm', 'value'))).toBe(CUSTOM_MM_DEFAULT);
+  it('limits the custom length (typed in inches) the same way', () => {
+    expect(inchesToMm(Number(attribute('custom-length', 'min')))).toBeCloseTo(CUSTOM_MM_MIN, 8);
+    expect(inchesToMm(Number(attribute('custom-length', 'max')))).toBeCloseTo(CUSTOM_MM_MAX, 8);
+    expect(inchesToMm(Number(attribute('custom-length', 'value')))).toBeCloseTo(CUSTOM_MM_DEFAULT, 8);
   });
 
   it('starts the slider where the code would put it for a card', () => {

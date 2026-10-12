@@ -49,14 +49,14 @@ The generator creates **new, original** cards in the same style: concentric ring
 | --- | --- |
 | Number of Rings | How many concentric rings of letters (3 to 7, default 5) |
 | Letters per Ring | Letters spaced around each ring (3 to 10, default 6) |
-| Card Size (long side) | Length of the card's longer side in mm (100 to 250). Default 216 mm = 8.5 in |
+| Card Size (long side) | Length of the card's longer side in inches (4 to 10 in 0.1 steps). Default 8.5 in |
 | Aspect Ratio | Card proportions; the shorter side follows from this. Five choices from 5.5 : 8.5 (portrait, the default) to 8.5 : 5.5 (landscape) |
-| Base Letter Height | Capital-letter height in mm for the innermost ring (1 to 6 in 0.5 steps, default 2) |
+| Base Letter Height | Capital-letter height in inches for the innermost ring (0.04 to 0.24 in 0.01 steps, default 0.08) |
 | Scale Factor | How much larger each successive ring's letters are (1.3 to 2.5, default 1.6) |
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
 | Center dot | Checkbox to show or hide the fixation circle and dot (on by default) |
 
-Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card. The default card is 5.5 x 8.5 in (about 140 x 216 mm) and fits one page. A note under the buttons shows the card's size in mm and inches, how it will print, and any warning (letters shrunk to fit, letters too small to read, will not fit a page).
+Letters are picked at random for each ring when a card is generated. "Print Card" prints just the card. The default card is 5.5 x 8.5 in and fits one page. A note under the buttons shows the card's size in inches, how it will print, and any warning (letters shrunk to fit, letters too small to read, will not fit a page).
 
 ### How layout works
 
@@ -69,10 +69,10 @@ Letters are picked at random for each ring when a card is generated. "Print Card
 ### Gotchas
 
 - **Sliders do not redraw the card.** Only the value readouts update live. Click "Generate Card" to apply settings, because each generation is random.
-- **Small cards with many rings get tiny letters.** Fitting shrinks letters instead of refusing, so 7 rings of 10 letters on a 100 mm card can be unreadable. When the innermost letters end up under 1.5 mm tall (`MIN_LETTER_MM`), the note under the buttons turns amber with a warning. It is a warning only; the card is still drawn.
+- **Small cards with many rings get tiny letters.** Fitting shrinks letters instead of refusing, so 7 rings of 10 letters on a 4 in card can be unreadable. When the innermost letters end up under about 0.06 in (1.5 mm) tall (`MIN_LETTER_MM`), the note under the buttons turns amber with a warning. It is a warning only; the card is still drawn.
 - **Screen size is approximate.** CSS `mm` is exact in print but screens vary, so a card on screen is not true size. On a screen narrower than the card (the default is about 528 px wide) the card scrolls sideways inside its own box; the page itself does not.
 - **Letter height is cap height** (about 0.716 of the font size for Arial), not font size.
-- **Page fit is reported under the buttons.** A card that only fits a sideways page shows "Print in landscape." (choose landscape in the print dialog). A card too big for either orientation, such as a 250 mm square, shows an amber warning, because it would be cut off or split across pages. The limit is about 184 x 254 mm upright (Letter or A4 with 0.5 in margins; larger print margins will clip), from `shared/paper.js`.
+- **Page fit is reported under the buttons.** A card that only fits a sideways page shows "Print in landscape." (choose landscape in the print dialog). A card too big for either orientation, such as a 10 in square, shows an amber warning, because it would be cut off or split across pages. The limit is about 7.2 x 10 in upright (Letter or A4 with 0.5 in margins; larger print margins will clip), from `shared/paper.js`.
 - **The fixation dot is drawn with a border, not a background.** Browsers do not print backgrounds by default, so a background-filled dot disappeared from printouts. Keep it a border (a test guards this).
 
 ### Ideas for later

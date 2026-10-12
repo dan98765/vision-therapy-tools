@@ -14,15 +14,16 @@ import {
   stepPrecisionPercent,
 } from '../shared/calibration.js';
 import { byId, setNote } from '../shared/page.js';
-import { TICK_MM, rulerTicks } from './ruler.js';
+import { inchesToMm } from '../shared/units.js';
+import { TICK_IN, rulerTicks } from './ruler.js';
 
 const DEFAULT_BOX_HEIGHT_PX = 56; // for references that have no known height
 
-// The check drawing: a ruler hanging from the top edge, and a square below it. Lengths in real mm unless
+// The check drawing: a ruler hanging from the top edge, and a square below it. Lengths in real inches unless
 // the name ends in Px, which are screen pixels for the labels and margins.
 const DRAWING = {
-  rulerMm: 150,
-  squareMm: 50,
+  rulerIn: 6,
+  squareIn: 2,
   marginPx: 14,
   labelRoomPx: 20,
   labelBaselinePx: 14,
@@ -50,7 +51,7 @@ const NOTES = {
 const els = {
   reference: byId('reference'),
   customGroup: byId('custom-group'),
-  customMm: byId('custom-mm'),
+  customLength: byId('custom-length'),
   boxWidth: byId('box-width'),
   boxWidthVal: byId('box-width-val'),
   narrower: byId('btn-narrower'),
@@ -59,9 +60,7 @@ const els = {
   box: byId('reference-box'),
   ruler: byId('ruler'),
   note: byId('calibration-note'),
-  resPpmm: byId('res-ppmm'),
   resPpi: byId('res-ppi'),
-  res100: byId('res-100'),
   resCss: byId('res-css'),
   resPrecision: byId('res-precision'),
 };
@@ -74,7 +73,16 @@ const state = {
   ratioWhenAdjusted: window.devicePixelRatio, // to notice a later zoom or display change
 };
 
-const referenceMm = () => referenceLength(els.reference.value, els.customMm.value);
+// The custom length is typed in inches. A blank box is passed on as blank, so it gets the default.
+function customLengthMm() {
+  const typed = els.customLength.value;
+  return typed.trim() === '' ? typed : inchesToMm(Number(typed));
+}
+
+const referenceMm = () => referenceLength(els.reference.value, customLengthMm());
+
+// A real length in inches, in screen pixels under the current calibration.
+const inchesToPx = inches => mmToPx(inchesToMm(inches), state.ppmm);
 
 // Set the slider range and position for the current reference. The calibration is kept when the reference
 // changes, so the slider moves to the width the new reference has under the same pixels per millimetre.
@@ -120,11 +128,10 @@ function svgText(x, y, content, { size, fill }) {
 }
 
 function drawRuler() {
-  const { ppmm } = state;
-  const { rulerMm, squareMm, marginPx, labelRoomPx, labelBaselinePx, squareGapPx, bottomPx } = DRAWING;
-  const squarePx = mmToPx(squareMm, ppmm);
-  const rulerHeightPx = mmToPx(TICK_MM.cm, ppmm) + labelRoomPx;
-  const widthPx = mmToPx(rulerMm, ppmm) + 2 * marginPx;
+  const { rulerIn, squareIn, marginPx, labelRoomPx, labelBaselinePx, squareGapPx, bottomPx } = DRAWING;
+  const squarePx = inchesToPx(squareIn);
+  const rulerHeightPx = inchesToPx(TICK_IN.inch) + labelRoomPx;
+  const widthPx = inchesToPx(rulerIn) + 2 * marginPx;
   const heightPx = rulerHeightPx + squareGapPx + squarePx + bottomPx;
   const squareTop = rulerHeightPx + squareGapPx;
 
@@ -133,10 +140,10 @@ function drawRuler() {
   els.ruler.setAttribute('height', heightPx.toFixed(2));
   els.ruler.setAttribute('viewBox', `0 0 ${widthPx.toFixed(2)} ${heightPx.toFixed(2)}`);
 
-  els.ruler.append(svgLine(marginPx, 0.5, marginPx + mmToPx(rulerMm, ppmm), 0.5));
-  for (const tick of rulerTicks(rulerMm)) {
-    const x = marginPx + mmToPx(tick.mm, ppmm);
-    const tickPx = mmToPx(tick.lengthMm, ppmm);
+  els.ruler.append(svgLine(marginPx, 0.5, marginPx + inchesToPx(rulerIn), 0.5));
+  for (const tick of rulerTicks(rulerIn)) {
+    const x = marginPx + inchesToPx(tick.inches);
+    const tickPx = inchesToPx(tick.lengthIn);
     els.ruler.append(svgLine(x, 0, x, tickPx));
     if (tick.label) els.ruler.append(svgText(x, tickPx + labelBaselinePx, tick.label, { size: 11, fill: DRAWING.ink }));
   }
@@ -144,9 +151,9 @@ function drawRuler() {
   els.ruler.append(svgElement('rect', {
     x: marginPx, y: squareTop, width: squarePx, height: squarePx, fill: 'none', stroke: DRAWING.accent, 'stroke-width': 1.5,
   }));
-  els.ruler.append(svgText(marginPx + squarePx / 2, squareTop + squarePx / 2 + 4, `${squareMm} mm`, { size: 12, fill: DRAWING.accent }));
+  els.ruler.append(svgText(marginPx + squarePx / 2, squareTop + squarePx / 2 + 4, `${squareIn} in`, { size: 12, fill: DRAWING.accent }));
   els.ruler.setAttribute('aria-label',
-    `A ruler ${rulerMm} millimetres long and a ${squareMm} millimetre square, drawn with your calibration`);
+    `A ruler ${rulerIn} inches long and a ${squareIn} inch square, drawn with your calibration`);
 }
 
 function renderBox(mm) {
@@ -164,10 +171,8 @@ function percentText(percent) {
 
 function renderResults(boxWidthPx) {
   const numbers = describeCalibration(state.ppmm);
-  els.resPpmm.textContent = numbers.pxPerMm.toFixed(3);
   els.resPpi.textContent = numbers.pxPerInch.toFixed(1);
-  els.res100.textContent = `${numbers.hundredMmInPx.toFixed(1)} px`;
-  els.resCss.textContent = percentText(numbers.cssMmTooSmallPercent);
+  els.resCss.textContent = percentText(numbers.cssLengthTooSmallPercent);
   els.resPrecision.textContent = `changes it by ${stepPrecisionPercent(boxWidthPx).toFixed(2)}%`;
 }
 
@@ -198,7 +203,7 @@ function referenceChanged() {
   render();
 }
 els.reference.addEventListener('change', referenceChanged);
-els.customMm.addEventListener('input', referenceChanged);
+els.customLength.addEventListener('input', referenceChanged);
 
 els.reset.addEventListener('click', () => {
   state.ppmm = NOMINAL_PX_PER_MM;

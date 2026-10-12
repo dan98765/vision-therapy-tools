@@ -1,9 +1,10 @@
 // Macdonald Form Field Cards: reads the controls, draws the card.
 
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
-import { mmLabel, sizeSummary } from '../shared/format.js';
+import { inchLabel, mmAsInches, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { pageNote } from '../shared/paper.js';
+import { inchesToMm } from '../shared/units.js';
 import { BORDER_MM, cardGeometry, fitRings, placeLetters } from './layout.js';
 
 const LETTER_SETS = {
@@ -41,10 +42,10 @@ function div(className) {
 function generateCard() {
   const numRings = parseInt(els.rings.value);
   const lettersPerRing = parseInt(els.lettersPerRing.value);
-  const baseEm = parseFloat(els.baseLetter.value) / CAP_HEIGHT;
+  const baseEm = inchesToMm(parseFloat(els.baseLetter.value)) / CAP_HEIGHT;
   const scaleFactor = parseFloat(els.scaleFactor.value);
 
-  const geo = cardGeometry(parseInt(els.cardSize.value), parseFloat(els.aspectRatio.value));
+  const geo = cardGeometry(inchesToMm(parseFloat(els.cardSize.value)), parseFloat(els.aspectRatio.value));
   const { k, rings } = fitRings(numRings, lettersPerRing, baseEm, scaleFactor, geo.available);
   const letters = placeLetters(rings, lettersPerRing, geo.cx, geo.cy, LETTER_SETS[els.letterSet.value]);
 
@@ -75,7 +76,7 @@ function generateCard() {
       page.text +
       (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '') +
       (tooSmall
-        ? ` Warning: the innermost letters are only ${smallestMm.toFixed(2)} mm tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`
+        ? ` Warning: the innermost letters are only ${mmAsInches(smallestMm, 3)} tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`
         : ''),
     tooSmall || page.warn,
   );
@@ -84,8 +85,8 @@ function generateCard() {
 function syncDisplays() {
   els.ringsVal.textContent = els.rings.value;
   els.lettersVal.textContent = els.lettersPerRing.value;
-  els.cardSizeVal.textContent = els.cardSize.value + ' mm';
-  els.baseLetterVal.textContent = mmLabel(els.baseLetter.value);
+  els.cardSizeVal.textContent = inchLabel(els.cardSize.value, 1);
+  els.baseLetterVal.textContent = inchLabel(els.baseLetter.value);
   els.scaleFactorVal.textContent = parseFloat(els.scaleFactor.value).toFixed(2);
 }
 

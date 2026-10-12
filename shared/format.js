@@ -1,12 +1,18 @@
-// Text shown to the user, kept pure so it can be tested.
+// Text shown to the user, kept pure so it can be tested. Lengths are shown in inches.
 
-const inches = mm => (mm / 25.4).toFixed(1);
+import { mmToInches } from './units.js';
 
-export function sizeSummary(widthMm, heightMm) {
-  return `${widthMm.toFixed(0)} × ${heightMm.toFixed(0)} mm (${inches(widthMm)} × ${inches(heightMm)} in). ` +
-    'Print at 100% / "Actual size" to keep this size.';
+// A length in inches, such as "0.20 in".
+export function inchLabel(inches, digits = 2) {
+  return `${Number(inches).toFixed(digits)} in`;
 }
 
-export function mmLabel(value, digits = 1) {
-  return `${Number(value).toFixed(digits)} mm`;
+// A length given in millimetres, shown in inches.
+export function mmAsInches(mm, digits = 2) {
+  return inchLabel(mmToInches(mm), digits);
+}
+
+export function sizeSummary(widthMm, heightMm) {
+  return `${mmToInches(widthMm).toFixed(2)} × ${mmToInches(heightMm).toFixed(2)} in. ` +
+    'Print at 100% / "Actual size" to keep this size.';
 }

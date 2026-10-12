@@ -54,7 +54,7 @@ The built pages use ES modules, so **opening a file from disk (`file://`) does n
 - **True-size things can be wider than a phone** (a 140 mm card is about 528 px). Put them in a wrapper with `max-width: 100%; overflow-x: auto` (and `overflow: visible` in print) so the box scrolls, not the whole page, and centre the item with `margin: 0 auto`, not a flex container, which would cut off its left edge. The Hart chart and the cards both do this.
 - **Interactive exercises** (timers, moving targets) need a clear start/stop, must respect `prefers-reduced-motion`, and should not flash faster than 3 Hz.
 - **Accessibility basics**: real `<label>`s tied to inputs, keyboard operable, adequate contrast. Exercise content may need to be large and high-contrast by design.
-- Physical size matters for these exercises (viewing distance, letter size). Where size is meaningful, use mm (CSS `mm` is true size in print) rather than abstract pixels.
+- Physical size matters for these exercises (viewing distance, letter size). Where size is meaningful, use real lengths (CSS `mm` is true size in print) rather than abstract pixels. **Users see inches**: controls, readouts and notes are in inches, while the layout maths, tests and CSS stay in mm. Convert at the edge with `shared/units.js` and show with `shared/format.js` (`inchLabel`, `mmAsInches`, `sizeSummary`), and give slider ranges in inches with steps that land on tidy values.
 - **Relative links and paths only.** The site is served from a subpath on GitHub Pages, so `/something` links would break. Vite is configured with `base: './'`.
 
 ## Linting
@@ -81,7 +81,7 @@ Layout checks in a normal browser tab do not show what a printout looks like, so
 5. Cases worth covering: the defaults on Letter and A4; the largest card in portrait, landscape and square; a Hart chart with row numbers, 24 rows, and one wider than a page.
 6. Cross-check the page-fit messages whenever `shared/paper.js` or a size range changes. For a grid of settings (every card size and aspect ratio; Hart rows, columns, letter heights and row numbers), read the note under the buttons, print on **both** Letter and A4 with 0.5 in margins in the orientation it recommends, and confirm that anything it says fits really is one page with nothing sticking out sideways (lay the page out at the real printable width to see overflow). When last run (226 print runs), all 65 "fits" results held on both papers, and all 24 "will not fit" results really failed on A4 (two of them, 250 mm cards at ratios 0.75 and 1.333, would fit Letter). A card or chart that fits Letter but not A4 correctly warns, because the limits are the smaller of the two.
 
-The default card is 139.7 x 216 mm and the default Hart chart 174.5 x 167.6 mm; both print on one page with the controls hidden.
+The default card is 139.7 x 216 mm and the default Hart chart 177 x 142 mm (7.0 x 5.6 in); both print on one page with the controls hidden.
 
 ## Git hooks
 

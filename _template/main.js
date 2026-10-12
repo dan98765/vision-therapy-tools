@@ -2,7 +2,7 @@
 // Keep maths that can be tested in its own file (like grid.js or layout.js in the
 // other exercises) and add a test for it in tests/.
 
-import { mmLabel } from '../shared/format.js';
+import { inchLabel } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 
 const els = {
@@ -17,7 +17,7 @@ const els = {
 function generate() {
   // TODO: draw the exercise into els.exercise
   els.exercise.textContent = `Size ${els.size.value}`;
-  setNote(els.note, `Size is ${mmLabel(els.size.value)}.`);
+  setNote(els.note, `Size is ${inchLabel(els.size.value)}.`);
 }
 
 function syncDisplays() {

@@ -12,11 +12,11 @@ It is a utility, and the first step for the interactive tools listed in [tool-id
 
 ## How to use it
 
-1. Choose something of known size to measure against: a credit, bank or ID card (85.6 mm along its long edge), a sheet of A4 or US Letter paper (the short edge), or anything else with a length you can enter in millimetres.
+1. Choose something of known size to measure against: a credit, bank or ID card (3.37 in, or 85.6 mm, along its long edge), a sheet of A4 or US Letter paper (the short edge), or anything else with a length you can enter in millimetres.
 2. Hold the object flat against the screen with one edge lined up with the left edge of the on-screen box, and move the slider (or the minus and plus buttons, one pixel at a time) until the other edge lines up with the right edge.
-3. Check the result against a ruler: the page draws a ruler and a 50 mm square using the calibration. Hold a real ruler against them.
+3. Check the result against a ruler: the page draws an inch ruler (marked to 1/16 inch) and a 2 inch square using the calibration. Hold a real ruler against them.
 
-The page then shows pixels per millimetre and per inch, how long 100 mm is in pixels, and how far a millimetre in CSS is from a real millimetre on this screen.
+The page then shows pixels per inch and how far an inch in CSS is from a real inch on this screen. Lengths are shown in inches; the maths underneath stays in millimetres.
 
 ## Where the code lives
 
@@ -24,7 +24,7 @@ The page then shows pixels per millimetre and per inch, how long 100 mm is in pi
 | --- | --- |
 | `index.html` | Markup only: the reference choice, the slider and box, the results, the check ruler |
 | `main.js` | Reads the controls, draws the box and the ruler, shows the results and the note |
-| `ruler.js` | The ruler's tick marks in real millimetres. No DOM access, so it is tested |
+| `ruler.js` | The ruler's tick marks in real inches. No DOM access, so it is tested |
 | `style.css` | The box, the results list and the scrolling wrappers |
 | `../shared/calibration.js` | The maths: pixels per mm, conversions, slider range, the stale-zoom check, plain-language numbers |
 | `../tests/calibration.test.js` | The maths, plus checks that the page's wording, limits and slider values agree with the maths |
@@ -42,8 +42,8 @@ The page then shows pixels per millimetre and per inch, how long 100 mm is in pi
 
 | Control | Meaning |
 | --- | --- |
-| Reference | Credit or ID card (long edge, 85.6 mm; the card is drawn at its true shape, 85.6 x 53.98 mm), A4 paper short edge (210 mm), US Letter paper short edge (215.9 mm), or a custom length |
-| Length of your object | Only for the custom reference. 10 to 400 mm; an empty or invalid box uses 100 mm |
+| Reference | Credit or ID card (long edge, 3.37 in; the card is drawn at its true shape, 3.37 x 2.13 in), A4 paper short edge (8.27 in), US Letter paper short edge (8.5 in), or a custom length |
+| Length of your object | Only for the custom reference. 0.5 to 16 in, typed in inches; an empty or invalid box uses 4 in |
 | Box width | Slider from half to double the width the browser would assume, in half-pixel steps, plus buttons for one pixel |
 | Reset | Back to the browser's own assumption (96 pixels per inch) |
 

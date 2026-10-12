@@ -17,9 +17,10 @@ export const REFERENCES = {
   custom: { mm: null }, // the user's own length
 };
 
-export const CUSTOM_MM_MIN = 10;
-export const CUSTOM_MM_MAX = 400;
-export const CUSTOM_MM_DEFAULT = 100;
+// 0.5, 16 and 4 inches. The page asks for the custom length in inches.
+export const CUSTOM_MM_MIN = 12.7;
+export const CUSTOM_MM_MAX = 406.4;
+export const CUSTOM_MM_DEFAULT = 101.6;
 
 // The box slider spans this share of the width the browser would assume, which any real screen falls inside.
 export const BOX_RANGE = { min: 0.5, max: 2 };
@@ -81,14 +82,13 @@ export function calibrationStatus({ adjusted, calibratedRatio, currentRatio }) {
 // Plain-language numbers for a calibration.
 export function describeCalibration(pxPerMmValue) {
   positive(pxPerMmValue, 'pxPerMm');
-  const scale = pxPerMmValue / NOMINAL_PX_PER_MM; // above 1: CSS "mm" come out smaller than real mm
+  const scale = pxPerMmValue / NOMINAL_PX_PER_MM; // above 1: CSS lengths come out smaller than real ones
   return {
     pxPerMm: pxPerMmValue,
     pxPerInch: pxPerMmValue * 25.4,
-    hundredMmInPx: mmToPx(100, pxPerMmValue),
-    // How far a length styled in CSS mm is from the real length, in percent.
-    // Positive: CSS mm are drawn too small; negative: too large.
-    cssMmTooSmallPercent: (1 - 1 / scale) * 100,
+    // How far a length styled in CSS units is from the real length, in percent.
+    // Positive: CSS lengths are drawn too small; negative: too large.
+    cssLengthTooSmallPercent: (1 - 1 / scale) * 100,
   };
 }
 

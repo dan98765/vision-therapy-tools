@@ -1,16 +1,28 @@
-// The tick marks of the check ruler, in real millimetres. No DOM access, so it can be tested.
+// The tick marks of the check ruler, in real inches. No DOM access, so it can be tested.
 
-// Tick lengths in mm, so the ticks themselves are true to size once the screen is calibrated.
-export const TICK_MM = { mm: 2, half: 3.5, cm: 5 };
+// Ticks fall every 1/16 inch. Whole inches carry a label; the others get shorter the finer the division.
+export const TICKS_PER_INCH = 16;
 
-// One tick per millimetre from 0 to `lengthMm`. Every 10 mm is a centimetre tick with a label,
-// every 5 mm a half-centimetre tick, and the rest plain.
-export function rulerTicks(lengthMm) {
+// Tick lengths in inches, so the ticks themselves are true to size once the screen is calibrated.
+export const TICK_IN = { inch: 0.25, half: 0.19, quarter: 0.14, eighth: 0.1, sixteenth: 0.06 };
+
+function tickKind(index) {
+  if (index % 16 === 0) return 'inch';
+  if (index % 8 === 0) return 'half';
+  if (index % 4 === 0) return 'quarter';
+  if (index % 2 === 0) return 'eighth';
+  return 'sixteenth';
+}
+
+// One tick per sixteenth of an inch from 0 to `lengthIn` (a whole number of inches). Positions are in
+// inches, worked out from whole sixteenths so they stay exact.
+export function rulerTicks(lengthIn) {
   const ticks = [];
-  for (let mm = 0; mm <= lengthMm; mm++) {
-    if (mm % 10 === 0) ticks.push({ mm, kind: 'cm', lengthMm: TICK_MM.cm, label: String(mm / 10) });
-    else if (mm % 5 === 0) ticks.push({ mm, kind: 'half', lengthMm: TICK_MM.half });
-    else ticks.push({ mm, kind: 'mm', lengthMm: TICK_MM.mm });
+  for (let index = 0; index <= lengthIn * TICKS_PER_INCH; index++) {
+    const kind = tickKind(index);
+    const tick = { inches: index / TICKS_PER_INCH, kind, lengthIn: TICK_IN[kind] };
+    if (kind === 'inch') tick.label = String(index / TICKS_PER_INCH);
+    ticks.push(tick);
   }
   return ticks;
 }

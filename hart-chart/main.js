@@ -1,8 +1,9 @@
 // Hart chart: reads the controls, draws the chart.
 
-import { mmLabel, sizeSummary } from '../shared/format.js';
+import { inchLabel, sizeSummary } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { pageNote } from '../shared/paper.js';
+import { inchesToMm } from '../shared/units.js';
 import { LETTER_SETS, buildGrid, gridLayout } from './grid.js';
 
 const els = {
@@ -17,6 +18,7 @@ const els = {
   spacingVal: byId('spacing-val'),
   letterSet: byId('letter-set'),
   showNumbers: byId('show-numbers'),
+  showColumnNumbers: byId('show-column-numbers'),
   btnGenerate: byId('btn-generate'),
   btnPrint: byId('btn-print'),
   note: byId('chart-note'),
@@ -36,12 +38,14 @@ function render() {
   const rows = grid.length;
   const cols = grid[0].length;
   const numbers = els.showNumbers.checked;
+  const colNumbers = els.showColumnNumbers.checked;
   const layout = gridLayout({
     rows,
     cols,
-    heightMm: parseFloat(els.height.value),
+    heightMm: inchesToMm(parseFloat(els.height.value)),
     spacing: parseFloat(els.spacing.value),
     numbers,
+    colNumbers,
   });
 
   const mm = value => value.toFixed(3) + 'mm';
@@ -53,11 +57,20 @@ function render() {
     (numbers ? ' ' + mm(layout.numW) : '');
 
   els.chart.textContent = '';
+  // A row of column numbers, with an empty corner on each side when row numbers are shown too
+  const appendColumnNumbers = () => {
+    if (numbers) els.chart.append(cell('cell row-num', ''));
+    for (let c = 1; c <= cols; c++) els.chart.append(cell('cell row-num', c));
+    if (numbers) els.chart.append(cell('cell row-num', ''));
+  };
+
+  if (colNumbers) appendColumnNumbers();
   grid.forEach((row, r) => {
     if (numbers) els.chart.append(cell('cell row-num', r + 1));
     for (const letter of row) els.chart.append(cell('cell', letter));
     if (numbers) els.chart.append(cell('cell row-num', r + 1));
   });
+  if (colNumbers) appendColumnNumbers();
 
   const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true });
   setNote(
@@ -77,12 +90,12 @@ function generate() {
 function syncDisplays() {
   els.rowsVal.textContent = els.rows.value;
   els.colsVal.textContent = els.cols.value;
-  els.heightVal.textContent = mmLabel(els.height.value);
+  els.heightVal.textContent = inchLabel(els.height.value);
   els.spacingVal.textContent = parseFloat(els.spacing.value).toFixed(1) + '×';
 }
 
 // Size and spacing redraw the same letters; the rest need a new chart.
-for (const input of [els.height, els.spacing, els.showNumbers]) {
+for (const input of [els.height, els.spacing, els.showNumbers, els.showColumnNumbers]) {
   input.addEventListener('input', () => { syncDisplays(); render(); });
 }
 for (const input of [els.rows, els.cols, els.letterSet]) {
