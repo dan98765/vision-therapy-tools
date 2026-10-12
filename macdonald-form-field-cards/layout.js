@@ -75,7 +75,9 @@ export function fitRings(numRings, perRing, baseEm, scaleFactor, available) {
 // Pick letters for every ring and place them around it with a little wobble. With `noRepeats`, letters are
 // dealt from the pool across the whole card, so none appears twice until the pool has been used up; otherwise
 // each ring is picked on its own and the same letter can appear in several rings.
-// Returns [{ letter, font, x, y }] with x and y measured from the inside corner of the card.
+// Returns [{ letter, font, x, y, ring, angle, r }] with x and y measured from the inside corner of the card.
+// `ring` is the ring's index, innermost first, and `angle` and `r` are the letter's position round the centre
+// (cx, cy), so a ring can be turned (see motion.js).
 export function placeLetters(rings, perRing, cx, cy, pool, random = Math.random, { noRepeats = false } = {}) {
   const placed = [];
   const counts = rings.map((_, i) => countOf(perRing, i));
@@ -90,7 +92,7 @@ export function placeLetters(rings, perRing, cx, cy, pool, random = Math.random,
     letters.forEach((letter, i) => {
       const angle = baseAngle + angleStep * i + wobble() / radius;
       const r = radius + wobble();
-      placed.push({ letter, font, x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+      placed.push({ letter, font, ring: ringIndex, angle, r, x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
     });
   });
   return placed;

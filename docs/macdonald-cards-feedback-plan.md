@@ -7,7 +7,7 @@ Feedback received from a user of [Macdonald Form Field Cards](macdonald-form-fie
 1. An option to have **one ring moving in a circle**, and to **choose which ring**.
 2. **All letters of the alphabet should be present, with no repeated letters.**
 
-**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The "use every letter once" mode (option B) is built too ("Use every letter once" below). The moving ring (request 1) and remembered settings are not. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
+**Status:** the no-repeat letters option (request 2, option A) is built; see "Request 2" below. The "use every letter once" mode (option B) is built too ("Use every letter once" below). The moving ring (request 1) is built too (see "Request 1" below). Remembered settings are not. This file records what each request means, how it fits the current code, the decisions still open, and the order to do the work in.
 
 ## Answers from the user
 
@@ -71,6 +71,8 @@ A second checkbox, "Use every letter once (rings hold different numbers)", off b
 - A card with all 26 letters still passes the existing clipping and overlap checks in `tests/cards-layout.test.js`.
 
 ## Request 1: one ring moving in a circle
+
+**Built.** The user's answers (smooth, both directions and speed as options, letters upright) are in "Answers from the user" above. What was built: a "Moving Ring" choice (None by default, then one entry per ring), a Direction choice (clockwise, counterclockwise), a Speed slider (1 to 30 turns a minute, default 6) and a Start/Stop button, with Escape also stopping. The maths is `macdonald-form-field-cards/motion.js`, tested in `tests/motion.test.js`, and the behaviour was checked in headless Chrome (only the chosen ring moves, the radius is kept, direction, stop, Escape, switching rings, Generate and reduced motion). One measured finding changed the notes: a turning ring can pass its neighbours closer than the 0.1 em the still layout keeps, down to about 0.065 em, with the ink never touching; see "The moving ring" in [macdonald-form-field-cards.md](macdonald-form-field-cards.md). The design notes below are the plan it followed.
 
 ### What it probably means
 

@@ -56,6 +56,10 @@ The generator creates **new, original** cards in the same style: concentric ring
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
 | Use every letter once | Off by default. Puts the whole chosen set on the card exactly once (26 letters, 21 consonants or 5 vowels) and spreads it over the rings, as evenly as possible with the extra letters on the outer rings (26 over 5 rings is 5, 5, 5, 5, 6). The letters-per-ring control is then not used and reads "varies", and so is the no-repeats option. A ring needs at least 3 letters, so a small set uses fewer rings than asked for (the 5 vowels fill one ring), and the note says so |
 | No repeated letters on the card | On by default. Letters are dealt from the chosen set across the whole card, so no letter appears twice until every letter in the set has been used. Off: each ring is picked on its own and the same letter can appear in several rings |
+| Moving Ring | None by default. After a card is generated, the choices are its rings (Ring 1 is the innermost). The chosen ring can turn round the fixation point while the others stay still |
+| Direction | Clockwise (default) or counterclockwise, as seen on the screen. Applies at once, even while the ring is turning |
+| Speed | 1 to 30 turns a minute (default 6, one turn in 10 seconds). Applies at once |
+| Start moving ring | Starts and stops the turning. It is off until pressed, and it is not available until a ring is chosen. Escape also stops it |
 | Center dot | Checkbox to show or hide the fixation circle and dot (on by default) |
 
 Letters are picked at random when a card is generated. With "No repeated letters on the card" on (the default), none appears twice: a card of up to 26 places (rings times letters per ring) shows different letters, and the note under the buttons says how many of the alphabet are used. A card with more places than the set has letters (the default 5 x 6 is 30 places against 26 letters) uses every letter before repeating any, and the note says how many repeat. Consonants (21) and vowels (5) repeat sooner for the same reason. Inside one ring a letter never repeats unless the set is smaller than the ring. "Print Card" prints just the card. The default card is 5.5 x 8.5 in and fits one page. A note under the buttons shows the card's size in inches, how it will print, and any warning (letters shrunk to fit, letters too small to read, will not fit a page).
@@ -68,6 +72,15 @@ Letters are picked at random when a card is generated. With "No repeated letters
 - If the requested sizes do not fit on the card, **every letter is shrunk by the same factor** (keeping the size progression) until the outer ring fits. A note under the buttons says how much. So Base Letter Height is the size you ask for, not a guarantee. Raise the card size or lower rings, letters per ring or scale factor to keep the full size.
 - Rings can hold different numbers of letters: `layoutRings`, `fitRings` and `placeLetters` take either one number or an array with a count per ring, and `ringCounts` works out the array for "Use every letter once". The tests sweep sizes, shapes, ring counts and all three letter sets for clipping and overlap.
 - Letters are positioned relative to the inside of the card border, so measure from the padding box (`BORDER_MM` in `layout.js`) or letters drift off-center from the fixation dot. `main.js` passes `BORDER_MM` to the CSS as `--border-mm`, so the border width is defined once.
+
+### The moving ring
+
+- Each letter keeps the distance from the center it was drawn at and is moved round it, not rotated, so letters stay upright. The maths (`advanceAngle`, `turnedPosition`) is in `motion.js`, and `placeLetters` returns each letter's `ring`, `angle` and `r` for it.
+- It turns smoothly, one frame at a time (`requestAnimationFrame`). Each frame adds the time since the last, but never more than 100 ms, so a tab that was in the background does not make the ring jump. Browsers pause frames in a hidden tab.
+- Only the chosen ring's letters are moved, and only their `left` and `top`. Stopping leaves the ring where it is, and Start continues from there. Choosing another ring (or None) puts the old one back where it was drawn. Generating a new card stops it, and keeps the choice if that ring still exists.
+- There is no flashing: the letters move continuously and nothing changes visibility. Nothing starts by itself, which is also what `prefers-reduced-motion` asks for; a device set to reduce motion gets an extra line in the note.
+- **Clearance while turning.** The card is laid out so still letters keep 0.1 em apart. A turning ring passes its neighbours at angles that layout did not plan for. Measured over a sweep of sizes, shapes, ring counts and speeds, the ink of two letters never overlaps and the closest approach is about 0.065 em (a little over a twentieth of the larger letter's height). Keeping 0.1 em throughout would have meant spacing the rings further apart on every card, which makes every letter smaller, so it was not done. `tests/motion.test.js` checks the clearance at 24 angles per ring.
+- **Printing** prints the card as it is on the screen, so a ring that is mid-turn prints where it has got to. The note says so.
 
 ### Gotchas
 
@@ -84,7 +97,7 @@ Letters are picked at random when a card is generated. With "No repeated letters
 - Choose letter size by visual angle at a given viewing distance
 - Seeded randomness so a given card can be regenerated or shared
 - Remember the last settings on the device (idea U4 in `tool-ideas.md`; needs a decision on the "stores nothing" promise)
-- Planned from user feedback: a moving ring and non-repeating letters (see `macdonald-cards-feedback-plan.md`)
+- Reverse the direction each lap, or turn more than one ring at once (not asked for yet)
 
 ## Legal notes
 

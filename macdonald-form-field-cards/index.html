@@ -104,16 +104,45 @@
         </label>
       </div>
 
+      <div class="control-group">
+        <label for="moving-ring">Moving Ring</label>
+        <div class="control-row">
+          <select id="moving-ring">
+            <option value="" selected>None (every ring still)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="ring-direction">Direction</label>
+        <div class="control-row">
+          <select id="ring-direction">
+            <option value="clockwise" selected>Clockwise</option>
+            <option value="counterclockwise">Counterclockwise</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="ring-speed">Speed</label>
+        <div class="control-row">
+          <input type="range" id="ring-speed" min="1" max="30" value="6" step="1">
+          <span class="value-display" id="ring-speed-val">6 turns/min (10.0 s a turn)</span>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- Action Buttons -->
   <div class="actions">
     <button type="button" class="btn btn-primary" id="btn-generate">Generate Card</button>
+    <button type="button" class="btn btn-secondary" id="btn-motion" disabled>Start moving ring</button>
     <button type="button" class="btn btn-secondary" id="btn-print">Print Card</button>
   </div>
 
   <p class="note" id="card-note" aria-live="polite"></p>
+  <p class="note" id="motion-note"></p>
 
   <!-- Card -->
   <div class="card-wrapper">
