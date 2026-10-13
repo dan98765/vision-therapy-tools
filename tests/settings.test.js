@@ -1,12 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { REMEMBERED as CARD_CONTROLS } from '../macdonald-form-field-cards/remembered.js';
 import { REMEMBERED as TEMPLATE_CONTROLS } from '../_template/remembered.js';
 import { REMEMBERED as HART_CONTROLS } from '../hart-chart/remembered.js';
 import { REMEMBERED as CALIBRATION_CONTROLS } from '../screen-calibration/remembered.js';
 import {
   SETTINGS_VERSION,
+  browserStorage,
   createStore,
   restoreValues,
   storageKey,
@@ -83,6 +84,23 @@ describe('restoreValues', () => {
 
   it('does not take values from the prototype', () => {
     expect(restoreValues(JSON.parse('{"__proto__": {"rings": 4}}'), specs)).toEqual({});
+  });
+});
+
+describe('browserStorage', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('is the page\'s localStorage when there is one', () => {
+    const storage = fakeStorage();
+    vi.stubGlobal('window', { localStorage: storage });
+    expect(browserStorage()).toBe(storage);
+  });
+
+  it('is null when the browser blocks storage, or has none', () => {
+    vi.stubGlobal('window', { get localStorage() { throw new Error('blocked'); } });
+    expect(browserStorage()).toBeNull();
+    vi.stubGlobal('window', {});
+    expect(browserStorage()).toBeNull();
   });
 });
 

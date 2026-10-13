@@ -9,16 +9,14 @@ import {
   placeLetters,
   ringCounts,
 } from '../macdonald-form-field-cards/layout.js';
+import { inkBox, layoutProblem } from './ink.js';
 import { seeded } from './rng.js';
 
 // Page defaults from macdonald-form-field-cards/index.html
 const DEFAULTS = { longSide: 216, ratio: 0.647, rings: 5, perRing: 6, baseMm: 2, scale: 1.6 };
 
-// The ink of a capital letter: as wide as the widest capital (W, 0.94 em) and as
-// tall as a capital (CAP_HEIGHT), plus a small margin so letters never nearly touch.
+// Still letters keep this much clear of each other, in em (see tests/ink.js)
 const INK_MARGIN = 0.1;
-const BOX_W = 0.94 + INK_MARGIN;
-const BOX_H = CAP_HEIGHT + INK_MARGIN;
 
 function build({ longSide, ratio, rings, perRing, baseMm, scale }, random = Math.random) {
   const geo = cardGeometry(longSide, ratio);
@@ -28,14 +26,7 @@ function build({ longSide, ratio, rings, perRing, baseMm, scale }, random = Math
   return { geo, fit, letters };
 }
 
-function boxes(letters) {
-  return letters.map(({ x, y, font }) => ({
-    left: x - (BOX_W * font) / 2,
-    right: x + (BOX_W * font) / 2,
-    top: y - (BOX_H * font) / 2,
-    bottom: y + (BOX_H * font) / 2,
-  }));
-}
+const boxes = letters => letters.map(({ x, y, font }) => inkBox(x, y, font, INK_MARGIN));
 
 describe('cardGeometry', () => {
   it('uses the long side for portrait and landscape cards', () => {
@@ -104,23 +95,8 @@ describe('placeLetters', () => {
                 for (const seed of [1, 2]) {
                   const settings = { longSide, ratio, rings, perRing, baseMm, scale };
                   const { geo, letters } = build(settings, seeded(seed));
-                  const bs = boxes(letters);
-                  const label = JSON.stringify({ ...settings, seed });
-
-                  for (const b of bs) {
-                    if (b.left < 0 || b.top < 0 || b.right > 2 * geo.cx || b.bottom > 2 * geo.cy) {
-                      expect.fail(`clipped: ${label}`);
-                    }
-                  }
-                  for (let i = 0; i < bs.length; i++) {
-                    for (let j = i + 1; j < bs.length; j++) {
-                      const p = bs[i];
-                      const q = bs[j];
-                      if (p.left < q.right && q.left < p.right && p.top < q.bottom && q.top < p.bottom) {
-                        expect.fail(`overlap: ${label}`);
-                      }
-                    }
-                  }
+                  const problem = layoutProblem(boxes(letters), geo);
+                  if (problem) expect.fail(`${problem}: ${JSON.stringify({ ...settings, seed })}`);
                   checked++;
                 }
               }
@@ -166,6 +142,22 @@ describe('placeLetters without repeats', () => {
   it('keeps the same positions and sizes either way, so the layout checks still apply', () => {
     const geometry = letters => letters.map(({ font }) => font);
     expect(geometry(place(DEFAULTS, seeded(6), true))).toEqual(geometry(place(DEFAULTS, seeded(6), false)));
+  });
+});
+
+describe('layoutRings with a count for each ring', () => {
+  it('uses each ring\'s own count, so a ring with more letters is pushed further out', () => {
+    const even = layoutRings(2, [6, 6], 2 / CAP_HEIGHT, 1.6, 1);
+    const crowded = layoutRings(2, [6, 30], 2 / CAP_HEIGHT, 1.6, 1);
+    expect(crowded[1].radius).toBeGreaterThan(even[1].radius);
+    expect(crowded[0]).toEqual(even[0]);
+  });
+
+  it('copes with a ring of one letter, which has no neighbours to keep clear of', () => {
+    const rings = layoutRings(3, [1, 4, 6], 2 / CAP_HEIGHT, 1.6, 1);
+    for (const ring of rings) expect(Number.isFinite(ring.radius)).toBe(true);
+    expect(rings[0].radius).toBeGreaterThan(0);
+    expect(rings[1].radius).toBeGreaterThan(rings[0].radius);
   });
 });
 
@@ -227,18 +219,8 @@ describe('every letter once, spread over uneven rings', () => {
             for (const [baseMm, scale] of [[1, 1.3], [2, 1.6], [6, 2.5]]) {
               for (const seed of [1, 2]) {
                 const { geo, letters } = placeAll(pool, rings, longSide, ratio, baseMm, scale, seed);
-                const bs = boxes(letters);
-                const label = JSON.stringify({ pool: pool.length, longSide, ratio, rings, baseMm, scale, seed });
-                for (const b of bs) {
-                  if (b.left < 0 || b.top < 0 || b.right > 2 * geo.cx || b.bottom > 2 * geo.cy) expect.fail(`clipped: ${label}`);
-                }
-                for (let i = 0; i < bs.length; i++) {
-                  for (let j = i + 1; j < bs.length; j++) {
-                    const p = bs[i];
-                    const q = bs[j];
-                    if (p.left < q.right && q.left < p.right && p.top < q.bottom && q.top < p.bottom) expect.fail(`overlap: ${label}`);
-                  }
-                }
+                const problem = layoutProblem(boxes(letters), geo);
+                if (problem) expect.fail(`${problem}: ${JSON.stringify({ pool: pool.length, longSide, ratio, rings, baseMm, scale, seed })}`);
                 checked++;
               }
             }

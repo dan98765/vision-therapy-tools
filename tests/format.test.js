@@ -59,5 +59,7 @@ describe('ringCountsNote', () => {
 
   it('says when fewer rings are used than asked for', () => {
     expect(ringCountsNote([5], 3)).toContain('Only 1 of the 3 rings is used');
+    expect(ringCountsNote([3, 3], 5)).toContain('Only 2 of the 5 rings are used');
+    expect(ringCountsNote([3, 3, 3], 3)).not.toContain('Only');
   });
 });

@@ -198,7 +198,7 @@ describe('contentProblems', () => {
     const tracked = readdirSync(root, { recursive: true, withFileTypes: false })
       .map(String)
       .filter(path => /\.(md|js|css|html|json|yml|yaml)$/.test(path))
-      .filter(path => !/^(node_modules|dist|\.git)[\\/]/.test(path));
+      .filter(path => !/^(node_modules|dist|coverage|\.git)[\\/]/.test(path));
     const files = tracked.map(path => ({
       path,
       lines: readFileSync(join(root, path), 'utf8').split('\n').map((text, i) => ({ number: i + 1, text })),

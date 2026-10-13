@@ -11,6 +11,7 @@ import {
   secondsPerTurn,
   turnedPosition,
 } from '../macdonald-form-field-cards/motion.js';
+import { inkBox, layoutProblem } from './ink.js';
 import { seeded } from './rng.js';
 
 const TAU = 2 * Math.PI;
@@ -117,18 +118,10 @@ describe('the placed letters carry what a ring needs to turn', () => {
   });
 });
 
-// A letter's ink box (as in cards-layout.test.js, but with a smaller margin). The card is laid out so still
-// letters keep 0.1 em apart; a turning ring passes its neighbours at an angle that layout did not plan for,
-// and keeps at least this much clear of them (measured at about 0.065 em at worst, so the ink never touches).
+// The card is laid out so still letters keep 0.1 em apart (cards-layout.test.js). A turning ring passes its
+// neighbours at an angle that layout did not plan for, and keeps at least this much clear of them (measured
+// at about 0.065 em at worst, so the ink never touches).
 const INK_MARGIN = 0.05;
-const BOX_W = 0.94 + INK_MARGIN;
-const BOX_H = CAP_HEIGHT + INK_MARGIN;
-const box = (x, y, font) => ({
-  left: x - (BOX_W * font) / 2,
-  right: x + (BOX_W * font) / 2,
-  top: y - (BOX_H * font) / 2,
-  bottom: y + (BOX_H * font) / 2,
-});
 
 describe('turning one ring', () => {
   it('never overlaps another letter or leaves the card, at any angle', () => {
@@ -144,20 +137,12 @@ describe('turning one ring', () => {
               const turn = (step / 24) * TAU;
               const boxes = letters.map(l => {
                 const { x, y } = l.ring === moving ? turnedPosition(l, turn, geo.cx, geo.cy) : l;
-                return { ring: l.ring, ...box(x, y, l.font) };
+                return inkBox(x, y, l.font, INK_MARGIN);
               });
-              const label = JSON.stringify({ longSide, ratio, rings, perRing, baseMm, scale, moving, step });
-              for (const b of boxes) {
-                if (b.left < 0 || b.top < 0 || b.right > 2 * geo.cx || b.bottom > 2 * geo.cy) expect.fail(`clipped: ${label}`);
-              }
-              for (let i = 0; i < boxes.length; i++) {
-                for (let j = i + 1; j < boxes.length; j++) {
-                  const p = boxes[i];
-                  const q = boxes[j];
-                  if (p.ring !== moving && q.ring !== moving) continue; // still letters were already checked
-                  if (p.left < q.right && q.left < p.right && p.top < q.bottom && q.top < p.bottom) expect.fail(`overlap: ${label}`);
-                }
-              }
+              // Still letters were already checked, so look only at pairs that include the turning ring
+              const involvesMoving = (i, j) => letters[i].ring === moving || letters[j].ring === moving;
+              const problem = layoutProblem(boxes, geo, involvesMoving);
+              if (problem) expect.fail(`${problem}: ${JSON.stringify({ longSide, ratio, rings, perRing, baseMm, scale, moving, step })}`);
               checked++;
             }
           }
