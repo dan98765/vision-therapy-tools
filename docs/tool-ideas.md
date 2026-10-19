@@ -27,7 +27,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | --- | --- | --- | --- | --- |
 | P1 | Visual tracing charts | Printable | M | Letters and numbers joined by tangled lines, followed with the eyes |
 | P2 | Saccade cards | Printable | S | Target cards for looking back and forth at a set spacing |
-| P3 | Matched Hart pair | Printable | S | A large wall chart and a small hand chart with the same letters |
+| P3 | Matched Hart pair | Printable | S | A large wall chart and a small hand chart with the same letters (built) |
 | P4 | Letter-size calculator | Printable | S | Viewing distance and visual angle to letter height in inches |
 | P5 | Pursuit pattern sheets | Printable | S | Figure-eights, spirals and waves to follow with the eyes |
 | P6 | Fusion and stereogram cards | Printable | M | Paired targets at an exact separation, and cards of two incomplete images used with a pen |
@@ -82,7 +82,7 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 
 ### P3. Matched Hart pair
 
-- **Plan:** [units-pair-calculator-plan.md](units-pair-calculator-plan.md).
+- **Status:** built as `matched-hart-pair/` (see [matched-hart-pair.md](matched-hart-pair.md)); the plan is in [units-pair-calculator-plan.md](units-pair-calculator-plan.md). The text below is the original idea.
 
 - **What:** one click produces a large chart for the wall and a small chart for the hand with the same letters and the same rows and columns, as the Hart chart notes describe. Already on the Hart chart's own ideas list.
 - **Controls:** the existing Hart settings plus the small chart's letter height.

@@ -1,0 +1,29 @@
+/* Matched Hart Pair: page styles. The charts are styled in shared/chart.css, as on the Hart chart page. */
+
+.pair-chart {
+  margin-bottom: 24px;
+}
+
+.pair-title {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  text-align: center;
+  color: #374151;
+}
+
+@media print {
+  .pair-title {
+    display: none;
+  }
+
+  /* Printing both (the browser's own Print): each chart on its own page */
+  body:not([data-print]) .pair-large {
+    break-before: page;
+  }
+
+  /* "Print small chart" and "Print large chart" print one */
+  body[data-print="small"] .pair-large,
+  body[data-print="large"] .pair-small {
+    display: none;
+  }
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { pageFit } from '../shared/paper.js';
-import { LETTER_SETS, buildGrid, gridLayout } from '../hart-chart/grid.js';
+import { LETTER_SETS, buildGrid, gridLayout } from '../shared/hart-grid.js';
 import { seeded } from './rng.js';
 
 // Page defaults from hart-chart/index.html

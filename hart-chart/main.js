@@ -1,12 +1,13 @@
 // Hart chart: reads the controls, draws the chart.
 
 import { lengthLabel, sizeSummary } from '../shared/format.js';
+import { LETTER_SETS, buildGrid, gridLayout } from '../shared/hart-grid.js';
+import { drawChart } from '../shared/hart-draw.js';
 import { useUnits } from '../shared/length-controls.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
 import { fromDisplay } from '../shared/units.js';
-import { LETTER_SETS, buildGrid, gridLayout } from './grid.js';
 import { LENGTH_CONTROLS } from './lengths.js';
 import { REMEMBERED } from './remembered.js';
 
@@ -32,13 +33,6 @@ const els = {
 // The current letters, kept so size and spacing changes do not reshuffle them
 let grid = [];
 
-function cell(className, text) {
-  const el = document.createElement('div');
-  el.className = className;
-  el.textContent = text;
-  return el;
-}
-
 function render() {
   const rows = grid.length;
   const cols = grid[0].length;
@@ -53,29 +47,7 @@ function render() {
     colNumbers,
   });
 
-  const mm = value => value.toFixed(3) + 'mm';
-  els.chart.style.fontSize = mm(layout.fontMm);
-  els.chart.style.gridAutoRows = mm(layout.cellH);
-  els.chart.style.gridTemplateColumns =
-    (numbers ? mm(layout.numW) + ' ' : '') +
-    `repeat(${cols}, ${mm(layout.cellW)})` +
-    (numbers ? ' ' + mm(layout.numW) : '');
-
-  els.chart.textContent = '';
-  // A row of column numbers, with an empty corner on each side when row numbers are shown too
-  const appendColumnNumbers = () => {
-    if (numbers) els.chart.append(cell('cell row-num', ''));
-    for (let c = 1; c <= cols; c++) els.chart.append(cell('cell row-num', c));
-    if (numbers) els.chart.append(cell('cell row-num', ''));
-  };
-
-  if (colNumbers) appendColumnNumbers();
-  grid.forEach((row, r) => {
-    if (numbers) els.chart.append(cell('cell row-num', r + 1));
-    for (const letter of row) els.chart.append(cell('cell', letter));
-    if (numbers) els.chart.append(cell('cell row-num', r + 1));
-  });
-  if (colNumbers) appendColumnNumbers();
+  drawChart(els.chart, grid, layout, { numbers, colNumbers });
 
   const units = view.units();
   const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true, units });

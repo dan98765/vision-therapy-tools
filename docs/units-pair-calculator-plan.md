@@ -56,6 +56,8 @@ Each ships as its own commit after lint, tests, build and real-browser checks (a
 
 ## P3. Matched Hart Pair
 
+**Built** as planned (see [matched-hart-pair.md](matched-hart-pair.md)). The size-ratio slider runs 1.25 to 6 in steps of 0.25 with a default of 1.5, chosen so that a default pair prints (the small chart upright, the large one sideways); anything bigger gets the usual page-fit warning.
+
 ### Decisions
 
 - **A new exercise page, `matched-hart-pair/`**, not a mode of the Hart chart. The Hart chart stays simple.

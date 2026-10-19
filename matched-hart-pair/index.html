@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Matched Hart Pair</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="../shared/chart.css">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <!-- site-header -->
+  <h1>Matched Hart Pair</h1>
+  <p class="subtitle">A small chart and a large chart with the same letters, for near-far practice</p>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel">
+    <h2>Chart Settings</h2>
+    <div class="controls-grid">
+
+      <div class="control-group">
+        <label for="rows">Rows</label>
+        <div class="control-row">
+          <input type="range" id="rows" min="4" max="24" value="10" step="1">
+          <span class="value-display" id="rows-val">10</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="cols">Letters per Row</label>
+        <div class="control-row">
+          <input type="range" id="cols" min="4" max="16" value="10" step="1">
+          <span class="value-display" id="cols-val">10</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="small-height">Small Chart Letter Height</label>
+        <div class="control-row">
+          <input type="range" id="small-height" min="0.08" max="0.5" value="0.16" step="0.02">
+          <span class="value-display" id="small-height-val">0.16 in</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="size-ratio">Large Chart Size</label>
+        <div class="control-row">
+          <input type="range" id="size-ratio" min="1.25" max="6" value="1.5" step="0.25">
+          <span class="value-display" id="size-ratio-val">1.50× (letters 0.24 in)</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="spacing">Spacing</label>
+        <div class="control-row">
+          <input type="range" id="spacing" min="1.5" max="4" value="2.5" step="0.1">
+          <span class="value-display" id="spacing-val">2.5×</span>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="letter-set">Letter Set</label>
+        <div class="control-row">
+          <select id="letter-set">
+            <option value="upper">Uppercase A – Z</option>
+            <option value="upper-consonants">Uppercase consonants only</option>
+            <option value="lower">Lowercase a – z</option>
+            <option value="lower-consonants">Lowercase consonants only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="show-numbers">
+          Show row numbers
+        </label>
+      </div>
+
+      <div class="control-group">
+        <label class="checkbox-label">
+          <input type="checkbox" id="show-column-numbers">
+          Show column numbers
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="actions">
+    <button type="button" class="btn btn-primary" id="btn-generate">Generate Pair</button>
+    <button type="button" class="btn btn-secondary" id="btn-print-small">Print small chart</button>
+    <button type="button" class="btn btn-secondary" id="btn-print-large">Print large chart</button>
+    <button type="button" class="btn btn-secondary" id="btn-reset-settings">Reset settings</button>
+  </div>
+
+  <p class="note" id="settings-note">Your settings are remembered in this browser only, and nothing is sent anywhere. Reset settings puts the defaults back.</p>
+
+  <!-- The small chart -->
+  <section class="pair-chart pair-small" aria-labelledby="small-title">
+    <h2 class="pair-title" id="small-title">Small chart (to hold)</h2>
+    <p class="note" id="small-note" aria-live="polite"></p>
+    <div class="chart-wrapper">
+      <div class="chart" id="chart-small" role="img" aria-label="Small Hart chart of random letters"></div>
+    </div>
+  </section>
+
+  <!-- The large chart, with the same letters -->
+  <section class="pair-chart pair-large" aria-labelledby="large-title">
+    <h2 class="pair-title" id="large-title">Large chart (for the wall)</h2>
+    <p class="note" id="large-note" aria-live="polite"></p>
+    <div class="chart-wrapper">
+      <div class="chart" id="chart-large" role="img" aria-label="Large Hart chart with the same letters as the small chart"></div>
+    </div>
+  </section>
+
+  <p class="disclaimer">Not medical advice. Use exercises as directed by your vision therapist.</p>
+</body>
+</html>

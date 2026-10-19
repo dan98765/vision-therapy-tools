@@ -108,9 +108,6 @@ describe.each(exercises)('exercise %s', name => {
   });
 });
 
-// Browsers drop background colours and images when printing unless the user turns on "background
-// graphics", so an exercise must not depend on them: the fixation dot once vanished from printouts
-// for exactly this reason. Draw shapes with borders or text; a white or transparent background is fine.
 // Remembering the controls is part of every exercise (shared/settings.js), including copies of _template/
 describe.each(folders)('remembered settings in %s', name => {
   const main = read(`${name}/main.js`);
@@ -130,9 +127,14 @@ describe.each(folders)('remembered settings in %s', name => {
   });
 });
 
-describe.each(folders)('print styles in %s', name => {
+// Browsers drop background colours and images when printing unless the user turns on "background
+// graphics", so an exercise must not depend on them: the fixation dot once vanished from printouts
+// for exactly this reason. Draw shapes with borders or text; a white or transparent background is fine.
+// The shared chart styles are checked too, because the Hart pages print them.
+const stylesheets = [...folders.map(name => `${name}/style.css`), 'shared/chart.css'];
+describe.each(stylesheets)('print styles in %s', file => {
   it('does not depend on background colours', () => {
-    const css = read(`${name}/style.css`).replace(/\/\*[\s\S]*?\*\//g, ''); // ignore comments
+    const css = read(file).replace(/\/\*[\s\S]*?\*\//g, ''); // ignore comments
     for (const [, value] of css.matchAll(/\bbackground(?:-color)?\s*:\s*([^;}]+)/g)) {
       expect(value.trim(), `background: ${value.trim()}`).toMatch(/^(#fff(fff)?|white|transparent|none)$/i);
     }

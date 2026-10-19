@@ -1,7 +1,7 @@
-// Grid maths for the Hart chart. No DOM access, so it can be tested.
+// Grid maths for the Hart chart and the matched pair. No DOM access, so it can be tested.
 // All lengths are in mm; "em" means the font-size of the letters.
 
-import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS } from '../shared/letters.js';
+import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS } from './letters.js';
 
 export const LETTER_SETS = {
   'upper': UPPER,
