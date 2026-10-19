@@ -1,0 +1,20 @@
+/* Letter Size Calculator: styles for this page only. Shared styles live in ../shared/style.css. */
+
+/* The box that is being worked out: it can be read but not typed in, so it looks different without a
+   background colour (the site's exercise styles do not use them) */
+.control-group input[readonly] {
+  border-style: dashed;
+  font-weight: 600;
+}
+
+.use-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  list-style: none;
+  margin-bottom: 8px;
+}
+
+.use-links a {
+  font-weight: 500;
+}

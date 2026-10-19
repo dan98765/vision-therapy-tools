@@ -12,6 +12,7 @@ Small vision therapy exercises as browser pages. Plain HTML, CSS and vanilla Jav
 | [Screen Calibration](https://dan98765.github.io/vision-therapy-tools/screen-calibration/) ([code](screen-calibration/), [notes](docs/screen-calibration.md)) | A utility: match a credit card or paper to the screen to find how many pixels make a real millimetre, with a ruler to check it. Remembers your calibration in your browser only. |
 | [Hart Chart Generator](https://dan98765.github.io/vision-therapy-tools/hart-chart/) ([code](hart-chart/), [notes](docs/hart-chart.md)) | Printable rows of random letters for saccade and near-far focusing practice, laid out for true-size printing, with sizes in inches or millimetres. |
 | [Matched Hart Pair](https://dan98765.github.io/vision-therapy-tools/matched-hart-pair/) ([code](matched-hart-pair/), [notes](docs/matched-hart-pair.md)) | A small chart and a large chart with the same letters, laid out for true-size printing, with sizes in inches or millimetres. |
+| [Letter Size Calculator](https://dan98765.github.io/vision-therapy-tools/letter-size-calculator/) ([code](letter-size-calculator/), [notes](docs/letter-size-calculator.md)) | A utility: work out a letter height, viewing distance or visual angle from the other two, and send the height to the charts. |
 
 More exercises are being considered: see [docs/tool-ideas.md](docs/tool-ideas.md).
 

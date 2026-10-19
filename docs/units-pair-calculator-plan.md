@@ -77,6 +77,8 @@ Each ships as its own commit after lint, tests, build and real-browser checks (a
 
 ## P4. Letter Size Calculator
 
+**Built** as planned (see [letter-size-calculator.md](letter-size-calculator.md)). Differences: the calculator's boxes have explicit limits (0.5 minutes of arc to 10 degrees; 0.01 to 24 in of letter height; 4 to 600 in of distance), the angle is remembered in minutes of arc because its range depends on the unit, the link's message reads "outside the range this page can make" (it does not name the page), and the list of pages that take the link is `PREFILL_PAGES` in `shared/prefill.js`, with a test that each one really does.
+
 ### Decisions
 
 - **A new page, `letter-size-calculator/`**, with three linked quantities and a choice of which to work out: **letter height**, **viewing distance** or **visual angle**. The two that are not being solved are typed in; the solved one is shown and cannot be typed in.

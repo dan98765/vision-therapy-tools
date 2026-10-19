@@ -77,6 +77,11 @@ Letters are picked at random when a card is generated. With "No repeated letters
 
 The controls are remembered on this device (`remembered.js` lists them; `shared/settings.js` and `shared/remember.js` do the work) and come back when the page is opened again, including the speed and direction of the moving ring. Not remembered: the card's random letters, the moving-ring choice (the choices depend on the card that was drawn) and whether a ring is turning, so a page never opens with something already moving. **Reset settings** clears everything and puts the defaults back. A saved value that no longer fits its control is ignored, and a missing, blocked or corrupt store just means the defaults.
 
+
+### Letter height from a link
+
+The [letter size calculator](letter-size-calculator.md) links here with `?letter-mm=<height in millimetres>`. The page sets Base Letter Height from it (kept inside the control's range, with a note when it had to move it), saves that as the page's setting, and takes the value out of the address so a reload does not put it back over later changes. A link that is not a plain positive number up to 1,000 is ignored. The code is `applyLetterPrefill` in `shared/length-controls.js` and the parsing is in `shared/prefill.js`.
+
 ### The moving ring
 
 - Each letter keeps the distance from the center it was drawn at and is moved round it, not rotated, so letters stay upright. The maths (`advanceAngle`, `turnedPosition`) is in `motion.js`, and `placeLetters` returns each letter's `ring`, `angle` and `r` for it.

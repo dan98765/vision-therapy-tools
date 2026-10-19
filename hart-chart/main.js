@@ -3,7 +3,7 @@
 import { lengthLabel, sizeSummary } from '../shared/format.js';
 import { LETTER_SETS, buildGrid, gridLayout } from '../shared/hart-grid.js';
 import { drawChart } from '../shared/hart-draw.js';
-import { useUnits } from '../shared/length-controls.js';
+import { applyLetterPrefill, useUnits } from '../shared/length-controls.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
@@ -93,6 +93,8 @@ const view = useUnits(LENGTH_CONTROLS, () => {
 // Controls come back as the user last left them, and are saved on this device as they change
 const remember = rememberControls('hart-chart', REMEMBERED, { lengths: LENGTH_CONTROLS });
 remember.restore();
+const prefill = { control: els.height, spec: LENGTH_CONTROLS['letter-height'], note: byId('prefill-note') };
+if (applyLetterPrefill(prefill)) remember.save();
 remember.watch();
 els.btnResetSettings.addEventListener('click', () => {
   remember.reset();

@@ -28,7 +28,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | P1 | Visual tracing charts | Printable | M | Letters and numbers joined by tangled lines, followed with the eyes |
 | P2 | Saccade cards | Printable | S | Target cards for looking back and forth at a set spacing |
 | P3 | Matched Hart pair | Printable | S | A large wall chart and a small hand chart with the same letters (built) |
-| P4 | Letter-size calculator | Printable | S | Viewing distance and visual angle to letter height in inches |
+| P4 | Letter-size calculator | Printable | S | Viewing distance and visual angle to letter height (built) |
 | P5 | Pursuit pattern sheets | Printable | S | Figure-eights, spirals and waves to follow with the eyes |
 | P6 | Fusion and stereogram cards | Printable | M | Paired targets at an exact separation, and cards of two incomplete images used with a pen |
 | P7 | Near-point targets | Printable | S | Fine targets and string-bead position guides |
@@ -92,7 +92,7 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 
 ### P4. Letter-size calculator
 
-- **Plan:** [units-pair-calculator-plan.md](units-pair-calculator-plan.md).
+- **Status:** built as `letter-size-calculator/` (see [letter-size-calculator.md](letter-size-calculator.md)); the plan is in [units-pair-calculator-plan.md](units-pair-calculator-plan.md). The text below is the original idea.
 
 - **What:** enter a viewing distance and the visual angle the letters should span, and get the letter height in inches. Also the reverse.
 - **Maths:** height = 2 x distance x tan(angle / 2), with a round-trip test. Take plain angles in minutes of arc or degrees. Do not label results with acuity ratings.

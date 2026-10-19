@@ -2,7 +2,7 @@
 
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
 import { lengthLabel, letterUseNote, mmLabel, ringCountsNote, sizeSummary } from '../shared/format.js';
-import { useUnits } from '../shared/length-controls.js';
+import { applyLetterPrefill, useUnits } from '../shared/length-controls.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
@@ -262,6 +262,8 @@ const view = useUnits(LENGTH_CONTROLS, () => {
 // Controls come back as the user last left them, and are saved on this device as they change
 const remember = rememberControls('macdonald-form-field-cards', REMEMBERED, { lengths: LENGTH_CONTROLS });
 remember.restore();
+const prefill = { control: els.baseLetter, spec: LENGTH_CONTROLS['base-letter'], note: byId('prefill-note') };
+if (applyLetterPrefill(prefill)) remember.save();
 remember.watch();
 els.btnResetSettings.addEventListener('click', () => {
   remember.reset();

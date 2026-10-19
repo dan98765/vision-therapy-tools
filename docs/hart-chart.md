@@ -67,6 +67,11 @@ The page generates a chart of random letters, laid out internally in millimetres
 
 The controls are remembered on this device (`remembered.js` lists them; `shared/settings.js` and `shared/remember.js` do the work) and come back when the page is opened again. The letters are not kept, so a chart is new each time. **Reset settings** clears them and puts the defaults back. A saved value that no longer fits its control (outside the slider's range, an option that is gone) is ignored, and a missing, blocked or corrupt store just means the defaults.
 
+
+### Letter height from a link
+
+The [letter size calculator](letter-size-calculator.md) links here with `?letter-mm=<height in millimetres>`. The page sets Letter Height from it (kept inside the control's range, with a note when it had to move it), saves that as the page's setting, and takes the value out of the address so a reload does not put it back over later changes. A link that is not a plain positive number up to 1,000 is ignored. The code is `applyLetterPrefill` in `shared/length-controls.js` and the parsing is in `shared/prefill.js`.
+
 ### Ideas for later
 
 - A matching large and small pair now has its own page: see [matched-hart-pair.md](matched-hart-pair.md)

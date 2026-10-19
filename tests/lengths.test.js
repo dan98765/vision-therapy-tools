@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { LENGTH_CONTROLS as CALIBRATION_LENGTHS } from '../screen-calibration/lengths.js';
 import { LENGTH_CONTROLS as CARD_LENGTHS } from '../macdonald-form-field-cards/lengths.js';
 import { LENGTH_CONTROLS as HART_LENGTHS } from '../hart-chart/lengths.js';
+import { LENGTH_CONTROLS as CALCULATOR_LENGTHS } from '../letter-size-calculator/lengths.js';
 import { LENGTH_CONTROLS as PAIR_LENGTHS } from '../matched-hart-pair/lengths.js';
 import {
   controlValueFromMm,
@@ -132,7 +133,7 @@ describe('what is saved and restored', () => {
   });
 
   it('keeps the old inch value working after a unit switch and a reload, for every length control', () => {
-    for (const controls of [HART_LENGTHS, CARD_LENGTHS, PAIR_LENGTHS, CALIBRATION_LENGTHS]) {
+    for (const controls of [HART_LENGTHS, CARD_LENGTHS, PAIR_LENGTHS, CALCULATOR_LENGTHS, CALIBRATION_LENGTHS]) {
       for (const [id, s] of Object.entries(controls)) {
         for (const units of UNITS) {
           const saved = mmFromControlValue(s[units].value, units);
@@ -152,6 +153,7 @@ describe('each page\'s length controls', () => {
   const pages = {
     'hart-chart': HART_LENGTHS,
     'macdonald-form-field-cards': CARD_LENGTHS,
+    'letter-size-calculator': CALCULATOR_LENGTHS,
     'matched-hart-pair': PAIR_LENGTHS,
     'screen-calibration': CALIBRATION_LENGTHS,
   };

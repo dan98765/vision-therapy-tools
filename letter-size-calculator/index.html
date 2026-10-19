@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Letter Size Calculator</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <!-- site-header -->
+  <h1>Letter Size Calculator</h1>
+  <p class="subtitle">How tall a letter must be to look a given size from a given distance</p>
+
+  <!-- Inputs -->
+  <div class="controls-panel">
+    <h2>Work it out</h2>
+    <p class="help">Choose what to work out, then type in the other two. The box with the dashed edge is the answer.</p>
+    <div class="controls-grid">
+
+      <div class="control-group">
+        <label for="solve-for">Work out the</label>
+        <div class="control-row">
+          <select id="solve-for">
+            <option value="height" selected>Letter height</option>
+            <option value="distance">Viewing distance</option>
+            <option value="angle">Visual angle</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="angle-unit">Write angles in</label>
+        <div class="control-row">
+          <select id="angle-unit">
+            <option value="arcmin" selected>Minutes of arc</option>
+            <option value="deg">Degrees</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="letter-height" id="letter-height-label">Letter height (inches)</label>
+        <div class="control-row">
+          <input type="number" id="letter-height" min="0.01" max="24" step="0.01" value="0.14" readonly>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="viewing-distance" id="viewing-distance-label">Viewing distance (inches)</label>
+        <div class="control-row">
+          <input type="number" id="viewing-distance" min="4" max="600" step="1" value="16">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="visual-angle" id="visual-angle-label">Visual angle (minutes of arc)</label>
+        <div class="control-row">
+          <input type="number" id="visual-angle" min="0.5" max="600" step="0.5" value="30">
+        </div>
+      </div>
+
+    </div>
+    <p class="help">The height is the height of a capital letter, as on the other pages. These are plain sizes and angles: nothing here says what a size means for anyone's vision.</p>
+  </div>
+
+  <p class="note" id="calc-note" aria-live="polite"></p>
+
+  <!-- Result -->
+  <div class="controls-panel">
+    <h2>Result</h2>
+    <dl class="results">
+      <div><dt>Letter height</dt><dd id="res-height"></dd></div>
+      <div><dt>Font size for that height (Arial)</dt><dd id="res-font"></dd></div>
+      <div><dt>Viewing distance</dt><dd id="res-distance"></dd></div>
+      <div><dt>Visual angle</dt><dd id="res-angle"></dd></div>
+    </dl>
+  </div>
+
+  <!-- Links that carry the height to the other pages -->
+  <div class="controls-panel" id="use-panel" hidden>
+    <h2>Use this letter height</h2>
+    <ul class="use-links">
+      <li><a id="link-hart-chart" href="../hart-chart/">Hart chart</a></li>
+      <li><a id="link-matched-hart-pair" href="../matched-hart-pair/">Matched Hart pair (small chart)</a></li>
+      <li><a id="link-macdonald-form-field-cards" href="../macdonald-form-field-cards/">Macdonald cards (innermost ring)</a></li>
+    </ul>
+    <p class="help">Each link sets that page's letter height. If the page cannot make a letter that size, it uses the nearest it can and says so.</p>
+  </div>
+
+  <p class="note" id="settings-note">Your settings are remembered in this browser only, and nothing is sent anywhere. Reset settings puts the defaults back.</p>
+  <div class="actions">
+    <button type="button" class="btn btn-secondary" id="btn-reset-settings">Reset settings</button>
+  </div>
+
+  <p class="disclaimer">Not medical advice. Use exercises as directed by your vision therapist.</p>
+</body>
+</html>

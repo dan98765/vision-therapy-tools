@@ -237,6 +237,37 @@ h1 {
   background: #d1d5db;
 }
 
+/* ── Help text and result lists (used by the calibration page and the letter size calculator) ── */
+.help {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.results {
+  display: grid;
+  gap: 2px;
+}
+
+.results div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.results dt {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.results dd {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Note under the buttons ───────────────────────────── */
 .note {
   max-width: 720px;

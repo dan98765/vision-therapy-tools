@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { REMEMBERED as CARD_CONTROLS } from '../macdonald-form-field-cards/remembered.js';
 import { REMEMBERED as TEMPLATE_CONTROLS } from '../_template/remembered.js';
 import { REMEMBERED as HART_CONTROLS } from '../hart-chart/remembered.js';
+import { REMEMBERED as CALCULATOR_CONTROLS } from '../letter-size-calculator/remembered.js';
 import { REMEMBERED as PAIR_CONTROLS } from '../matched-hart-pair/remembered.js';
 import { REMEMBERED as CALIBRATION_CONTROLS } from '../screen-calibration/remembered.js';
 import {
@@ -169,6 +170,7 @@ describe('the controls each page remembers', () => {
   const pages = {
     'macdonald-form-field-cards': CARD_CONTROLS,
     'hart-chart': HART_CONTROLS,
+    'letter-size-calculator': CALCULATOR_CONTROLS,
     'matched-hart-pair': PAIR_CONTROLS,
     'screen-calibration': CALIBRATION_CONTROLS,
     _template: TEMPLATE_CONTROLS,

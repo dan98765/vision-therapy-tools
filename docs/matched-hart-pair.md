@@ -56,6 +56,11 @@ The page builds one random letter grid and draws it twice: a **small chart** at 
 
 The controls are remembered on this device and come back when the page is opened again; the letters are not kept. **Reset settings** clears them. See the Hart chart notes for how a saved value that no longer fits is ignored.
 
+
+### Letter height from a link
+
+The [letter size calculator](letter-size-calculator.md) links here with `?letter-mm=<height in millimetres>`. The page sets Small Chart Letter Height from it (kept inside the control's range, with a note when it had to move it), saves that as the page's setting, and takes the value out of the address so a reload does not put it back over later changes. A link that is not a plain positive number up to 1,000 is ignored. The code is `applyLetterPrefill` in `shared/length-controls.js` and the parsing is in `shared/prefill.js`.
+
 ### Ideas for later
 
 - Link the two charts by viewing distance, so the large chart's size follows from how far away it hangs (the letter-size calculator already works out a height from a distance)
