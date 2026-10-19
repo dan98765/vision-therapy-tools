@@ -82,6 +82,8 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 
 ### P3. Matched Hart pair
 
+- **Plan:** [units-pair-calculator-plan.md](units-pair-calculator-plan.md).
+
 - **What:** one click produces a large chart for the wall and a small chart for the hand with the same letters and the same rows and columns, as the Hart chart notes describe. Already on the Hart chart's own ideas list.
 - **Controls:** the existing Hart settings plus the small chart's letter height.
 - **Maths:** build the letter grid once (`buildGrid` already takes a random function) and lay it out twice.
@@ -89,6 +91,8 @@ These fit the repo best: they are about exact sizes in millimetres, which the la
 - **Tests:** both charts hold identical letters.
 
 ### P4. Letter-size calculator
+
+- **Plan:** [units-pair-calculator-plan.md](units-pair-calculator-plan.md).
 
 - **What:** enter a viewing distance and the visual angle the letters should span, and get the letter height in inches. Also the reverse.
 - **Maths:** height = 2 x distance x tan(angle / 2), with a round-trip test. Take plain angles in minutes of arc or degrees. Do not label results with acuity ratings.
@@ -226,6 +230,8 @@ All of these must start only when the user presses start, offer a stop, and neve
 - **Related:** U1 (the calibration needs remembering most), U3 (a practice log needs the same policy decision), U5 (settings that apply to every tool).
 
 ### U5. Global settings
+
+- **Plan:** the units part is planned in [units-pair-calculator-plan.md](units-pair-calculator-plan.md).
 
 - **What:** a few settings that belong to the user rather than to one chart, set once and applied by every tool. The first and clearest is **units: imperial (inches) or metric (millimetres and centimetres)**. Today every page shows inches and there is no way to change that.
 - **Candidates, roughly in order of value:**
