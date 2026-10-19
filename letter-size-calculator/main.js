@@ -7,7 +7,7 @@ import { CAP_HEIGHT } from '../shared/letters.js';
 import { byId, setNote } from '../shared/page.js';
 import { PREFILL_PAGES, letterLink } from '../shared/prefill.js';
 import { rememberControls } from '../shared/remember.js';
-import { fromDisplay, toDisplay } from '../shared/units.js';
+import { UNIT_WORDS, fromDisplay, toDisplay } from '../shared/units.js';
 import { ANGLE_UNITS, angleFromArcmin, angleToArcmin, convertAngle, restoredAngleArcmin, solve } from './angle.js';
 import { LENGTH_CONTROLS } from './lengths.js';
 import { REMEMBERED } from './remembered.js';
@@ -36,7 +36,6 @@ const QUANTITIES = {
   distance: { input: els.distance, label: els.distanceLabel, name: 'Viewing distance', spec: LENGTH_CONTROLS['viewing-distance'] },
   angle: { input: els.angle, label: els.angleLabel, name: 'Visual angle' },
 };
-const UNIT_WORDS = { in: 'inches', mm: 'millimetres' };
 
 const angleUnit = () => els.angleUnit.value;
 let shownAngleUnit = angleUnit(); // the unit the angle box is showing, to convert it when the user changes it
@@ -55,7 +54,7 @@ function readLength(key) {
   const value = readNumber(input);
   if (value === null || !Number.isFinite(value)) return { problem: `Enter the ${name.toLowerCase()}.` };
   if (value < min || value > max) {
-    return { problem: `${name} should be between ${min} and ${max} ${UNIT_WORDS[units]}.` };
+    return { problem: `${name} should be between ${min} and ${max} ${UNIT_WORDS[units].plural}.` };
   }
   return { value: fromDisplay(value, units) };
 }
@@ -77,7 +76,7 @@ function renderLabels() {
   const units = view.units();
   const solving = els.solve.value;
   for (const [key, { input, label, name }] of Object.entries(QUANTITIES)) {
-    const unit = key === 'angle' ? ANGLE_UNITS[angleUnit()].name : UNIT_WORDS[units];
+    const unit = key === 'angle' ? ANGLE_UNITS[angleUnit()].name : UNIT_WORDS[units].plural;
     label.textContent = `${name} (${unit})${key === solving ? ', the answer' : ''}`;
     input.readOnly = key === solving;
   }

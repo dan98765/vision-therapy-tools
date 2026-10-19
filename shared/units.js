@@ -8,6 +8,12 @@ export const MM_PER_INCH = 25.4;
 export const UNITS = ['in', 'mm'];
 export const DEFAULT_UNITS = 'in';
 
+// The words for each system, for labels and messages
+export const UNIT_WORDS = {
+  in: { plural: 'inches', singular: 'inch' },
+  mm: { plural: 'millimetres', singular: 'millimetre' },
+};
+
 export const inchesToMm = inches => inches * MM_PER_INCH;
 export const mmToInches = mm => mm / MM_PER_INCH;
 

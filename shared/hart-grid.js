@@ -1,7 +1,9 @@
 // Grid maths for the Hart chart and the matched pair. No DOM access, so it can be tested.
 // All lengths are in mm; "em" means the font-size of the letters.
 
+import { sizeSummary } from './format.js';
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS } from './letters.js';
+import { pageNote } from './paper.js';
 
 export const LETTER_SETS = {
   'upper': UPPER,
@@ -44,5 +46,19 @@ export function gridLayout({ rows, cols, heightMm, spacing, numbers, colNumbers 
     chartW,
     chartH,
     tooSmall: heightMm < MIN_LETTER_MM,
+  };
+}
+
+// What the note under a chart says, in `units`: its size, how it will print (a chart can continue onto more
+// pages, row by row), and a warning if the letters are too small to read. `layout` comes from gridLayout.
+// Returns { text, warn }.
+export function chartNote(layout, units) {
+  const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true, units });
+  return {
+    text:
+      sizeSummary(layout.chartW, layout.chartH, units) +
+      page.text +
+      (layout.tooSmall ? ' Warning: letters this small may be too small to read.' : ''),
+    warn: page.warn || layout.tooSmall,
   };
 }

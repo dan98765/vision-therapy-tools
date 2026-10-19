@@ -1,12 +1,11 @@
 // Matched Hart pair: reads the controls, draws a small chart and a large chart with the same letters.
 
-import { lengthLabel, sizeSummary } from '../shared/format.js';
+import { lengthLabel } from '../shared/format.js';
 import { drawChart } from '../shared/hart-draw.js';
-import { LETTER_SETS, buildGrid } from '../shared/hart-grid.js';
+import { LETTER_SETS, buildGrid, chartNote } from '../shared/hart-grid.js';
 import { applyLetterPrefill, useUnits } from '../shared/length-controls.js';
 import { byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
-import { pageNote } from '../shared/paper.js';
 import { fromDisplay, toDisplay } from '../shared/units.js';
 import { LENGTH_CONTROLS } from './lengths.js';
 import { largeHeightMm, pairLayouts } from './pair.js';
@@ -41,18 +40,6 @@ let grid = [];
 
 const smallHeightMm = () => fromDisplay(parseFloat(els.smallHeight.value), view.units());
 
-// What the note under a chart's title says: its size, how it prints, and whether the letters are too small
-function describeChart(layout, units) {
-  const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true, units });
-  return {
-    text:
-      sizeSummary(layout.chartW, layout.chartH, units) +
-      page.text +
-      (layout.tooSmall ? ' Warning: letters this small may be too small to read.' : ''),
-    warn: page.warn || layout.tooSmall,
-  };
-}
-
 function render() {
   const numbers = els.showNumbers.checked;
   const colNumbers = els.showColumnNumbers.checked;
@@ -71,7 +58,7 @@ function render() {
 
   const units = view.units();
   for (const [layout, note] of [[layouts.small, els.smallNote], [layouts.large, els.largeNote]]) {
-    const { text, warn } = describeChart(layout, units);
+    const { text, warn } = chartNote(layout, units);
     setNote(note, text, warn);
   }
 }

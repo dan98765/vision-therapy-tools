@@ -21,9 +21,9 @@ function applyUnits(lengths, units, previousUnits) {
 
 // If the page was opened from a link carrying a letter height (see shared/prefill.js), put it in `control` (a
 // length control with definition `spec`), say so in `note`, and take it out of the address so a reload does not
-// put it back over later changes. Returns whether it did. A height
-// the control cannot show is moved to the nearest it can, and the note says so. Call it after restoring saved
-// settings, so the link wins, and save afterwards.
+// put it back over later changes. Returns whether it did. A height the control cannot show is moved to the
+// nearest it can, and the note says so. Call it after restoring saved settings, so the link wins, and save
+// afterwards.
 export function applyLetterPrefill({ control, spec, note }) {
   const mm = parseLetterMm(window.location.search);
   if (mm === null) return false;

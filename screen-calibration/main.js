@@ -20,7 +20,7 @@ import {
 import { useUnits } from '../shared/length-controls.js';
 import { byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
-import { fromDisplay } from '../shared/units.js';
+import { UNIT_WORDS, fromDisplay } from '../shared/units.js';
 import { LENGTH_CONTROLS } from './lengths.js';
 import { REMEMBERED } from './remembered.js';
 import { longestTickMm, rulerTicks } from './ruler.js';
@@ -42,10 +42,10 @@ const DRAWING = {
   accent: '#2563eb',
 };
 
-// The words for each system. A metric ruler is numbered in centimetres.
-const UNIT_WORDS = {
-  in: { plural: 'inches', singular: 'inch', numbers: 'inches', cssLength: 'An inch' },
-  mm: { plural: 'millimetres', singular: 'millimetre', numbers: 'centimetres', cssLength: 'A millimetre' },
+// Words for each system beyond the shared ones (shared/units.js). A metric ruler is numbered in centimetres.
+const WORDS = {
+  in: { ...UNIT_WORDS.in, numbers: 'inches', cssLength: 'An inch' },
+  mm: { ...UNIT_WORDS.mm, numbers: 'centimetres', cssLength: 'A millimetre' },
 };
 
 const NOTES = {
@@ -169,7 +169,7 @@ function svgText(x, y, content, { size, fill }) {
 
 function drawRuler() {
   const units = view.units();
-  const words = UNIT_WORDS[units];
+  const words = WORDS[units];
   const { marginPx, labelRoomPx, labelBaselinePx, squareGapPx, bottomPx } = DRAWING;
   const rulerLength = DRAWING.ruler[units];
   const squareLength = DRAWING.square[units];
@@ -217,7 +217,7 @@ function percentText(percent) {
 // The words and numbers that depend on the units showing
 function renderUnitText() {
   const units = view.units();
-  const words = UNIT_WORDS[units];
+  const words = WORDS[units];
   for (const option of els.reference.options) option.textContent = referenceOptionText(option.value, units);
   els.customLabel.textContent = `Length of your object (${words.plural})`;
   els.resPpiLabel.textContent = `Pixels per ${words.singular}`;

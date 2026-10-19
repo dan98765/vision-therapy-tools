@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { pageFit } from '../shared/paper.js';
-import { LETTER_SETS, buildGrid, gridLayout } from '../shared/hart-grid.js';
+import { LETTER_SETS, buildGrid, chartNote, gridLayout } from '../shared/hart-grid.js';
 import { seeded } from './rng.js';
 
 // Page defaults from hart-chart/index.html
@@ -44,6 +44,39 @@ describe('buildGrid', () => {
   it('is repeatable with the same seed', () => {
     const pool = LETTER_SETS.upper;
     expect(buildGrid(5, 5, pool, seeded(9))).toEqual(buildGrid(5, 5, pool, seeded(9)));
+  });
+});
+
+describe('chartNote', () => {
+  it('gives the size and nothing else for a chart that fits upright', () => {
+    const note = chartNote(gridLayout(DEFAULTS), 'in');
+    expect(note.text).toBe('6.87 × 5.50 in. Print at 100% / "Actual size" to keep this size.');
+    expect(note.warn).toBe(false);
+  });
+
+  it('writes the size in the units asked for', () => {
+    expect(chartNote(gridLayout(DEFAULTS), 'mm').text).toMatch(/^175 × 140 mm\./);
+  });
+
+  it('says a chart that only fits sideways, or runs onto more pages, without a warning', () => {
+    const sideways = chartNote(gridLayout({ ...DEFAULTS, numbers: true }), 'in');
+    expect(sideways.text).toMatch(/Print in landscape\./);
+    expect(sideways.warn).toBe(false);
+    const tall = chartNote(gridLayout({ ...DEFAULTS, rows: 24 }), 'in');
+    expect(tall.text).toMatch(/more pages/);
+    expect(tall.warn).toBe(false);
+  });
+
+  it('warns when the chart is too wide to print, in either units', () => {
+    const wide = gridLayout({ ...DEFAULTS, heightMm: 30 });
+    expect(chartNote(wide, 'in').warn).toBe(true);
+    expect(chartNote(wide, 'in').text).toContain('(about 7.2 in × 10.0 in)');
+    expect(chartNote(wide, 'mm').text).toContain('(about 184 mm × 254 mm)');
+  });
+
+  it('warns when the letters are too small to read', () => {
+    const tiny = gridLayout({ ...DEFAULTS, heightMm: 1 });
+    expect(chartNote(tiny, 'in')).toEqual({ text: expect.stringContaining('too small to read'), warn: true });
   });
 });
 

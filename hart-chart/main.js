@@ -1,12 +1,11 @@
 // Hart chart: reads the controls, draws the chart.
 
-import { lengthLabel, sizeSummary } from '../shared/format.js';
-import { LETTER_SETS, buildGrid, gridLayout } from '../shared/hart-grid.js';
+import { lengthLabel } from '../shared/format.js';
+import { LETTER_SETS, buildGrid, chartNote, gridLayout } from '../shared/hart-grid.js';
 import { drawChart } from '../shared/hart-draw.js';
 import { applyLetterPrefill, useUnits } from '../shared/length-controls.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
-import { pageNote } from '../shared/paper.js';
 import { fromDisplay } from '../shared/units.js';
 import { LENGTH_CONTROLS } from './lengths.js';
 import { REMEMBERED } from './remembered.js';
@@ -49,15 +48,8 @@ function render() {
 
   drawChart(els.chart, grid, layout, { numbers, colNumbers });
 
-  const units = view.units();
-  const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true, units });
-  setNote(
-    els.note,
-    sizeSummary(layout.chartW, layout.chartH, units) +
-      page.text +
-      (layout.tooSmall ? ' Warning: letters this small may be too small to read.' : ''),
-    page.warn || layout.tooSmall,
-  );
+  const { text, warn } = chartNote(layout, view.units());
+  setNote(els.note, text, warn);
 }
 
 function generate() {

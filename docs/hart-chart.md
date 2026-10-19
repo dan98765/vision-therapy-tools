@@ -34,7 +34,7 @@ The page generates a chart of random letters, laid out internally in millimetres
 | --- | --- |
 | `index.html` | Markup only: controls, buttons, the chart container |
 | `main.js` | Reads the controls, draws the chart, writes the note under the buttons |
-| `../shared/hart-grid.js` | The maths: building the letter grid (no repeated neighbours) and the chart size. No DOM access, so it is tested. The matched pair page uses it too |
+| `../shared/hart-grid.js` | The maths: building the letter grid (no repeated neighbours), the chart size, and the note under a chart (`chartNote`). No DOM access, so it is tested. The matched pair page uses it too |
 | `../shared/hart-draw.js` | Draws a chart (letters and optional numbers) into a box, shared with the matched pair |
 | `style.css` | Nothing of its own; the chart styles are in `../shared/chart.css`, shared with the matched pair |
 | `../shared/` | Styles and helpers shared with other exercises, including `paper.js` (will it fit a Letter/A4 page, and what to tell the user) |
