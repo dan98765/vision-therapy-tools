@@ -1,12 +1,14 @@
 // Macdonald Form Field Cards: reads the controls, draws the card, and turns one ring when asked.
 
 import { CAP_HEIGHT, MIN_LETTER_MM, UPPER, UPPER_CONSONANTS, VOWELS } from '../shared/letters.js';
-import { inchLabel, letterUseNote, mmAsInches, ringCountsNote, sizeSummary } from '../shared/format.js';
+import { lengthLabel, letterUseNote, mmLabel, ringCountsNote, sizeSummary } from '../shared/format.js';
+import { useUnits } from '../shared/length-controls.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
-import { inchesToMm } from '../shared/units.js';
+import { fromDisplay } from '../shared/units.js';
 import { BORDER_MM, cardGeometry, fitRings, placeLetters, ringCounts } from './layout.js';
+import { LENGTH_CONTROLS } from './lengths.js';
 import { advanceAngle, secondsPerTurn, turnedPosition } from './motion.js';
 import { REMEMBERED } from './remembered.js';
 
@@ -51,8 +53,9 @@ function div(className) {
   return el;
 }
 
-// The card as drawn: each letter with its element, plus the centre the rings turn about
-const card = { letters: [], cx: 0, cy: 0 };
+// The card as drawn: each letter with its element, plus the centre the rings turn about, and what the note
+// under the buttons says about it (kept so the note can be written again in other units)
+const card = { letters: [], cx: 0, cy: 0, view: null };
 
 // The moving ring: how far it has turned from where it was drawn, and whether it is turning now
 const motion = { turn: 0, running: false, lastTime: 0, frame: 0 };
@@ -65,10 +68,10 @@ function generateCard() {
 
   const numRings = parseInt(els.rings.value);
   const lettersPerRing = parseInt(els.lettersPerRing.value);
-  const baseEm = inchesToMm(parseFloat(els.baseLetter.value)) / CAP_HEIGHT;
+  const baseEm = fromDisplay(parseFloat(els.baseLetter.value), view.units()) / CAP_HEIGHT;
   const scaleFactor = parseFloat(els.scaleFactor.value);
 
-  const geo = cardGeometry(inchesToMm(parseFloat(els.cardSize.value)), parseFloat(els.aspectRatio.value));
+  const geo = cardGeometry(fromDisplay(parseFloat(els.cardSize.value), view.units()), parseFloat(els.aspectRatio.value));
   const pool = LETTER_SETS[els.letterSet.value];
   // "Use every letter once" spreads the whole set over the rings, so the rings hold different numbers
   const allLetters = els.allLetters.checked;
@@ -102,18 +105,35 @@ function generateCard() {
   fillRingChoices(rings.length);
   updateMotionControls();
 
-  const smallestMm = rings[0].font * CAP_HEIGHT;
+  card.view = {
+    width: geo.width,
+    height: geo.height,
+    k,
+    smallestMm: rings[0].font * CAP_HEIGHT,
+    noRepeats,
+    positions: letters.length,
+    poolSize: pool.length,
+    counts,
+    numRings,
+  };
+  renderNote();
+}
+
+// The note under the buttons, in the units showing now
+function renderNote() {
+  const { width, height, k, smallestMm, noRepeats, positions, poolSize, counts, numRings } = card.view;
+  const units = view.units();
   const tooSmall = smallestMm < MIN_LETTER_MM;
-  const page = pageNote(geo.width, geo.height);
+  const page = pageNote(width, height, { units });
   setNote(
     els.note,
-    sizeSummary(geo.width, geo.height) +
+    sizeSummary(width, height, units) +
       page.text +
-      (noRepeats ? ' ' + letterUseNote(letters.length, pool.length) : '') +
+      (noRepeats ? ' ' + letterUseNote(positions, poolSize) : '') +
       (counts ? ' ' + ringCountsNote(counts, numRings) : '') +
       (k < 0.995 ? ` Letters were shrunk to ${Math.round(k * 100)}% of the requested size to fit the card.` : '') +
       (tooSmall
-        ? ` Warning: the innermost letters are only ${mmAsInches(smallestMm, 3)} tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`
+        ? ` Warning: the innermost letters are only ${mmLabel(smallestMm, units, 'small')} tall, which may be too small to read. Use a bigger card or fewer rings or letters per ring.`
         : ''),
     tooSmall || page.warn,
   );
@@ -215,8 +235,9 @@ function syncDisplays() {
   els.noRepeats.disabled = allLetters;
   els.ringsVal.textContent = els.rings.value;
   els.lettersVal.textContent = allLetters ? 'varies' : els.lettersPerRing.value;
-  els.cardSizeVal.textContent = inchLabel(els.cardSize.value, 1);
-  els.baseLetterVal.textContent = inchLabel(els.baseLetter.value);
+  const units = view.units();
+  els.cardSizeVal.textContent = lengthLabel(els.cardSize.value, units, LENGTH_CONTROLS['card-size'][units].digits);
+  els.baseLetterVal.textContent = lengthLabel(els.baseLetter.value, units, LENGTH_CONTROLS['base-letter'][units].digits);
   els.scaleFactorVal.textContent = parseFloat(els.scaleFactor.value).toFixed(2);
   const turns = Number(els.speed.value);
   els.speedVal.textContent = `${turns} turns/min (${secondsPerTurn(turns).toFixed(1)} s a turn)`;
@@ -230,8 +251,16 @@ for (const input of [els.rings, els.lettersPerRing, els.cardSize, els.baseLetter
 els.btnGenerate.addEventListener('click', generateCard);
 bindPrint(els.btnPrint);
 
+// The length controls show the units chosen in the header. Set them up before restoring saved settings. A
+// change of units rewrites the readouts and the note but keeps the card, whose letters are random.
+const view = useUnits(LENGTH_CONTROLS, () => {
+  remember.save();
+  syncDisplays();
+  renderNote();
+});
+
 // Controls come back as the user last left them, and are saved on this device as they change
-const remember = rememberControls('macdonald-form-field-cards', REMEMBERED);
+const remember = rememberControls('macdonald-form-field-cards', REMEMBERED, { lengths: LENGTH_CONTROLS });
 remember.restore();
 remember.watch();
 els.btnResetSettings.addEventListener('click', () => {

@@ -5,8 +5,9 @@
 // that no longer exists), or someone may have edited the storage. A value is used only if it is still valid
 // for its control, and is otherwise ignored, so the control keeps its default.
 
-// Change this when the saved shape changes, to discard what older versions saved
-export const SETTINGS_VERSION = 1;
+// Change this when the saved shape changes, to discard what older versions saved.
+// 2: length controls are saved in millimetres (they were saved as the inches shown).
+export const SETTINGS_VERSION = 2;
 
 const KEY_PREFIX = 'vision-therapy-tools';
 

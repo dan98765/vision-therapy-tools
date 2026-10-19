@@ -8,9 +8,9 @@ Small vision therapy exercises as browser pages. Plain HTML, CSS and vanilla Jav
 
 | Tool | Description |
 | --- | --- |
-| [Macdonald Form Field Cards](https://dan98765.github.io/vision-therapy-tools/macdonald-form-field-cards/) ([code](macdonald-form-field-cards/), [notes](docs/macdonald-form-field-cards.md)) | Printable concentric-ring letter cards for peripheral awareness and form recognition practice, laid out for true-size printing, with sizes in inches. |
+| [Macdonald Form Field Cards](https://dan98765.github.io/vision-therapy-tools/macdonald-form-field-cards/) ([code](macdonald-form-field-cards/), [notes](docs/macdonald-form-field-cards.md)) | Printable concentric-ring letter cards for peripheral awareness and form recognition practice, laid out for true-size printing, with sizes in inches or millimetres. |
 | [Screen Calibration](https://dan98765.github.io/vision-therapy-tools/screen-calibration/) ([code](screen-calibration/), [notes](docs/screen-calibration.md)) | A utility: match a credit card or paper to the screen to find how many pixels make a real millimetre, with a ruler to check it. Remembers your calibration in your browser only. |
-| [Hart Chart Generator](https://dan98765.github.io/vision-therapy-tools/hart-chart/) ([code](hart-chart/), [notes](docs/hart-chart.md)) | Printable rows of random letters for saccade and near-far focusing practice, laid out for true-size printing, with sizes in inches. |
+| [Hart Chart Generator](https://dan98765.github.io/vision-therapy-tools/hart-chart/) ([code](hart-chart/), [notes](docs/hart-chart.md)) | Printable rows of random letters for saccade and near-far focusing practice, laid out for true-size printing, with sizes in inches or millimetres. |
 
 More exercises are being considered: see [docs/tool-ideas.md](docs/tool-ideas.md).
 
@@ -46,7 +46,7 @@ Every push to `main` runs the linters and tests, builds the site and publishes i
 
 ## Security
 
-The pages make no network requests and ship a strict Content-Security-Policy. The only thing they store is each tool's control settings (and the screen calibration), in the browser's own `localStorage` on your device and never sent anywhere; each tool has a **Reset settings** button that clears it. To report a problem, see [SECURITY.md](SECURITY.md).
+The pages make no network requests and ship a strict Content-Security-Policy. The only thing they store is each tool's control settings (and the screen calibration, and your choice of inches or millimetres), in the browser's own `localStorage` on your device and never sent anywhere; each tool has a **Reset settings** button that clears it. To report a problem, see [SECURITY.md](SECURITY.md).
 
 ## Disclaimer
 

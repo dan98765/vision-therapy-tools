@@ -91,6 +91,19 @@ h1 {
   text-underline-offset: 4px;
 }
 
+.site-units {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.site-units select {
+  font-size: 0.85rem;
+  padding: 2px 6px;
+}
+
 /* ── Controls Panel ───────────────────────────────────── */
 .controls-panel {
   background: #fff;

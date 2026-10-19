@@ -21,6 +21,7 @@ export function renderSiteHeader(root, filePath) {
   const parts = relative(root, filePath).split(sep);
   const current = parts.length > 1 ? parts[0] : ''; // '' for the landing page
   const home = current === '' ? './' : '../';
+  const shared = `${home}shared/`;
   const ariaCurrent = ' aria-current="page"';
 
   const links = findExerciseFolders(root)
@@ -34,6 +35,7 @@ export function renderSiteHeader(root, filePath) {
     .trimEnd()
     .replace('{{home}}', home)
     .replace('{{homeCurrent}}', current === '' ? ariaCurrent : '')
+    .replace('{{shared}}', shared)
     .replace('{{links}}', () => links); // a function, so "$" in a title is not special
 }
 

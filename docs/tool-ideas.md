@@ -46,7 +46,7 @@ Effort is a rough guess, judged against the exercises built so far: **S** about 
 | U2 | Home program sheet | Utility | S | A printable one-page schedule typed by the therapist or parent |
 | U3 | Practice log | Utility | M | Records what was done and when (a policy decision) |
 | U4 | Remembered settings | Utility | S | Each tool reopens with the settings the user last chose (built) |
-| U5 | Global settings | Utility | M | Settings for every tool at once, starting with inches or metric units |
+| U5 | Global settings | Utility | M | Settings for every tool at once, starting with inches or metric units (units built) |
 
 ## What every new tool must meet
 
@@ -231,7 +231,7 @@ All of these must start only when the user presses start, offer a stop, and neve
 
 ### U5. Global settings
 
-- **Plan:** the units part is planned in [units-pair-calculator-plan.md](units-pair-calculator-plan.md).
+- **Status:** the units part is built (inches or millimetres, in the header on every page); see [units-pair-calculator-plan.md](units-pair-calculator-plan.md). The other candidates below (paper size, reduced motion, interface size, default viewing distance) are not.
 
 - **What:** a few settings that belong to the user rather than to one chart, set once and applied by every tool. The first and clearest is **units: imperial (inches) or metric (millimetres and centimetres)**. Today every page shows inches and there is no way to change that.
 - **Candidates, roughly in order of value:**

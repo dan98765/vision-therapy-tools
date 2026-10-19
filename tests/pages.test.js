@@ -45,6 +45,13 @@ describe.each(pages)('%s', (label, file) => {
     expect(csp).not.toMatch(/unsafe-inline|unsafe-eval|https?:|\*/);
   });
 
+  it('allows scripts from the site itself, and only when the page loads one', () => {
+    const csp = html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1];
+    const scriptSrc = csp.match(/script-src ([^;]+)/)?.[1];
+    const loadsScript = /<script\b[^>]*\bsrc=/.test(html);
+    expect(scriptSrc).toBe(loadsScript ? "'self'" : undefined);
+  });
+
   it('has no inline scripts, styles or style attributes', () => {
     expect(html).not.toMatch(/<script(?![^>]*\bsrc=)[^>]*>/);
     expect(html).not.toMatch(/<style[\s>]/);

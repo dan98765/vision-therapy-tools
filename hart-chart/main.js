@@ -1,11 +1,13 @@
 // Hart chart: reads the controls, draws the chart.
 
-import { inchLabel, sizeSummary } from '../shared/format.js';
+import { lengthLabel, sizeSummary } from '../shared/format.js';
+import { useUnits } from '../shared/length-controls.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
 import { pageNote } from '../shared/paper.js';
-import { inchesToMm } from '../shared/units.js';
+import { fromDisplay } from '../shared/units.js';
 import { LETTER_SETS, buildGrid, gridLayout } from './grid.js';
+import { LENGTH_CONTROLS } from './lengths.js';
 import { REMEMBERED } from './remembered.js';
 
 const els = {
@@ -45,7 +47,7 @@ function render() {
   const layout = gridLayout({
     rows,
     cols,
-    heightMm: inchesToMm(parseFloat(els.height.value)),
+    heightMm: fromDisplay(parseFloat(els.height.value), view.units()),
     spacing: parseFloat(els.spacing.value),
     numbers,
     colNumbers,
@@ -75,10 +77,11 @@ function render() {
   });
   if (colNumbers) appendColumnNumbers();
 
-  const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true });
+  const units = view.units();
+  const page = pageNote(layout.chartW, layout.chartH, { rowsStayWhole: true, units });
   setNote(
     els.note,
-    sizeSummary(layout.chartW, layout.chartH) +
+    sizeSummary(layout.chartW, layout.chartH, units) +
       page.text +
       (layout.tooSmall ? ' Warning: letters this small may be too small to read.' : ''),
     page.warn || layout.tooSmall,
@@ -93,7 +96,8 @@ function generate() {
 function syncDisplays() {
   els.rowsVal.textContent = els.rows.value;
   els.colsVal.textContent = els.cols.value;
-  els.heightVal.textContent = inchLabel(els.height.value);
+  const units = view.units();
+  els.heightVal.textContent = lengthLabel(els.height.value, units, LENGTH_CONTROLS['letter-height'][units].digits);
   els.spacingVal.textContent = parseFloat(els.spacing.value).toFixed(1) + '×';
 }
 
@@ -107,8 +111,15 @@ for (const input of [els.rows, els.cols, els.letterSet]) {
 els.btnGenerate.addEventListener('click', generate);
 bindPrint(els.btnPrint);
 
+// The length control shows the units chosen in the header. Set it up before restoring saved settings.
+const view = useUnits(LENGTH_CONTROLS, () => {
+  remember.save();
+  syncDisplays();
+  render();
+});
+
 // Controls come back as the user last left them, and are saved on this device as they change
-const remember = rememberControls('hart-chart', REMEMBERED);
+const remember = rememberControls('hart-chart', REMEMBERED, { lengths: LENGTH_CONTROLS });
 remember.restore();
 remember.watch();
 els.btnResetSettings.addEventListener('click', () => {

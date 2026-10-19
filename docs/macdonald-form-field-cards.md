@@ -49,9 +49,9 @@ The generator creates **new, original** cards in the same style: concentric ring
 | --- | --- |
 | Number of Rings | How many concentric rings of letters (3 to 7, default 5) |
 | Letters per Ring | Letters spaced around each ring (3 to 10, default 6) |
-| Card Size (long side) | Length of the card's longer side in inches (4 to 10 in 0.1 steps). Default 8.5 in |
+| Card Size (long side) | Length of the card's longer side: 4 to 10 in in 0.1 steps (default 8.5 in), or 100 to 250 mm in 1 mm steps (default 216 mm), as the Units control in the header says |
 | Aspect Ratio | Card proportions; the shorter side follows from this. Five choices from 5.5 : 8.5 (portrait, the default) to 8.5 : 5.5 (landscape) |
-| Base Letter Height | Capital-letter height in inches for the innermost ring (0.04 to 0.24 in 0.01 steps, default 0.08) |
+| Base Letter Height | Capital-letter height for the innermost ring: 0.04 to 0.24 in in 0.01 steps (default 0.08 in), or 1 to 6 mm in 0.5 steps (default 2 mm) |
 | Scale Factor | How much larger each successive ring's letters are (1.3 to 2.5, default 1.6) |
 | Letter Set | Pool of letters drawn from: A to Z, consonants only, or vowels only |
 | Use every letter once | Off by default. Puts the whole chosen set on the card exactly once (26 letters, 21 consonants or 5 vowels) and spreads it over the rings, as evenly as possible with the extra letters on the outer rings (26 over 5 rings is 5, 5, 5, 5, 6). The letters-per-ring control is then not used and reads "varies", and so is the no-repeats option. A ring needs at least 3 letters, so a small set uses fewer rings than asked for (the 5 vowels fill one ring), and the note says so |

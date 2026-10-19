@@ -1,27 +1,42 @@
 import { describe, expect, it } from 'vitest';
-import { inchLabel, letterUseNote, mmAsInches, ringCountsNote, sizeSummary } from '../shared/format.js';
-import { MM_PER_INCH, inchesToMm, mmToInches } from '../shared/units.js';
+import { lengthLabel, letterUseNote, mmLabel, ringCountsNote, sizeSummary } from '../shared/format.js';
+import { DEFAULT_UNITS, MM_PER_INCH, UNITS, fromDisplay, inchesToMm, mmToInches, toDisplay } from '../shared/units.js';
 
 describe('sizeSummary', () => {
   it('shows inches and the print reminder', () => {
-    expect(sizeSummary(139.7, 215.9)).toBe(
+    expect(sizeSummary(139.7, 215.9, 'in')).toBe(
       '5.50 × 8.50 in. Print at 100% / "Actual size" to keep this size.',
+    );
+  });
+
+  it('shows whole millimetres in metric', () => {
+    expect(sizeSummary(139.7, 215.9, 'mm')).toBe(
+      '140 × 216 mm. Print at 100% / "Actual size" to keep this size.',
     );
   });
 });
 
-describe('inchLabel', () => {
-  it('formats with two decimals by default', () => {
-    expect(inchLabel('0.2')).toBe('0.20 in');
-    expect(inchLabel(8.5, 1)).toBe('8.5 in');
-    expect(inchLabel(3.14159, 3)).toBe('3.142 in');
+describe('lengthLabel', () => {
+  it('writes a value already in the units with the given decimals', () => {
+    expect(lengthLabel('0.2', 'in', 2)).toBe('0.20 in');
+    expect(lengthLabel(8.5, 'in', 1)).toBe('8.5 in');
+    expect(lengthLabel(3.14159, 'in', 3)).toBe('3.142 in');
+    expect(lengthLabel('5', 'mm', 1)).toBe('5.0 mm');
   });
 });
 
-describe('mmAsInches', () => {
-  it('shows a length given in millimetres as inches', () => {
-    expect(mmAsInches(25.4)).toBe('1.00 in');
-    expect(mmAsInches(1.5, 3)).toBe('0.059 in');
+describe('mmLabel', () => {
+  it('shows a length given in millimetres in either unit', () => {
+    expect(mmLabel(25.4, 'in')).toBe('1.00 in');
+    expect(mmLabel(25.4, 'mm')).toBe('25 mm');
+    expect(mmLabel(1.5, 'in', 'small')).toBe('0.059 in');
+    expect(mmLabel(1.5, 'mm', 'small')).toBe('1.50 mm');
+  });
+
+  it('rounds the printable page area as the page-fit warning shows it', () => {
+    expect(mmLabel(184, 'in', 'page')).toBe('7.2 in');
+    expect(mmLabel(254, 'in', 'page')).toBe('10.0 in');
+    expect(mmLabel(184, 'mm', 'page')).toBe('184 mm');
   });
 });
 
@@ -30,6 +45,17 @@ describe('units', () => {
     expect(MM_PER_INCH).toBe(25.4);
     expect(inchesToMm(8.5)).toBeCloseTo(215.9, 10);
     expect(mmToInches(inchesToMm(0.08))).toBeCloseTo(0.08, 12);
+  });
+
+  it('offers inches and millimetres, starting with inches', () => {
+    expect(UNITS).toEqual(['in', 'mm']);
+    expect(DEFAULT_UNITS).toBe('in');
+  });
+
+  it('converts a length to the number to show and back, in either unit', () => {
+    expect(toDisplay(25.4, 'in')).toBeCloseTo(1, 12);
+    expect(toDisplay(25.4, 'mm')).toBe(25.4);
+    for (const units of UNITS) expect(fromDisplay(toDisplay(123.4, units), units)).toBeCloseTo(123.4, 10);
   });
 });
 

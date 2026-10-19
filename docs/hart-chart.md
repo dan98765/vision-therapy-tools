@@ -26,7 +26,7 @@ TODO: the research behind this page did not find who developed the chart or when
 
 ## How the tool works
 
-The page generates a chart of random letters, laid out internally in millimetres (the page shows inches) so it prints at true size at 100% scale. To make a **large** chart for the wall and a **small** chart for the hand, generate twice with different letter heights. Keep the same row and column counts so the two charts line up. Row and column numbers help keep your place. The default chart (10 rows of 10 letters, 0.2 in tall) is about 7.0 x 5.6 in and fits one page; with row numbers it is about 8.1 in wide and needs a sideways page.
+The page generates a chart of random letters, laid out internally in millimetres (the page shows inches or millimetres, as the Units control in the header says) so it prints at true size at 100% scale. To make a **large** chart for the wall and a **small** chart for the hand, generate twice with different letter heights. Keep the same row and column counts so the two charts line up. Row and column numbers help keep your place. The default chart (10 rows of 10 letters, 0.2 in tall) is about 7.0 x 5.6 in and fits one page; with row numbers it is about 8.1 in wide and needs a sideways page.
 
 ### Where the code lives
 
@@ -47,7 +47,7 @@ The page generates a chart of random letters, laid out internally in millimetres
 | --- | --- |
 | Rows | Number of lines of letters (4 to 24, default 10) |
 | Letters per Row | Letters in each line (4 to 16, default 10) |
-| Letter Height | Capital-letter height in inches (0.08 to 1.2 in 0.02 steps, default 0.2) |
+| Letter Height | Capital-letter height in the units showing: 0.08 to 1.2 in in 0.02 steps (default 0.2), or 2 to 30 mm in 0.5 steps (default 5). Switching units keeps the size, moved to the nearest step |
 | Spacing | Cell width as a multiple of the font size (1.5 to 4, default 2.5); row height is 0.8 of that |
 | Letter Set | Uppercase or lowercase, all letters or consonants only (default uppercase, all letters) |
 | Show row numbers | Numbers each row on both sides (off by default) |
@@ -58,7 +58,7 @@ The page generates a chart of random letters, laid out internally in millimetres
 - **Random letters never repeat next to each other.** A letter is never the same as the one to its left or the one above it, so every eye jump lands on a different letter.
 - **Consonants only** avoids accidentally spelling words.
 - **Size and spacing sliders keep the same letters.** Changing rows, letters per row or letter set makes a new chart, and "Generate Chart" always makes a new one. This split (redraw vs regenerate) is deliberate; keep it when changing the code.
-- **Size warning.** A note under the buttons shows the chart's size in inches and how it will print (limits from `shared/paper.js`: about 7.2 x 10 in upright, which is Letter or A4 with 0.5 in margins; larger print margins will clip). A chart that only fits a sideways page says "Print in landscape.". A chart that is narrow enough but taller than a page says it continues onto more pages (in landscape if it is wider than 7.2 in); rows are kept whole (`break-inside: avoid`), so no row is split across a page break. A chart too wide for either orientation turns amber, because it would be cut off, and so does one with letters under 1.5 mm tall. The chart is still drawn.
+- **Size warning.** A note under the buttons shows the chart's size (in inches or millimetres) and how it will print (limits from `shared/paper.js`: about 7.2 x 10 in upright, which is Letter or A4 with 0.5 in margins; larger print margins will clip). A chart that only fits a sideways page says "Print in landscape.". A chart that is narrow enough but taller than a page says it continues onto more pages (in landscape if it is wider than 7.2 in); rows are kept whole (`break-inside: avoid`), so no row is split across a page break. A chart too wide for either orientation turns amber, because it would be cut off, and so does one with letters under 1.5 mm tall. The chart is still drawn.
 - **Letter height is cap height** (about 0.716 of the font size for Arial), including for lowercase letters, so lowercase letters look smaller than uppercase at the same setting.
 - **On-screen size is approximate**, because CSS `mm` is exact in print but screens vary. A chart wider than the window scrolls sideways.
 

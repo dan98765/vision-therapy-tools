@@ -18,10 +18,12 @@ import {
   pxPerMm,
   pxToMm,
   referenceLength,
+  referenceOptionText,
   restoredCalibration,
   stepPrecisionPercent,
 } from '../shared/calibration.js';
-import { inchesToMm, mmToInches } from '../shared/units.js';
+import { LENGTH_CONTROLS } from '../screen-calibration/lengths.js';
+import { UNITS, fromDisplay } from '../shared/units.js';
 
 describe('the browser assumption', () => {
   it('is 96 CSS pixels per inch', () => {
@@ -160,8 +162,32 @@ describe('references', () => {
     }
   });
 
+  it('uses the fallback for a blank custom length, so each unit can have its own default', () => {
+    expect(referenceLength('custom', '', { fallbackMm: 100 })).toBe(100);
+    expect(referenceLength('custom', 'abc', { fallbackMm: 100 })).toBe(100);
+    expect(referenceLength('custom', 55, { fallbackMm: 100 })).toBe(55);
+  });
+
   it('rejects an unknown reference', () => {
     expect(() => referenceLength('banana')).toThrow(RangeError);
+  });
+});
+
+describe('referenceOptionText', () => {
+  it('words each reference with its length in inches', () => {
+    expect(referenceOptionText('card', 'in')).toBe('Credit or ID card (long edge, 3.37 in)');
+    expect(referenceOptionText('a4', 'in')).toBe('A4 paper (short edge, 8.27 in)');
+    expect(referenceOptionText('letter', 'in')).toBe('US Letter paper (short edge, 8.5 in)');
+  });
+
+  it('words each reference with its length in millimetres, without trailing zeros', () => {
+    expect(referenceOptionText('card', 'mm')).toBe('Credit or ID card (long edge, 85.6 mm)');
+    expect(referenceOptionText('a4', 'mm')).toBe('A4 paper (short edge, 210 mm)');
+    expect(referenceOptionText('letter', 'mm')).toBe('US Letter paper (short edge, 215.9 mm)');
+  });
+
+  it('has no length for the choice of the user\'s own object', () => {
+    for (const units of UNITS) expect(referenceOptionText('custom', units)).toBe('Something else I can measure');
   });
 });
 
@@ -205,24 +231,27 @@ describe('the page and the shared maths agree', () => {
   const html = readFileSync(join(resolve(import.meta.dirname, '..'), 'screen-calibration', 'index.html'), 'utf8');
   const attribute = (id, name) => html.match(new RegExp(`id="${id}"[^>]*\\s${name}="([^"]*)"`))?.[1];
 
-  it('offers exactly the references the maths knows, each with its length in the wording', () => {
+  it('offers exactly the references the maths knows, worded as the page first loads (in inches)', () => {
     const options = [...html.matchAll(/<option value="(\w+)"[^>]*>([^<]+)<\/option>/g)].map(m => ({ key: m[1], text: m[2] }));
     expect(options.map(o => o.key)).toEqual(Object.keys(REFERENCES));
-    for (const { key, text } of options) {
-      if (REFERENCES[key].mm === null) continue;
-      const inches = Number(mmToInches(REFERENCES[key].mm).toFixed(2)); // 3.37, 8.27, 8.5
-      expect(text, key).toContain(`${inches} in`);
-    }
+    for (const { key, text } of options) expect(text, key).toBe(referenceOptionText(key, 'in'));
   });
 
   it('starts on the card', () => {
     expect(html).toMatch(/<option value="card" selected>/);
   });
 
-  it('limits the custom length (typed in inches) the same way', () => {
-    expect(inchesToMm(Number(attribute('custom-length', 'min')))).toBeCloseTo(CUSTOM_MM_MIN, 8);
-    expect(inchesToMm(Number(attribute('custom-length', 'max')))).toBeCloseTo(CUSTOM_MM_MAX, 8);
-    expect(inchesToMm(Number(attribute('custom-length', 'value')))).toBeCloseTo(CUSTOM_MM_DEFAULT, 8);
+  it('starts the custom length box as the inch definition says, inside what the maths allows in both units', () => {
+    const spec = LENGTH_CONTROLS['custom-length'];
+    for (const name of ['min', 'max', 'step', 'value']) {
+      expect(Number(attribute('custom-length', name)), name).toBe(spec.in[name === 'value' ? 'value' : name]);
+    }
+    for (const units of UNITS) {
+      expect(fromDisplay(spec[units].min, units)).toBeGreaterThanOrEqual(CUSTOM_MM_MIN);
+      expect(fromDisplay(spec[units].max, units)).toBeLessThanOrEqual(CUSTOM_MM_MAX);
+    }
+    // a blank box means 4 in, or the metric default, so a 4 in default matches the maths' own
+    expect(fromDisplay(spec.in.value, 'in')).toBeCloseTo(CUSTOM_MM_DEFAULT, 8);
   });
 
   it('starts the slider where the code would put it for a card', () => {

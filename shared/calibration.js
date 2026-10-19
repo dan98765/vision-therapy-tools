@@ -5,20 +5,24 @@
 // styled "85.6mm" is rarely 85.6 mm wide. The user holds a real object of known size against the
 // screen and resizes an on-screen box to match it; the box width then gives pixels per real mm.
 
+import { toDisplay } from './units.js';
+
 // What the browser assumes: CSS pixels per mm if the screen followed the CSS definition exactly.
 export const NOMINAL_PX_PER_MM = 96 / 25.4;
 
 // Things the user can measure against. Lengths in mm; `heightMm` lets the box be drawn the right shape.
-// The wording shown to the user is in screen-calibration/index.html, and a test keeps the two in step.
+// `name` and `edge` are the words shown for the choice (see referenceOptionText); the page's HTML holds the
+// inch wording as it loads, and a test keeps the two in step.
 export const REFERENCES = {
-  card: { mm: 85.6, heightMm: 53.98 }, // credit or ID card, long edge (ISO/IEC 7810 ID-1)
-  a4: { mm: 210 }, // short edge
-  letter: { mm: 215.9 }, // short edge, 8.5 in
-  custom: { mm: null }, // the user's own length
+  card: { name: 'Credit or ID card', edge: 'long edge', mm: 85.6, heightMm: 53.98 }, // ISO/IEC 7810 ID-1
+  a4: { name: 'A4 paper', edge: 'short edge', mm: 210 },
+  letter: { name: 'US Letter paper', edge: 'short edge', mm: 215.9 }, // 8.5 in
+  custom: { name: 'Something else I can measure', mm: null }, // the user's own length
 };
 
-// 0.5, 16 and 4 inches. The page asks for the custom length in inches.
-export const CUSTOM_MM_MIN = 12.7;
+// The limits on the user's own length, in mm: 10 mm to 16 in. The page's own box is narrower in each unit
+// (see screen-calibration/lengths.js), and an empty box means CUSTOM_MM_DEFAULT (4 in).
+export const CUSTOM_MM_MIN = 10;
 export const CUSTOM_MM_MAX = 406.4;
 export const CUSTOM_MM_DEFAULT = 101.6;
 
@@ -103,14 +107,24 @@ export function restoredCalibration(saved) {
   return ppmmOk && ratioOk ? { ppmm, ratio } : null;
 }
 
+// The words for a reference in the option list, with its length in `units`: "Credit or ID card (long edge,
+// 3.37 in)" or "... 85.6 mm)". The length shows at most two decimals (inches) or one (millimetres), without
+// trailing zeros. The custom choice has no length.
+export function referenceOptionText(key, units) {
+  const { name, edge, mm } = REFERENCES[key];
+  if (mm === null) return name;
+  const length = Number(toDisplay(mm, units).toFixed(units === 'in' ? 2 : 1));
+  return `${name} (${edge}, ${length} ${units})`;
+}
+
 // The reference length to use: a built-in one, or the user's number kept within the allowed range.
-// A blank or non-numeric custom length gives the default.
-export function referenceLength(key, customMm) {
+// A blank or non-numeric custom length gives `fallbackMm`, the default for the units showing.
+export function referenceLength(key, customMm, { fallbackMm = CUSTOM_MM_DEFAULT } = {}) {
   const reference = REFERENCES[key];
   if (!reference) throw new RangeError(`unknown reference "${key}"`);
   if (reference.mm !== null) return reference.mm;
   const blank = customMm === null || customMm === undefined || String(customMm).trim() === '';
   const value = Number(customMm);
-  if (blank || !Number.isFinite(value)) return CUSTOM_MM_DEFAULT;
+  if (blank || !Number.isFinite(value)) return fallbackMm;
   return Math.min(CUSTOM_MM_MAX, Math.max(CUSTOM_MM_MIN, value));
 }

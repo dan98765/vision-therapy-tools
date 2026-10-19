@@ -1,8 +1,9 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { PLACEHOLDER, applySiteHeader, renderSiteHeader, siteHeader } from '../scripts/site-header.js';
+import { UNITS } from '../shared/units.js';
 
 const root = resolve(import.meta.dirname, '..');
 const page = file => join(root, file);
@@ -38,6 +39,17 @@ describe('the header for the real pages', () => {
 
   it('marks nothing as current on a page that is not an exercise, such as the template', () => {
     expect(count(renderSiteHeader(root, page('_template/index.html')), 'aria-current')).toBe(0);
+  });
+
+  it('has the Units control, offering the same units the maths knows, and the script that runs it', () => {
+    for (const header of [landing, cards, hart]) {
+      const options = [...header.matchAll(/<option value="(\w+)">/g)].map(m => m[1]);
+      expect(options).toEqual(UNITS);
+      expect(header).toContain('<select id="units">');
+    }
+    expect(landing).toContain('<script type="module" src="./shared/header.js"></script>');
+    expect(hart).toContain('<script type="module" src="../shared/header.js"></script>');
+    expect(existsSync(join(root, 'shared', 'header.js'))).toBe(true);
   });
 
   it('leaves no unfilled {{token}} behind', () => {

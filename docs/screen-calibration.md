@@ -16,7 +16,7 @@ It is a utility, and the first step for the interactive tools listed in [tool-id
 2. Hold the object flat against the screen with one edge lined up with the left edge of the on-screen box, and move the slider (or the minus and plus buttons, one pixel at a time) until the other edge lines up with the right edge.
 3. Check the result against a ruler: the page draws an inch ruler (marked to 1/16 inch) and a 2 inch square using the calibration. Hold a real ruler against them.
 
-The page then shows pixels per inch and how far an inch in CSS is from a real inch on this screen. Lengths are shown in inches; the maths underneath stays in millimetres.
+The page then shows pixels per inch and how far an inch in CSS is from a real inch on this screen. Lengths are shown in inches or millimetres, as the Units control in the header says (the maths underneath stays in millimetres). In millimetres the page shows pixels per millimetre instead, the references read "85.6 mm", "210 mm" and "215.9 mm", the ruler is marked in centimetres with a tick for every millimetre, and the square is 50 mm; in inches the ruler is marked to 1/16 inch and the square is 2 in. A custom length typed in one unit is converted, to the displayed decimals and not to a step, when the units change.
 
 ## Where the code lives
 
@@ -24,7 +24,7 @@ The page then shows pixels per inch and how far an inch in CSS is from a real in
 | --- | --- |
 | `index.html` | Markup only: the reference choice, the slider and box, the results, the check ruler |
 | `main.js` | Reads the controls, draws the box and the ruler, shows the results and the note |
-| `ruler.js` | The ruler's tick marks in real inches. No DOM access, so it is tested |
+| `ruler.js` | The ruler's tick marks, inch or metric, positioned in real millimetres. No DOM access, so it is tested |
 | `style.css` | The box, the results list and the scrolling wrappers |
 | `../shared/calibration.js` | The maths: pixels per mm, conversions, slider range, the stale-zoom check, plain-language numbers |
 | `../tests/calibration.test.js` | The maths, plus checks that the page's wording, limits and slider values agree with the maths |
@@ -43,7 +43,7 @@ The page then shows pixels per inch and how far an inch in CSS is from a real in
 | Control | Meaning |
 | --- | --- |
 | Reference | Credit or ID card (long edge, 3.37 in; the card is drawn at its true shape, 3.37 x 2.13 in), A4 paper short edge (8.27 in), US Letter paper short edge (8.5 in), or a custom length |
-| Length of your object | Only for the custom reference. 0.5 to 16 in, typed in inches; an empty or invalid box uses 4 in |
+| Length of your object | Only for the custom reference. 0.5 to 16 in, or 10 to 400 mm, typed in the units showing; an empty or invalid box uses 4 in or 100 mm |
 | Box width | Slider from half to double the width the browser would assume, in half-pixel steps, plus buttons for one pixel |
 | Reset | Back to the browser's own assumption (96 pixels per inch) |
 

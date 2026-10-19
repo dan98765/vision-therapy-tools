@@ -13,22 +13,26 @@ import {
   mmToPx,
   pxPerMm,
   referenceLength,
+  referenceOptionText,
   restoredCalibration,
   stepPrecisionPercent,
 } from '../shared/calibration.js';
+import { useUnits } from '../shared/length-controls.js';
 import { byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
-import { inchesToMm } from '../shared/units.js';
+import { fromDisplay } from '../shared/units.js';
+import { LENGTH_CONTROLS } from './lengths.js';
 import { REMEMBERED } from './remembered.js';
-import { TICK_IN, rulerTicks } from './ruler.js';
+import { longestTickMm, rulerTicks } from './ruler.js';
 
 const DEFAULT_BOX_HEIGHT_PX = 56; // for references that have no known height
 
-// The check drawing: a ruler hanging from the top edge, and a square below it. Lengths in real inches unless
-// the name ends in Px, which are screen pixels for the labels and margins.
+// The check drawing: a ruler hanging from the top edge, and a square below it. The ruler and square lengths
+// are in the units showing (a whole number of inches or millimetres); names ending in Px are screen pixels
+// for the labels and margins.
 const DRAWING = {
-  rulerIn: 6,
-  squareIn: 2,
+  ruler: { in: 6, mm: 150 },
+  square: { in: 2, mm: 50 },
   marginPx: 14,
   labelRoomPx: 20,
   labelBaselinePx: 14,
@@ -36,6 +40,12 @@ const DRAWING = {
   bottomPx: 8,
   ink: '#111',
   accent: '#2563eb',
+};
+
+// The words for each system. A metric ruler is numbered in centimetres.
+const UNIT_WORDS = {
+  in: { plural: 'inches', singular: 'inch', numbers: 'inches', cssLength: 'An inch' },
+  mm: { plural: 'millimetres', singular: 'millimetre', numbers: 'centimetres', cssLength: 'A millimetre' },
 };
 
 const NOTES = {
@@ -61,6 +71,7 @@ const els = {
   reference: byId('reference'),
   customGroup: byId('custom-group'),
   customLength: byId('custom-length'),
+  customLabel: byId('custom-length-label'),
   boxWidth: byId('box-width'),
   boxWidthVal: byId('box-width-val'),
   narrower: byId('btn-narrower'),
@@ -70,7 +81,10 @@ const els = {
   ruler: byId('ruler'),
   note: byId('calibration-note'),
   resPpi: byId('res-ppi'),
+  resPpiLabel: byId('res-ppi-label'),
   resCss: byId('res-css'),
+  resCssLabel: byId('res-css-label'),
+  rulerHelp: byId('ruler-help'),
   resPrecision: byId('res-precision'),
 };
 
@@ -83,23 +97,30 @@ const state = {
   restored: false, // the calibration came from an earlier visit, not from matching the box this time
 };
 
-const remember = rememberControls('screen-calibration', REMEMBERED);
+const remember = rememberControls('screen-calibration', REMEMBERED, { lengths: LENGTH_CONTROLS });
+
+// The custom length shows the units chosen in the header. Set it up before restoring saved settings.
+const view = useUnits(LENGTH_CONTROLS, () => {
+  remember.save();
+  referenceChanged();
+});
 
 // Keep the calibration on this device, or forget it
 function persistCalibration() {
   remember.setExtra('calibration', state.adjusted ? { ppmm: state.ppmm, ratio: state.ratioWhenAdjusted } : null);
 }
 
-// The custom length is typed in inches. A blank box is passed on as blank, so it gets the default.
+// The custom length is typed in the units showing. A blank box is passed on as blank, so it gets the default.
 function customLengthMm() {
   const typed = els.customLength.value;
-  return typed.trim() === '' ? typed : inchesToMm(Number(typed));
+  return typed.trim() === '' ? typed : fromDisplay(Number(typed), view.units());
 }
 
-const referenceMm = () => referenceLength(els.reference.value, customLengthMm());
-
-// A real length in inches, in screen pixels under the current calibration.
-const inchesToPx = inches => mmToPx(inchesToMm(inches), state.ppmm);
+function referenceMm() {
+  const units = view.units();
+  const fallbackMm = fromDisplay(LENGTH_CONTROLS['custom-length'][units].value, units);
+  return referenceLength(els.reference.value, customLengthMm(), { fallbackMm });
+}
 
 // Set the slider range and position for the current reference. The calibration is kept when the reference
 // changes, so the slider moves to the width the new reference has under the same pixels per millimetre.
@@ -147,10 +168,15 @@ function svgText(x, y, content, { size, fill }) {
 }
 
 function drawRuler() {
-  const { rulerIn, squareIn, marginPx, labelRoomPx, labelBaselinePx, squareGapPx, bottomPx } = DRAWING;
-  const squarePx = inchesToPx(squareIn);
-  const rulerHeightPx = inchesToPx(TICK_IN.inch) + labelRoomPx;
-  const widthPx = inchesToPx(rulerIn) + 2 * marginPx;
+  const units = view.units();
+  const words = UNIT_WORDS[units];
+  const { marginPx, labelRoomPx, labelBaselinePx, squareGapPx, bottomPx } = DRAWING;
+  const rulerLength = DRAWING.ruler[units];
+  const squareLength = DRAWING.square[units];
+  const rulerMm = fromDisplay(rulerLength, units);
+  const squarePx = mmToPx(fromDisplay(squareLength, units), state.ppmm);
+  const rulerHeightPx = mmToPx(longestTickMm(units), state.ppmm) + labelRoomPx;
+  const widthPx = mmToPx(rulerMm, state.ppmm) + 2 * marginPx;
   const heightPx = rulerHeightPx + squareGapPx + squarePx + bottomPx;
   const squareTop = rulerHeightPx + squareGapPx;
 
@@ -159,10 +185,10 @@ function drawRuler() {
   els.ruler.setAttribute('height', heightPx.toFixed(2));
   els.ruler.setAttribute('viewBox', `0 0 ${widthPx.toFixed(2)} ${heightPx.toFixed(2)}`);
 
-  els.ruler.append(svgLine(marginPx, 0.5, marginPx + inchesToPx(rulerIn), 0.5));
-  for (const tick of rulerTicks(rulerIn)) {
-    const x = marginPx + inchesToPx(tick.inches);
-    const tickPx = inchesToPx(tick.lengthIn);
+  els.ruler.append(svgLine(marginPx, 0.5, marginPx + mmToPx(rulerMm, state.ppmm), 0.5));
+  for (const tick of rulerTicks(units, rulerLength)) {
+    const x = marginPx + mmToPx(tick.mm, state.ppmm);
+    const tickPx = mmToPx(tick.lengthMm, state.ppmm);
     els.ruler.append(svgLine(x, 0, x, tickPx));
     if (tick.label) els.ruler.append(svgText(x, tickPx + labelBaselinePx, tick.label, { size: 11, fill: DRAWING.ink }));
   }
@@ -170,9 +196,9 @@ function drawRuler() {
   els.ruler.append(svgElement('rect', {
     x: marginPx, y: squareTop, width: squarePx, height: squarePx, fill: 'none', stroke: DRAWING.accent, 'stroke-width': 1.5,
   }));
-  els.ruler.append(svgText(marginPx + squarePx / 2, squareTop + squarePx / 2 + 4, `${squareIn} in`, { size: 12, fill: DRAWING.accent }));
+  els.ruler.append(svgText(marginPx + squarePx / 2, squareTop + squarePx / 2 + 4, `${squareLength} ${units}`, { size: 12, fill: DRAWING.accent }));
   els.ruler.setAttribute('aria-label',
-    `A ruler ${rulerIn} inches long and a ${squareIn} inch square, drawn with your calibration`);
+    `A ruler ${rulerLength} ${words.plural} long and a ${squareLength} ${words.singular} square, drawn with your calibration`);
 }
 
 function renderBox(mm) {
@@ -188,9 +214,22 @@ function percentText(percent) {
   return `${Math.abs(percent).toFixed(1)}% ${percent >= 0 ? 'too small' : 'too large'}`;
 }
 
+// The words and numbers that depend on the units showing
+function renderUnitText() {
+  const units = view.units();
+  const words = UNIT_WORDS[units];
+  for (const option of els.reference.options) option.textContent = referenceOptionText(option.value, units);
+  els.customLabel.textContent = `Length of your object (${words.plural})`;
+  els.resPpiLabel.textContent = `Pixels per ${words.singular}`;
+  els.resCssLabel.textContent = `${words.cssLength} in CSS is`;
+  els.rulerHelp.textContent =
+    `Hold a ruler against the drawing below. The numbers are ${words.numbers}, and the square is ` +
+    `${DRAWING.square[units]} ${words.plural} on each side. If they do not match, adjust the box above.`;
+}
+
 function renderResults(boxWidthPx) {
   const numbers = describeCalibration(state.ppmm);
-  els.resPpi.textContent = numbers.pxPerInch.toFixed(1);
+  els.resPpi.textContent = view.units() === 'in' ? numbers.pxPerInch.toFixed(1) : numbers.pxPerMm.toFixed(3);
   els.resCss.textContent = percentText(numbers.cssLengthTooSmallPercent);
   els.resPrecision.textContent = `changes it by ${stepPrecisionPercent(boxWidthPx).toFixed(2)}%`;
 }
@@ -206,6 +245,7 @@ function updateNote() {
 }
 
 function render() {
+  renderUnitText();
   renderResults(renderBox(referenceMm()));
   drawRuler();
   updateNote();

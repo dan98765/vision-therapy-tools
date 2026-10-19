@@ -1,7 +1,7 @@
 // Will something fit on a printed page? Shared by the exercises that print at true size.
-// All lengths are in mm; the text shown to the user gives inches.
+// All lengths are in mm; the text shown to the user gives them in the user's units.
 
-import { mmToInches } from './units.js';
+import { mmLabel } from './format.js';
 
 // Printable area of a Letter or A4 page with 0.5 in (12.7 mm) margins, taking the smaller of the two papers
 // in each direction. 0.5 in is a cautious allowance: browsers' default margins are about 0.4 to 0.5 in, and
@@ -19,7 +19,7 @@ export function pageFit(widthMm, heightMm) {
 // What to tell the user about how a widthMm x heightMm exercise will print: { text, warn }.
 // `rowsStayWhole` is for exercises (like the Hart chart) that continue onto more pages row by row,
 // so something that is only too tall is not a problem.
-export function pageNote(widthMm, heightMm, { rowsStayWhole = false } = {}) {
+export function pageNote(widthMm, heightMm, { rowsStayWhole = false, units = 'in' } = {}) {
   const fit = pageFit(widthMm, heightMm);
   if (fit === 'portrait') return { text: '', warn: false };
   if (fit === 'landscape') return { text: ' Print in landscape.', warn: false };
@@ -31,7 +31,7 @@ export function pageNote(widthMm, heightMm, { rowsStayWhole = false } = {}) {
   }
   return {
     text:
-      ` Warning: this is larger than one Letter/A4 page (about ${mmToInches(PRINTABLE_W_MM).toFixed(1)} × ${mmToInches(PRINTABLE_H_MM).toFixed(1)} in)` +
+      ` Warning: this is larger than one Letter/A4 page (about ${mmLabel(PRINTABLE_W_MM, units, 'page')} × ${mmLabel(PRINTABLE_H_MM, units, 'page')})` +
       ' and will be cut off or split when printed. Use a smaller size.',
     warn: true,
   };

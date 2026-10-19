@@ -21,6 +21,8 @@ Each ships as its own commit after lint, tests, build and real-browser checks (a
 
 ## U5. Units toggle
 
+**Built.** What differs from the plan below: a length box the user types into (the calibration page's custom length) is `exact`, so a typed length keeps its decimals when the units change instead of moving to the nearest step. Everything else is as planned: the `lengths.js` definitions (metric ones are the old millimetre sliders), `shared/lengths.js` and `shared/length-controls.js`, lengths saved in millimetres with `SETTINGS_VERSION` 2, unit-aware text in `shared/format.js` and `shared/paper.js`, the Units control and `shared/header.js` in the header, the landing page's `script-src 'self'`, and a metric ruler. Checked in headless Chrome on all pages in both units.
+
 ### Decisions
 
 - **Two systems: inches and millimetres.** Inches stays the default, as now. Metric shows millimetres, not centimetres, for lengths in controls and notes. (The calibration ruler is marked in centimetres, as a ruler is.)

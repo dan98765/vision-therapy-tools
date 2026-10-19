@@ -1,20 +1,25 @@
-// Text shown to the user, kept pure so it can be tested. Lengths are shown in inches.
+// Text shown to the user, kept pure so it can be tested. Lengths are shown in the user's units, inches or
+// millimetres (see shared/units.js); `units` below is 'in' or 'mm'.
 
-import { mmToInches } from './units.js';
+import { toDisplay } from './units.js';
 
-// A length in inches, such as "0.20 in".
-export function inchLabel(inches, digits = 2) {
-  return `${Number(inches).toFixed(digits)} in`;
+// Decimals to show: a page size is a rounder number than the height of a small letter
+const DIGITS = { in: { size: 2, small: 3, page: 1 }, mm: { size: 0, small: 2, page: 0 } };
+
+// A length shown in the control's units, such as "0.20 in" or "5.0 mm". `value` is already in `units`.
+export function lengthLabel(value, units, digits) {
+  return `${Number(value).toFixed(digits)} ${units}`;
 }
 
-// A length given in millimetres, shown in inches.
-export function mmAsInches(mm, digits = 2) {
-  return inchLabel(mmToInches(mm), digits);
+// A length given in millimetres, shown in `units`. `kind` is 'size' (a card or chart), 'small' (a letter) or 'page' (the printable area of a sheet).
+export function mmLabel(mm, units, kind = 'size') {
+  return lengthLabel(toDisplay(mm, units), units, DIGITS[units][kind]);
 }
 
-export function sizeSummary(widthMm, heightMm) {
-  return `${mmToInches(widthMm).toFixed(2)} × ${mmToInches(heightMm).toFixed(2)} in. ` +
-    'Print at 100% / "Actual size" to keep this size.';
+export function sizeSummary(widthMm, heightMm, units) {
+  const digits = DIGITS[units].size;
+  const size = [widthMm, heightMm].map(mm => toDisplay(mm, units).toFixed(digits)).join(' × ');
+  return `${size} ${units}. Print at 100% / "Actual size" to keep this size.`;
 }
 
 // What to tell the user about how a card or chart used a pool of letters when no letter should repeat.

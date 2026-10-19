@@ -2,7 +2,6 @@
 // Keep maths that can be tested in its own file (like grid.js or layout.js in the
 // other exercises) and add a test for it in tests/.
 
-import { inchLabel } from '../shared/format.js';
 import { bindPrint, byId, setNote } from '../shared/page.js';
 import { rememberControls } from '../shared/remember.js';
 import { REMEMBERED } from './remembered.js';
@@ -20,7 +19,7 @@ const els = {
 function generate() {
   // TODO: draw the exercise into els.exercise
   els.exercise.textContent = `Size ${els.size.value}`;
-  setNote(els.note, `Size is ${inchLabel(els.size.value)}.`);
+  setNote(els.note, `Size is ${els.size.value}.`);
 }
 
 function syncDisplays() {
