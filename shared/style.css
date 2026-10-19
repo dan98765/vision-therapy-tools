@@ -24,6 +24,14 @@ body {
   padding: var(--page-pad-y) var(--page-pad-x);
 }
 
+/* The body is a centred column, and a flex item will not shrink below its content. Without this a wide child (a
+   chart, a row of buttons) makes the whole page scroll sideways instead of wrapping or scrolling by itself. The
+   header bar is left out because it spans the window with negative margins. */
+body > :not(.site-header) {
+  min-width: 0;
+  max-width: 100%;
+}
+
 h1 {
   font-size: 1.6rem;
   font-weight: 700;
@@ -201,6 +209,8 @@ h1 {
 /* ── Action Buttons ───────────────────────────────────── */
 .actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   margin-bottom: 24px;
 }
