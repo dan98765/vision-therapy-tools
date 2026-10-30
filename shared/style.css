@@ -26,8 +26,9 @@ body {
 
 /* The body is a centred column, and a flex item will not shrink below its content. Without this a wide child (a
    chart, a row of buttons) makes the whole page scroll sideways instead of wrapping or scrolling by itself. The
-   header bar is left out because it spans the window with negative margins. */
-body > :not(.site-header) {
+   header bar is left out because it spans the window with negative margins. :where() keeps this rule
+   weaker than any class, so a panel's own max-width (720px) still wins. */
+body > :where(:not(.site-header)) {
   min-width: 0;
   max-width: 100%;
 }
@@ -129,7 +130,7 @@ h1 {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #888;
+  color: #6b7280; /* 4.8:1 on white, enough for small text */
   margin-bottom: 16px;
 }
 
@@ -323,6 +324,34 @@ h1 {
 @media (max-width: 600px) {
   .controls-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Bigger things to touch on a phone or any touch screen: buttons, boxes, menus and checkboxes at least 44 px
+   tall, and the header links tall enough to hit without hitting their neighbours */
+@media (max-width: 600px), (pointer: coarse) {
+  .site-title,
+  .site-links a {
+    display: inline-block;
+    padding: 6px 0;
+  }
+
+  .site-units select,
+  .control-row select,
+  .control-row input[type="number"] {
+    min-height: 44px;
+  }
+
+  .control-row input[type="range"] {
+    height: 32px;
+  }
+
+  .btn {
+    min-height: 44px;
+  }
+
+  .checkbox-label {
+    min-height: 44px;
   }
 }
 

@@ -1,6 +1,7 @@
 /* Screen Calibration: styles for this page only. Shared styles live in ../shared/style.css. */
 
 .btn-nudge {
+  min-width: 44px;
   padding: 4px 14px;
 }
 

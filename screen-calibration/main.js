@@ -86,6 +86,8 @@ const els = {
   resCssLabel: byId('res-css-label'),
   rulerHelp: byId('ruler-help'),
   resPrecision: byId('res-precision'),
+  stage: byId('stage'),
+  scrollHint: byId('box-scroll-hint'),
 };
 
 // The calibration is `ppmm`, CSS pixels per real millimetre. It starts at what the browser assumes, which
@@ -231,7 +233,7 @@ function renderResults(boxWidthPx) {
   const numbers = describeCalibration(state.ppmm);
   els.resPpi.textContent = view.units() === 'in' ? numbers.pxPerInch.toFixed(1) : numbers.pxPerMm.toFixed(3);
   els.resCss.textContent = percentText(numbers.cssLengthTooSmallPercent);
-  els.resPrecision.textContent = `changes it by ${stepPrecisionPercent(boxWidthPx).toFixed(2)}%`;
+  els.resPrecision.textContent = `${stepPrecisionPercent(boxWidthPx).toFixed(2)}%`;
 }
 
 function updateNote() {
@@ -244,11 +246,18 @@ function updateNote() {
   setNote(els.note, note.text, note.warn);
 }
 
+// The box can be wider than a phone screen, and its right edge is what the user must line up, so say when
+// it has to be scrolled to
+function updateScrollHint() {
+  els.scrollHint.hidden = els.stage.scrollWidth <= els.stage.clientWidth;
+}
+
 function render() {
   renderUnitText();
   renderResults(renderBox(referenceMm()));
   drawRuler();
   updateNote();
+  updateScrollHint();
 }
 
 // ── Events ───────────────────────────────────────────────
@@ -286,7 +295,10 @@ function watchPixelRatio() {
     watchPixelRatio();
   }, { once: true });
 }
-window.addEventListener('resize', updateNote);
+window.addEventListener('resize', () => {
+  updateNote();
+  updateScrollHint();
+});
 watchPixelRatio();
 
 // Bring back the reference choice and the calibration from the last visit, if they are still valid. A

@@ -55,11 +55,13 @@
       </div>
     </div>
 
-    <div class="stage">
+    <div class="stage" id="stage">
       <div class="reference-box" id="reference-box" role="img" aria-label="The on-screen box to match your object against">
         Match your object to this box
       </div>
     </div>
+
+    <p class="help" id="box-scroll-hint" hidden>The box is wider than your screen. Scroll it sideways to see its right edge.</p>
 
     <div class="actions">
       <button type="button" class="btn btn-secondary" id="btn-reset">Reset</button>
@@ -73,7 +75,7 @@
     <dl class="results">
       <div><dt id="res-ppi-label">Pixels per inch</dt><dd id="res-ppi"></dd></div>
       <div><dt id="res-css-label">An inch in CSS is</dt><dd id="res-css"></dd></div>
-      <div><dt>One pixel of adjustment</dt><dd id="res-precision"></dd></div>
+      <div><dt>One pixel changes it by</dt><dd id="res-precision"></dd></div>
     </dl>
   </div>
 

@@ -26,7 +26,22 @@
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
 }
 
-.tool h2 {
+.group-title {
+  max-width: 720px;
+  width: 100%;
+  margin: 8px 0 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4b5563; /* the heading sits on the grey page, so it needs a darker grey than the panel headings */
+}
+
+.tools + .group-title {
+  margin-top: 24px;
+}
+
+.tool h3 {
   font-size: 1.05rem;
   font-weight: 600;
   color: #2563eb;
