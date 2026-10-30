@@ -179,7 +179,8 @@ h1 {
   font-variant-numeric: tabular-nums;
 }
 
-.control-row select {
+.control-row select,
+.control-row input[type="number"] {
   flex: 1;
   min-width: 0;
   padding: 5px 8px;
@@ -188,6 +189,12 @@ h1 {
   font-size: 0.85rem;
   background: #fff;
   color: #333;
+}
+
+/* A clear ring for keyboard users on everything that can be focused */
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
 }
 
 .checkbox-label {
@@ -254,6 +261,11 @@ h1 {
   margin-bottom: 12px;
 }
 
+/* Help text straight after a group of controls needs a gap above it */
+.controls-grid + .help {
+  margin-top: 12px;
+}
+
 .results {
   display: grid;
   gap: 2px;
@@ -268,6 +280,7 @@ h1 {
 }
 
 .results dt {
+  flex-shrink: 0;
   font-size: 0.85rem;
   color: #555;
 }
@@ -285,6 +298,11 @@ h1 {
   font-size: 0.82rem;
   color: #555;
   text-align: center;
+}
+
+/* The line about remembered settings sits at the bottom of a page, apart from what is above it */
+#settings-note {
+  margin-top: 16px;
 }
 
 .note.warn {
